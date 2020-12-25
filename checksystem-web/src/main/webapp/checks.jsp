@@ -49,6 +49,9 @@
                             <button data-name="download" data-dlType="print"
                                     data-dlFormat="text" class="dropdown-item">- Text
                             </button>
+                            <button data-name="download" data-dlType="print"
+                                    data-dlFormat="pdf" class="dropdown-item">- PDF
+                            </button>
                             <div class="dropdown-divider"></div>
                             <h6 class="dropdown-header">Serialize</h6>
                             <button data-name="download" data-dlType="serialize"
