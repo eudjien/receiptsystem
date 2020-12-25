@@ -6,6 +6,7 @@ import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.check.CheckItem;
 import ru.clevertec.checksystem.core.io.printer.CheckPrinter;
 import ru.clevertec.checksystem.core.io.printer.strategy.HtmlCheckPrintStrategy;
+import ru.clevertec.checksystem.core.io.printer.strategy.PdfCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.strategy.TextCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.reader.factory.CheckReaderCreator;
 import ru.clevertec.checksystem.core.io.writer.factory.CheckWriterCreator;
@@ -77,6 +78,7 @@ public class Main {
             switch (printFormat) {
                 case "text" -> checkPrinter.setStrategy(new TextCheckPrintStrategy());
                 case "html" -> checkPrinter.setStrategy(new HtmlCheckPrintStrategy());
+                case "pdf" -> checkPrinter.setStrategy(new PdfCheckPrintStrategy());
                 default -> throw new Exception("Print format '" + printFormat + " 'not supported");
             }
             var data = checkPrinter.printRaw();

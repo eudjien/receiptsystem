@@ -152,4 +152,26 @@ public class Tests {
         assertDoesNotThrow(() -> Main.main(args));
         //Files.delete(outputFilePath);
     }
+
+    @Test
+    public void readJsonFileThenPrintToPdfFileGoesWell() throws IOException {
+
+        var absPath = Paths.get(resourcesPath).toAbsolutePath();
+
+        var inputFilePath = Path.of(absPath.toString(), "checks.json");
+        var outputFilePath = Path.of(absPath.toString(), "checks_printed.pdf");
+
+        var args = new String[]{
+                "-mode=file-deserialize",
+                "-file-deserialize=true",
+                "-file-deserialize-format=json",
+                "-file-deserialize-path=" + inputFilePath,
+                "-file-print=true",
+                "-file-print-format=pdf",
+                "-file-print-path=" + outputFilePath
+        };
+
+        assertDoesNotThrow(() -> Main.main(args));
+        //Files.delete(outputFilePath);
+    }
 }

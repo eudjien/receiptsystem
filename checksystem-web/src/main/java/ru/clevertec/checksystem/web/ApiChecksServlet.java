@@ -5,6 +5,7 @@ import ru.clevertec.checksystem.core.DataSeed;
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.io.printer.CheckPrinter;
 import ru.clevertec.checksystem.core.io.printer.strategy.HtmlCheckPrintStrategy;
+import ru.clevertec.checksystem.core.io.printer.strategy.PdfCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.strategy.TextCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.reader.factory.CheckReaderCreator;
 import ru.clevertec.checksystem.core.io.writer.CheckWriter;
@@ -64,6 +65,13 @@ public class ApiChecksServlet extends HttpServlet {
                         resp.setContentType("application/json;charset=utf-8");
                         if (download) {
                             resp.setHeader("Content-disposition", "attachment; filename=check" + ".txt");
+                        }
+                    }
+                    case "pdf" -> {
+                        checkPrinter.setStrategy(new PdfCheckPrintStrategy());
+                        resp.setContentType("application/pdf;charset=utf-8");
+                        if (download) {
+                            resp.setHeader("Content-disposition", "attachment; filename=check" + ".pdf");
                         }
                     }
                     default -> {
