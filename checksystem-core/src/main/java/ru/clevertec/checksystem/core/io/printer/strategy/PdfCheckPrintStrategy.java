@@ -27,6 +27,17 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
 
     public static final String FONT = "font/JetBrainsMono-VariableFont_wght.ttf";
 
+    private static final String DATE_TEMPLATE = "dd.MM.yyyy";
+    private static final String TIME_TEMPLATE = "hh:mm";
+
+    private static final float FONT_SIZE_BASE = 16f;
+    private static final float LINE_HEIGHT_BASE = 1f;
+    private static final float LINE_HEIGHT_SM = LINE_HEIGHT_BASE - 0.25f;
+    private static final float LINE_HEIGHT_MD = LINE_HEIGHT_BASE + .25f;
+    private static final float DEFAULT_SPACE_SIZE = 16f;
+
+    private static final Color SEPARATOR_COLOR = new DeviceRgb(48, 48, 48);
+
     @Override
     public byte[] getData(Check check) throws IOException, URISyntaxException {
 
@@ -65,16 +76,12 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
 
         var writer = new PdfWriter(os);
         var pdf = new PdfDocument(writer);
-        return new Document(pdf).setFontSize(16).setFont(font);
+        return new Document(pdf).setFontSize(FONT_SIZE_BASE).setFont(font);
     }
 
     public void addCheckToDocument(Document document, Check check) {
-
-        var lineSep = new LineSeparator(new DashedLine(1))
-                .setMargins(15, 0, 15, 0)
-                .setStrokeColor(Color.convertRgbToCmyk(new DeviceRgb(48, 48, 48)));
-
-        document.add(createShopInfoDiv(check).setFontSize(18).setMarginBottom(15));
+        var lineSep = createSeparator();
+        document.add(createShopInfoDiv(check).setFontSize(FONT_SIZE_BASE * 1.125f).setMarginBottom(DEFAULT_SPACE_SIZE));
         document.add(createHeaderTable(check));
         document.add(lineSep);
         document.add(createItemsTable(check));
@@ -85,14 +92,15 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
     private Div createShopInfoDiv(Check check) {
         return new Div()
                 .add(new Paragraph(check.getName())
-                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(0.7f)
-                        .setMarginBottom(15).setBold())
+                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(LINE_HEIGHT_SM)
+                        .setMarginBottom(DEFAULT_SPACE_SIZE)
+                        .setBold())
                 .add(new Paragraph(check.getDescription())
-                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(0.7f))
-                .add(new Paragraph(check.getAddress()).setTextAlignment(TextAlignment.CENTER)
-                        .setMultipliedLeading(0.7f))
+                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(LINE_HEIGHT_SM))
+                .add(new Paragraph(check.getAddress())
+                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(LINE_HEIGHT_SM))
                 .add(new Paragraph(check.getPhoneNumber())
-                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(0.7f));
+                        .setTextAlignment(TextAlignment.CENTER).setMultipliedLeading(LINE_HEIGHT_SM));
     }
 
     private Table createItemsTable(Check check) {
@@ -112,29 +120,40 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
 
         for (var item : check.getItems()) {
 
-            table.addCell(new Cell().add(new Paragraph(item.getQuantity() + "")
-                    .setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell()
+                    .setBorder(Border.NO_BORDER)
+                    .add(new Paragraph(item.getQuantity() + "")
+                            .setMultipliedLeading(LINE_HEIGHT_MD)
+                            .setTextAlignment(TextAlignment.LEFT)));
 
-            table.addCell(new Cell().add(new Paragraph(item.getProduct().getName())
-                    .setTextAlignment(TextAlignment.LEFT)).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell()
+                    .setBorder(Border.NO_BORDER)
+                    .add(new Paragraph(item.getProduct().getName())
+                            .setMultipliedLeading(LINE_HEIGHT_MD)
+                            .setTextAlignment(TextAlignment.LEFT)));
 
-            table.addCell(new Cell().add(new Paragraph(getCurrency() + item.getProduct().getPrice()
-                    .setScale(getScale(), RoundingMode.CEILING))
-                    .setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell()
+                    .setBorder(Border.NO_BORDER)
+                    .add(new Paragraph(getCurrency()
+                                + item.getProduct().getPrice().setScale(getScale(), RoundingMode.CEILING))
+                            .setMultipliedLeading(LINE_HEIGHT_MD)
+                            .setTextAlignment(TextAlignment.RIGHT)));
 
             var totalParagraph = new Paragraph(getCurrency() + item.subTotal()
-                    .setScale(getScale(), RoundingMode.CEILING));
-            table.addCell(new Cell().add(totalParagraph
-                    .setTextAlignment(TextAlignment.RIGHT)).setBorder(Border.NO_BORDER));
+                    .setScale(getScale(), RoundingMode.CEILING))
+                    .setMultipliedLeading(LINE_HEIGHT_MD)
+                    .setTextAlignment(TextAlignment.RIGHT);
+            table.addCell(new Cell().setBorder(Border.NO_BORDER).add(totalParagraph));
 
             if (item.discountsSum().doubleValue() > 0) {
                 totalParagraph.setLineThrough();
-                table.addCell(new Cell(1, 4).add(
-                        new Paragraph("Discount: " + getCurrency() + item.discountsSum()
-                                .setScale(getScale(), RoundingMode.CEILING) + " = "
-                                + getCurrency() + item.total().setScale(getScale(), RoundingMode.CEILING)))
-                        .setTextAlignment(TextAlignment.RIGHT)
-                        .setBorder(Border.NO_BORDER));
+                table.addCell(new Cell(1, 4)
+                        .setBorder(Border.NO_BORDER)
+                        .add(new Paragraph("Discount: " + getCurrency() + item.discountsSum()
+                                    .setScale(getScale(), RoundingMode.CEILING) + " = "
+                                    + getCurrency() + item.total().setScale(getScale(), RoundingMode.CEILING))
+                                .setMultipliedLeading(LINE_HEIGHT_MD)
+                                .setTextAlignment(TextAlignment.RIGHT)));
             }
         }
 
@@ -142,9 +161,9 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
     }
 
     private Table createResultTable(Check check) {
-        var table = new Table(2);
-        table.useAllAvailableWidth();
-        table.setBorder(Border.NO_BORDER);
+        var table = new Table(2)
+                .useAllAvailableWidth()
+                .setBorder(Border.NO_BORDER);
 
         addResultTableRow(table, "SUBTOTAL", getCurrency() + check.subTotal()
                 .setScale(getScale(), RoundingMode.CEILING));
@@ -158,37 +177,29 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
 
     private void addResultTableRow(Table table, String leftText, String rightText) {
 
-        var leftCell = new Cell();
-        leftCell.setBorder(Border.NO_BORDER);
-        var leftCellParagraph = new Paragraph(leftText)
-                .setTextAlignment(TextAlignment.LEFT)
-                .setBold()
-                .setMultipliedLeading(1);
-        leftCell.add(leftCellParagraph);
+        table.addCell(new Cell()
+                .setBorder(Border.NO_BORDER)
+                .add(new Paragraph(leftText)
+                        .setMultipliedLeading(LINE_HEIGHT_BASE)
+                        .setTextAlignment(TextAlignment.LEFT)
+                        .setBold()));
 
-        var rightCell = new Cell();
-        rightCell.setBorder(Border.NO_BORDER);
-        var rightCellParagraph = new Paragraph(rightText)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setMultipliedLeading(1);
-        rightCell.add(rightCellParagraph);
-
-        table.addCell(new Cell().add(new Paragraph(leftText)
-                .setMultipliedLeading(1).setTextAlignment(TextAlignment.LEFT).setBold())
-                .setBorder(Border.NO_BORDER));
-
-        table.addCell(rightCell);
+        table.addCell(new Cell()
+                .setBorder(Border.NO_BORDER)
+                .add(new Paragraph(rightText)
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .setMultipliedLeading(LINE_HEIGHT_BASE)));
     }
 
     private Table createHeaderTable(Check check) {
 
-        var dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-        var timeFormatter = new SimpleDateFormat("hh:mm");
+        var dateFormatter = new SimpleDateFormat(DATE_TEMPLATE);
+        var timeFormatter = new SimpleDateFormat(TIME_TEMPLATE);
 
         var table = new Table(2).useAllAvailableWidth();
 
         table.addCell(new Cell().add(new Paragraph("CASHIER: " + check.getCashier())
-                .setMultipliedLeading(0.95f))
+                .setMultipliedLeading(LINE_HEIGHT_MD))
                 .setBorder(Border.NO_BORDER));
 
         var date = "DATE: " + dateFormatter.format(check.getDate());
@@ -198,11 +209,17 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
                 .add(new Table(1)
                         .addCell(new Cell(2, 1)
                                 .add(new Paragraph(date + "\n" + time)
-                                        .setMultipliedLeading(0.95f)).setBorder(Border.NO_BORDER))
+                                        .setMultipliedLeading(LINE_HEIGHT_MD)).setBorder(Border.NO_BORDER))
                         .setHorizontalAlignment(HorizontalAlignment.RIGHT)
                         .setBorder(Border.NO_BORDER))
                 .setBorder(Border.NO_BORDER));
 
         return table;
+    }
+
+    private LineSeparator createSeparator() {
+        return new LineSeparator(new DashedLine(1))
+                .setMargins(DEFAULT_SPACE_SIZE, 0, DEFAULT_SPACE_SIZE, 0)
+                .setStrokeColor(SEPARATOR_COLOR);
     }
 }
