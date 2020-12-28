@@ -1,0 +1,26 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'com.fasterxml.jackson.core:jackson-core:2.11.3'
+    api 'com.fasterxml.jackson.core:jackson-annotations:2.11.3'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
+    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.3'
+    api 'com.itextpdf:itext7-core:7.1.13'
+    api 'org.slf4j:slf4j-api:1.7.30'
+    api 'org.slf4j:slf4j-simple:1.7.30'
+    api 'org.apache.commons:commons-lang3:3.11'
+}
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+group = 'ru.clevertec.checksystem'
+version = '1.0'
+description = 'checksystem-core'
+java.sourceCompatibility = JavaVersion.VERSION_15
