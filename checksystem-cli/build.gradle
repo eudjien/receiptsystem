@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':checksystem-core')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+group = 'ru.clevertec.checksystem.cli'
+version = '1.0'
+description = 'checksystem-cli'
+java.sourceCompatibility = JavaVersion.VERSION_15
