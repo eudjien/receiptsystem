@@ -1,0 +1,2 @@
+rootProject.name = 'checksystem-cli'
+include('app')

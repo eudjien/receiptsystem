@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core;
+package ru.clevertec.checksystem.cli;
 
 public class CheckItemDiscountPair {
 

@@ -38,6 +38,7 @@ public class Tests {
             "d-item=6:5",
     };
     static String resourcesPath = "src/test/resources";
+    static String outFolder = "out";
 
     @Test
     public void readJsonFileThenWriteXmlFileGoesWell() throws IOException {
@@ -45,7 +46,7 @@ public class Tests {
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
 
         var inputFilePath = Path.of(absPath.toString(), "checks.json");
-        var outputFilePath = Path.of(absPath.toString(), "checks_convFromJson.xml");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_convFromJson.xml");
 
         var args = new String[]{
                 "-mode=file-deserialize",
@@ -67,7 +68,7 @@ public class Tests {
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
 
         var inputFilePath = Path.of(absPath.toString(), "checks.xml");
-        var outputFilePath = Path.of(absPath.toString(), "checks_convFromXml.json");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_convFromXml.json");
 
         var args = new String[]{
                 "-mode=file-deserialize",
@@ -92,7 +93,7 @@ public class Tests {
     public void generateCheckThenWriteToJsonFileGoesWell() throws IOException {
 
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
-        var outputFilePath = Path.of(absPath.toString(), "checks_convFromGenerated.xml");
+        var outputFilePath = Path.of(absPath.toString(),outFolder, "checks_convFromGenerated.xml");
 
         var serializeArgs = new String[]{
                 "-file-serialize=true",
@@ -115,7 +116,7 @@ public class Tests {
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
 
         var inputFilePath = Path.of(absPath.toString(), "checks.json");
-        var outputFilePath = Path.of(absPath.toString(), "checks_printed.txt");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_printed.txt");
 
         var args = new String[]{
                 "-mode=file-deserialize",
@@ -128,7 +129,7 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        //Files.delete(outputFilePath);
+        Files.delete(outputFilePath);
     }
 
     @Test
@@ -137,7 +138,7 @@ public class Tests {
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
 
         var inputFilePath = Path.of(absPath.toString(), "checks.json");
-        var outputFilePath = Path.of(absPath.toString(), "checks_printed.html");
+        var outputFilePath = Path.of(absPath.toString(),outFolder, "checks_printed.html");
 
         var args = new String[]{
                 "-mode=file-deserialize",
@@ -150,7 +151,7 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        //Files.delete(outputFilePath);
+        Files.delete(outputFilePath);
     }
 
     @Test
@@ -159,7 +160,7 @@ public class Tests {
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
 
         var inputFilePath = Path.of(absPath.toString(), "checks.json");
-        var outputFilePath = Path.of(absPath.toString(), "checks_printed.pdf");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_printed.pdf");
 
         var args = new String[]{
                 "-mode=file-deserialize",
@@ -172,6 +173,6 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        //Files.delete(outputFilePath);
+        Files.delete(outputFilePath);
     }
 }

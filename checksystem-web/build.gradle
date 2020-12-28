@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'com.bmuschko.tomcat' version '2.5'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':checksystem-core')
+    providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    def tomcatVersion = '9.0.1'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
+            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+}
+
+tomcat {
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol = 'org.apache.coyote.ajp.AjpNio2Protocol'
+}
+
+tomcatRunWar.stopPort = 8181
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+group = 'ru.clevertec.checksystem'
+version = '1.0'
+description = 'checksystem-web'
+java.sourceCompatibility = JavaVersion.VERSION_15
