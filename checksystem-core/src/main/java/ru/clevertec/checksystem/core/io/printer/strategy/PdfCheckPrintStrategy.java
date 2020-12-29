@@ -135,7 +135,7 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
             table.addCell(new Cell()
                     .setBorder(Border.NO_BORDER)
                     .add(new Paragraph(getCurrency()
-                                + item.getProduct().getPrice().setScale(getScale(), RoundingMode.CEILING))
+                            + item.getProduct().getPrice().setScale(getScale(), RoundingMode.CEILING))
                             .setMultipliedLeading(LINE_HEIGHT_MD)
                             .setTextAlignment(TextAlignment.RIGHT)));
 
@@ -150,8 +150,8 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
                 table.addCell(new Cell(1, 4)
                         .setBorder(Border.NO_BORDER)
                         .add(new Paragraph("Discount: " + getCurrency() + item.discountsSum()
-                                    .setScale(getScale(), RoundingMode.CEILING) + " = "
-                                    + getCurrency() + item.total().setScale(getScale(), RoundingMode.CEILING))
+                                .setScale(getScale(), RoundingMode.CEILING) + " = "
+                                + getCurrency() + item.total().setScale(getScale(), RoundingMode.CEILING))
                                 .setMultipliedLeading(LINE_HEIGHT_MD)
                                 .setTextAlignment(TextAlignment.RIGHT)));
             }

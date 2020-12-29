@@ -1,6 +1,5 @@
 package ru.clevertec.checksystem.cli;
 
-import ru.clevertec.checksystem.core.CheckItemDiscountPair;
 import ru.clevertec.checksystem.core.DataSeed;
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.check.CheckItem;
@@ -311,6 +310,4 @@ public class Main {
         }
         return os.toByteArray();
     }
-
-
 }

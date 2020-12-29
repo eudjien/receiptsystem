@@ -1,0 +1,2 @@
+rootProject.name = 'checksystem-core'
+include('lib')
