@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="checksystem-web:war">
+    <output-path>$PROJECT_DIR$/checksystem-web/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>checksystem-web</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="checksystem-web-1.0.war">
+      <element id="artifact" artifact-name="checksystem-web:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,2 +1,0 @@
-rootProject.name = 'clevertec-java-task'
-include('checksystem-core', 'checksystem-cli', 'checksystem-web')
