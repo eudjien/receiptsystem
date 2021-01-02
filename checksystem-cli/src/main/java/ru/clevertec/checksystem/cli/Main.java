@@ -3,15 +3,14 @@ package ru.clevertec.checksystem.cli;
 import ru.clevertec.checksystem.core.DataSeed;
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.check.CheckItem;
+import ru.clevertec.checksystem.core.factory.PdfTemplateFactory;
+import ru.clevertec.checksystem.core.factory.reader.CheckReaderCreator;
+import ru.clevertec.checksystem.core.factory.writer.CheckWriterCreator;
 import ru.clevertec.checksystem.core.io.printer.CheckPrinter;
 import ru.clevertec.checksystem.core.io.printer.strategy.HtmlCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.strategy.PdfCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.strategy.TextCheckPrintStrategy;
-import ru.clevertec.checksystem.core.io.reader.factory.CheckReaderCreator;
-import ru.clevertec.checksystem.core.io.writer.factory.CheckWriterCreator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -24,20 +23,11 @@ import java.util.stream.Collectors;
 public class Main {
     static Pattern pattern = Pattern.compile("^-(?<key>.+)=(?<value>.+)$");
 
-    static String PARAM_KEY_MODE = "mode";
-    static String PARAM_KEY_FILE_DESERIALIZE_FORMAT = "file-deserialize-format";
-    static String PARAM_KEY_FILE_DESERIALIZE_PATH = "file-deserialize-path";
-    static String PARAM_KEY_FILE_SERIALIZE_FORMAT = "file-serialize-format";
-    static String PARAM_KEY_FILE_SERIALIZE_PATH = "file-serialize-path";
-    static String PARAM_KEY_FILE_PRINT_FORMAT = "file-print-format";
-    static String PARAM_KEY_FILE_PRINT_PATH = "file-print-path";
-    static String PARAM_KEY_FILTER_ID = "filter-id";
-
     public static void main(String[] args) throws Exception {
 
         var checks = new ArrayList<Check>();
 
-        var mode = findParameterOrThrow(args, PARAM_KEY_MODE);
+        var mode = findParameterOrThrow(args, Constants.PARAM_KEY_MODE);
 
         switch (mode) {
             case "generate" -> {
@@ -52,8 +42,8 @@ public class Main {
                 checks.add(check);
             }
             case "file-deserialize" -> {
-                var format = findParameterOrThrow(args, PARAM_KEY_FILE_DESERIALIZE_FORMAT);
-                var path = findParameterOrThrow(args, PARAM_KEY_FILE_DESERIALIZE_PATH);
+                var format = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_DESERIALIZE_FORMAT);
+                var path = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_DESERIALIZE_PATH);
                 var checkReader = new CheckReaderCreator().create(format);
                 var data = checkReader.readMany(Files.readAllBytes(Path.of(path)));
                 checks.addAll(applyFilterIfExist(data, args));
@@ -62,22 +52,29 @@ public class Main {
         }
 
         if (hasEnabledSerializeFlag(args)) {
-            var format = findParameterOrThrow(args, PARAM_KEY_FILE_SERIALIZE_FORMAT);
-            var path = findParameterOrThrow(args, PARAM_KEY_FILE_SERIALIZE_PATH);
+            var format = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_SERIALIZE_FORMAT);
+            var path = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_SERIALIZE_PATH);
             var checkWriter = new CheckWriterCreator().create(format);
             Files.write(Path.of(path), checkWriter.write(checks));
             System.out.println("Serialized to file: OK");
         }
 
         if (hasEnabledFilePrintFlag(args)) {
-            var printFormat = findParameterOrThrow(args, PARAM_KEY_FILE_PRINT_FORMAT);
-            var printPath = findParameterOrThrow(args, PARAM_KEY_FILE_PRINT_PATH);
+            var printFormat = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_PRINT_FORMAT);
+            var printPath = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_PRINT_PATH);
             var checkPrinter = new CheckPrinter();
             checkPrinter.setChecks(checks);
             switch (printFormat) {
                 case "text" -> checkPrinter.setStrategy(new TextCheckPrintStrategy());
                 case "html" -> checkPrinter.setStrategy(new HtmlCheckPrintStrategy());
-                case "pdf" -> checkPrinter.setStrategy(new PdfCheckPrintStrategy());
+                case "pdf" -> {
+                    var strategy = new PdfCheckPrintStrategy();
+                    var template = findParameter(args, Constants.PARAM_KEY_FILE_PRINT_PDF_TEMPLATE);
+                    if (template != null) {
+                        strategy.setTemplate(PdfTemplateFactory.create(template));
+                    }
+                    checkPrinter.setStrategy(strategy);
+                }
                 default -> throw new Exception("Print format '" + printFormat + " 'not supported");
             }
             var data = checkPrinter.printRaw();
@@ -89,9 +86,9 @@ public class Main {
         printer.setChecks(checks);
         printer.setStrategy(new TextCheckPrintStrategy());
 
-        for (var item : printer.print()) {
-            System.out.println(item.getData());
-        }
+        // for (var item : printer.print()) {
+        // System.out.println(new String(item.getData(), StandardCharsets.UTF_8));
+        // }
     }
 
     static void applyCheckDiscounts(Check check, String[] args)
@@ -266,7 +263,7 @@ public class Main {
     }
 
     static List<Check> applyFilterIfExist(List<Check> checks, String[] args) {
-        var value = findParameter(args, PARAM_KEY_FILTER_ID);
+        var value = findParameter(args, Constants.PARAM_KEY_FILTER_ID);
         if (value != null) {
             var idList = new ArrayList<Integer>();
             var values = value.split(",");
@@ -301,13 +298,5 @@ public class Main {
             throw new Exception("Parameter '" + key + "' not defined");
         }
         return value;
-    }
-
-    static byte[] concatBytes(byte[]... bytesArrays) throws IOException {
-        var os = new ByteArrayOutputStream();
-        for (var bytes : bytesArrays) {
-            os.write(bytes);
-        }
-        return os.toByteArray();
     }
 }

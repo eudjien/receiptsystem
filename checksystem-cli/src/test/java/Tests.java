@@ -1,8 +1,8 @@
 import org.junit.jupiter.api.Test;
+import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.Main;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        Files.delete(outputFilePath);
+        //Files.delete(outputFilePath);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        Files.delete(outputFilePath);
+        //Files.delete(outputFilePath);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class Tests {
     public void generateCheckThenWriteToJsonFileGoesWell() throws IOException {
 
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
-        var outputFilePath = Path.of(absPath.toString(),outFolder, "checks_convFromGenerated.xml");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_convFromGenerated.xml");
 
         var serializeArgs = new String[]{
                 "-file-serialize=true",
@@ -107,7 +107,7 @@ public class Tests {
                 .toArray(String[]::new);
 
         assertDoesNotThrow(() -> Main.main(args));
-        Files.delete(outputFilePath);
+        //Files.delete(outputFilePath);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        Files.delete(outputFilePath);
+        //Files.delete(outputFilePath);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class Tests {
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
 
         var inputFilePath = Path.of(absPath.toString(), "checks.json");
-        var outputFilePath = Path.of(absPath.toString(),outFolder, "checks_printed.html");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_printed.html");
 
         var args = new String[]{
                 "-mode=file-deserialize",
@@ -151,7 +151,7 @@ public class Tests {
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        Files.delete(outputFilePath);
+        //Files.delete(outputFilePath);
     }
 
     @Test
@@ -165,14 +165,38 @@ public class Tests {
         var args = new String[]{
                 "-mode=file-deserialize",
                 "-file-deserialize=true",
-                "-file-deserialize-format=json",
-                "-file-deserialize-path=" + inputFilePath,
+                "-" + Constants.PARAM_KEY_FILE_DESERIALIZE_FORMAT + "=json",
+                "-" + Constants.PARAM_KEY_FILE_DESERIALIZE_PATH + "=" + inputFilePath,
                 "-file-print=true",
-                "-file-print-format=pdf",
-                "-file-print-path=" + outputFilePath
+                "-" + Constants.PARAM_KEY_FILE_PRINT_FORMAT + "=pdf",
+                "-" + Constants.PARAM_KEY_FILE_PRINT_PATH + "=" + outputFilePath,
         };
 
         assertDoesNotThrow(() -> Main.main(args));
-        Files.delete(outputFilePath);
+        //Files.delete(outputFilePath);
+    }
+
+    @Test
+    public void readJsonFileThenPrintToPdfFileWithTemplateGoesWell() throws IOException {
+
+        var absPath = Paths.get(resourcesPath).toAbsolutePath();
+
+        var inputFilePath = Path.of(absPath.toString(), "checks.json");
+        var templateFilePath = Path.of(absPath.toString(), "Clevertec_Template.pdf");
+        var outputFilePath = Path.of(absPath.toString(), outFolder, "checks_templated_printed.pdf");
+
+        var args = new String[]{
+                "-mode=file-deserialize",
+                "-file-deserialize=true",
+                "-" + Constants.PARAM_KEY_FILE_DESERIALIZE_FORMAT + "=json",
+                "-" + Constants.PARAM_KEY_FILE_DESERIALIZE_PATH + "=" + inputFilePath,
+                "-file-print=true",
+                "-" + Constants.PARAM_KEY_FILE_PRINT_FORMAT + "=pdf",
+                "-" + Constants.PARAM_KEY_FILE_PRINT_PATH + "=" + outputFilePath,
+                "-" + Constants.PARAM_KEY_FILE_PRINT_PDF_TEMPLATE + "=" + templateFilePath + "|94"
+        };
+
+        assertDoesNotThrow(() -> Main.main(args));
+        //Files.delete(outputFilePath);
     }
 }

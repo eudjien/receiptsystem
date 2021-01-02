@@ -1,0 +1,28 @@
+plugins {
+    id "java"
+}
+
+evaluationDependsOnChildren()
+
+def templatesDir = "${rootDir}${File.separator}resources${File.separator}templates"
+def templatePath = "${templatesDir + File.separator}Clevertec_Template.pdf"
+
+task dlTemplate(type: ru.clevertec.checksystem.gradle.DownloadFileTask) {
+    url = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
+    destinationPath = templatePath
+}
+
+project(':checksystem-cli') {
+    task printClevertec {
+        dependsOn dlTemplate
+        dependsOn run {
+            args = [
+                    "-mode=pre-defined",
+                    "-file-print=1",
+                    "-file-print-format=pdf",
+                    "-file-print-path=${rootDir}${File.separator}ClevertecCheck.pdf",
+                    "-file-print-pdf-template=${templatePath}|94"
+            ]
+        }
+    }
+}

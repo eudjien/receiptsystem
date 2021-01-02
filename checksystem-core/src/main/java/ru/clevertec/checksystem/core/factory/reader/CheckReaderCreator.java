@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.io.reader.factory;
+package ru.clevertec.checksystem.core.factory.reader;
 
 import ru.clevertec.checksystem.core.io.reader.CheckReader;
 import ru.clevertec.checksystem.core.io.reader.JsonCheckReader;

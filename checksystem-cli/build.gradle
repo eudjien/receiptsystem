@@ -18,7 +18,8 @@ sourceSets {
     main {
         resources {
             srcDirs += [
-                    "../${coreProjectName}/src/main/resources"
+                    "../${coreProjectName}/src/main/resources",
+                    "../${coreProjectName}/src/test/resources"
             ]
         }
     }
@@ -32,16 +33,6 @@ application {
     mainClass = 'ru.clevertec.checksystem.cli.Main'
 }
 
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'ru.clevertec.checksystem.cli.Main'
-        )
-    }
-}
-
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
 
 group = 'ru.clevertec.checksystem'
 version = '1.0'
