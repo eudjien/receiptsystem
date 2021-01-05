@@ -18,7 +18,7 @@ gradlew checksystem-web:tomcatRunWar
 **Download clevertec template then print checks**
 ```
 gradlew build
-gradlew printClevertec
+gradlew pdfprint
 ```
 
 ### CLI arguments

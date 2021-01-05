@@ -11,6 +11,7 @@ import ru.clevertec.checksystem.core.io.printer.strategy.HtmlCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.strategy.PdfCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.strategy.TextCheckPrintStrategy;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -86,13 +87,12 @@ public class Main {
         printer.setChecks(checks);
         printer.setStrategy(new TextCheckPrintStrategy());
 
-        // for (var item : printer.print()) {
-        // System.out.println(new String(item.getData(), StandardCharsets.UTF_8));
-        // }
+//         for (var item : printer.print()) {
+//            System.out.println(new String(item.getData(), StandardCharsets.UTF_8));
+//         }
     }
 
-    static void applyCheckDiscounts(Check check, String[] args)
-            throws Exception {
+    static void applyCheckDiscounts(Check check, String[] args) throws Exception {
         var discounts = DataSeed.CheckDiscounts();
         var discountKeys = getDiscountCardsFromArgs(args);
         for (var key : discountKeys) {
@@ -104,8 +104,7 @@ public class Main {
         }
     }
 
-    static void applyCheckItemsDiscounts(Check check, String[] args)
-            throws Exception {
+    static void applyCheckItemsDiscounts(Check check, String[] args) throws Exception {
         var discounts = DataSeed.CheckItemDiscounts();
         var checkItemDiscountPair = getDiscountCardItemsFromArgs(args);
         for (var pair : checkItemDiscountPair) {

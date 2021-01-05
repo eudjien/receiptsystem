@@ -1,2 +1,10 @@
-rootProject.name = 'clevertec-java-task'
+pluginManagement {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'checksystem'
 include('checksystem-core', 'checksystem-cli', /* 'checksystem-web' */)
+

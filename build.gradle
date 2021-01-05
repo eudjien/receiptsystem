@@ -1,28 +1,24 @@
+import java.nio.file.Paths
+
 plugins {
     id "java"
+    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.0"
 }
 
-evaluationDependsOnChildren()
+// With template or not
+def useTemplate = true;
 
-def templatesDir = "${rootDir}${File.separator}resources${File.separator}templates"
-def templatePath = "${templatesDir + File.separator}Clevertec_Template.pdf"
+// Input setup
+pdfPrintSettings.inputFilePath = Paths.get("$rootDir", "examples", "checks_serialized.json")
+pdfPrintSettings.inputFileFormat = "json"
 
-task dlTemplate(type: ru.clevertec.checksystem.gradle.DownloadFileTask) {
-    url = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
-    destinationPath = templatePath
+// Template setup
+if (useTemplate) {
+    pdfPrintSettings.useTemplate = true;
+    pdfPrintSettings.templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
+    pdfPrintSettings.topOffset = 94; // На сколько чек по отношению к шаблону будет смещен вниз
+    pdfPrintSettings.templateOutput = Paths.get("$rootDir", "resources", "templates", "Clevertec_Template.pdf")
 }
 
-project(':checksystem-cli') {
-    task printClevertec {
-        dependsOn dlTemplate
-        dependsOn run {
-            args = [
-                    "-mode=pre-defined",
-                    "-file-print=1",
-                    "-file-print-format=pdf",
-                    "-file-print-path=${rootDir}${File.separator}ClevertecCheck.pdf",
-                    "-file-print-pdf-template=${templatePath}|94"
-            ]
-        }
-    }
-}
+// Output path
+pdfPrintSettings.outputPdfPath = Paths.get("$rootDir", "CHECKS_" + (useTemplate ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf")
