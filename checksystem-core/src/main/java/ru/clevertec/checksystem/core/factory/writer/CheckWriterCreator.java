@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.io.writer.factory;
+package ru.clevertec.checksystem.core.factory.writer;
 
 import ru.clevertec.checksystem.core.io.writer.CheckWriter;
 import ru.clevertec.checksystem.core.io.writer.JsonCheckWriter;

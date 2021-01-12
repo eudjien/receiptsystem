@@ -1,23 +1,27 @@
-### Compile & run
+### Build & run
 
-**Console**
+**CLI**
 
 ```
-gradle checksystem-cli:build
-gradle checksystem-cli:run --args="..."
+gradlew checksystem-cli:build
+gradlew checksystem-cli:run --args="..."
 ```
 
 **Web**
 
 ```
-gradle checksystem-web:build
-gradle checksystem-web:tomcatRunWar
+gradlew checksystem-web:build
+gradlew checksystem-web:tomcatRunWar
 в браузере http://localhost:8080/checksystem-web
 ```
 
----
+**Download clevertec template then print checks**
+```
+gradlew build
+gradlew pdfprint
+```
 
-### Console arguments
+### CLI arguments
 
 - **-mode=[generate/file-deserialize/pre-defined]**: этот аргумент всегда должен присутствовать, он отвечает за то что
   будет делать программа при её запуске. Доступные значения:
