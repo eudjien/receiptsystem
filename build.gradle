@@ -2,23 +2,21 @@ import java.nio.file.Paths
 
 plugins {
     id "java"
-    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.0"
+    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.0.2"
 }
 
-// With template or not
-def useTemplate = true;
+def final isUsesTemplate = false;
+def final topOffset = 94; // На сколько чек по отношению к шаблону будет смещен вниз
 
-// Input setup
 pdfPrintSettings.inputFilePath = Paths.get("$rootDir", "examples", "checks_serialized.json")
 pdfPrintSettings.inputFileFormat = "json"
+pdfPrintSettings.outputPdfPath = Paths.get("$rootDir", "CHECKS_" +
+        (isUsesTemplate ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf")
 
 // Template setup
-if (useTemplate) {
-    pdfPrintSettings.useTemplate = true;
+if (isUsesTemplate) {
+    pdfPrintSettings.templateIsUsed = true;
     pdfPrintSettings.templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
-    pdfPrintSettings.topOffset = 94; // На сколько чек по отношению к шаблону будет смещен вниз
+    pdfPrintSettings.topOffset = topOffset;
     pdfPrintSettings.templateOutput = Paths.get("$rootDir", "resources", "templates", "Clevertec_Template.pdf")
 }
-
-// Output path
-pdfPrintSettings.outputPdfPath = Paths.get("$rootDir", "CHECKS_" + (useTemplate ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf")
