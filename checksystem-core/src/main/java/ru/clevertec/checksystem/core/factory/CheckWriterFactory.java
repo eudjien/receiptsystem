@@ -1,12 +1,12 @@
-package ru.clevertec.checksystem.core.factory.writer;
+package ru.clevertec.checksystem.core.factory;
 
 import ru.clevertec.checksystem.core.io.writer.CheckWriter;
 import ru.clevertec.checksystem.core.io.writer.JsonCheckWriter;
 import ru.clevertec.checksystem.core.io.writer.XmlCheckWriter;
 
-public class CheckWriterCreator extends WriterCreator {
-    @Override
-    public CheckWriter create(String format) throws Exception {
+public abstract class CheckWriterFactory {
+
+    public static CheckWriter create(String format) throws Exception {
         if (format == null || format.isBlank()) {
             throw new IllegalArgumentException("Format cannot be null or empty.");
         }

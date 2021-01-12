@@ -9,9 +9,9 @@ import ru.clevertec.checksystem.core.discount.item.QuantityThresholdPercentOffCh
 import ru.clevertec.checksystem.core.discount.item.SimpleConstantCheckItemDiscount;
 import ru.clevertec.checksystem.core.discount.item.SimplePercentageOffCheckItemDiscount;
 import ru.clevertec.checksystem.core.discount.item.base.CheckItemDiscount;
+import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +20,13 @@ import java.util.stream.IntStream;
 public abstract class DataSeed {
 
     private static List<Product> products;
-    private static List<Check> checks;
+    private static NormalinoList<Check> checks;
     private static HashMap<String, CheckDiscount> checkDiscounts;
     private static HashMap<String, CheckItemDiscount> checkItemDiscounts;
 
     public static List<Product> Products() {
         if (products == null) {
-            products = new ArrayList<>();
+            products = new NormalinoList<>();
             products.add(new Product("Пельмени", BigDecimal.valueOf(12.48)));
             products.add(new Product("Картошка", BigDecimal.valueOf(7.5)));
             products.add(new Product("Помидоры", BigDecimal.valueOf(3.91)));
@@ -53,11 +53,11 @@ public abstract class DataSeed {
         return products;
     }
 
-    public static List<Check> Checks() {
+    public static NormalinoList<Check> Checks() {
 
         try {
             if (checks == null) {
-                checks = new ArrayList<>();
+                checks = new NormalinoList<>();
 
                 var products = Products();
 
@@ -66,7 +66,7 @@ public abstract class DataSeed {
                         "ул. Пушкина, д. Калатушкина", "+375290000000", "Василий Пупкин",
                         new Date());
 
-                var checkItems = new ArrayList<CheckItem>();
+                var checkItems = new NormalinoList<CheckItem>();
                 checkItems.add(new CheckItem(products.get(0), 3));
                 checkItems.add(new CheckItem(products.get(1), 1));
                 var discountedCheckItem = new CheckItem(products.get(2), 8);
@@ -87,7 +87,7 @@ public abstract class DataSeed {
                         "ул. Элементова, д. 1", "+375290000001", "Екатерина Пупкина",
                         new Date());
 
-                checkItems = new ArrayList<>();
+                checkItems = new NormalinoList<>();
                 discountedCheckItem = new CheckItem(products.get(2), 8);
                 CheckItemDiscount discount = new QuantityThresholdPercentOffCheckItemDiscount(
                         "Скидка 1% если количество продуктов больше 6", 1, 6);
@@ -116,7 +116,7 @@ public abstract class DataSeed {
                         "ул. Советская, д. 1001", "+375290000002", "Алексей Пупкин",
                         new Date());
 
-                checkItems = new ArrayList<>();
+                checkItems = new NormalinoList<>();
                 checkItems.add(new CheckItem(products.get(2), 15));
                 checkItems.add(new CheckItem(products.get(4), 1));
                 checkItems.add(new CheckItem(products.get(6), 1));
@@ -134,7 +134,7 @@ public abstract class DataSeed {
                         "ул. Свиридова, д. 1234", "+375290000003", "Татьяна Пупкина",
                         new Date());
 
-                checkItems = new ArrayList<>();
+                checkItems = new NormalinoList<>();
                 discountedCheckItem = new CheckItem(products.get(3), 15);
                 discount = new QuantityThresholdPercentOffCheckItemDiscount(
                         "Скидка 10% если количество продуктов больше 2", 10, 2);

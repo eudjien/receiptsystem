@@ -16,6 +16,7 @@ gradlew checksystem-web:tomcatRunWar
 ```
 
 **Download clevertec template then print checks**
+
 ```
 gradlew build
 gradlew pdfprint
@@ -63,6 +64,15 @@ ___
   аргумент доступен при **-mode=[file-deserialize/pre-defined]**
 
 ---
+
+- **-proxied-services=[true/false]**: подключить dynamic proxy для логирования сервисов
+
+---
+
+> ***!!! ПАРАМЕТРЫ КОТОРЫЕ ЕЩЕ НЕ ОПИСАНЫ: !!!***
+> - pdf-print-template=[true/false]
+> - pdf-print-template-path=[true/false]
+> - pdf-print-template-offset=[0-*]
 
 ### Примеры комманд:
 

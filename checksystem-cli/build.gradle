@@ -2,24 +2,43 @@ plugins {
     id 'application'
 }
 
+group = 'ru.clevertec.checksystem'
+version = '1.0'
+description = 'checksystem-cli'
+
+def coreProjectName = 'checksystem-core'
+
+// https://www.eclipse.org/aspectj/doc/released/README-194.html
+def additionalJvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED"];
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
+}
+
+application {
+    mainClass = "ru.clevertec.checksystem.cli.Main"
+}
+
+configurations {
+    runtimeAgent
+}
+
 repositories {
     mavenCentral()
 }
 
-def coreProjectName = 'checksystem-core'
-
 dependencies {
-    implementation project(":${coreProjectName}")
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation project(":$coreProjectName")
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.0"
+    runtimeAgent "org.aspectj:aspectjweaver:1.6.9"
 }
 
 sourceSets {
     main {
         resources {
             srcDirs += [
-                    "../${coreProjectName}/src/main/resources",
-                    "../${coreProjectName}/src/test/resources"
+                    "../$coreProjectName/src/main/resources/font",
+                    "../$coreProjectName/src/test/resources"
             ]
         }
     }
@@ -27,14 +46,16 @@ sourceSets {
 
 test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true;
+    doFirst {
+        configurations.runtimeAgent.each { jarFile -> jvmArgs "-javaagent:$jarFile.absolutePath" }
+        jvmArgs additionalJvmArgs
+    }
 }
 
-application {
-    mainClass = 'ru.clevertec.checksystem.cli.Main'
+run {
+    doFirst {
+        configurations.runtimeAgent.each { jarFile -> jvmArgs "-javaagent:$jarFile.absolutePath" }
+        jvmArgs additionalJvmArgs
+    }
 }
-
-
-group = 'ru.clevertec.checksystem'
-version = '1.0'
-description = 'checksystem-cli'
-java.sourceCompatibility = JavaVersion.VERSION_15

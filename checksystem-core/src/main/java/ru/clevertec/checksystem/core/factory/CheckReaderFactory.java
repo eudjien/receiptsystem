@@ -1,12 +1,12 @@
-package ru.clevertec.checksystem.core.factory.reader;
+package ru.clevertec.checksystem.core.factory;
 
 import ru.clevertec.checksystem.core.io.reader.CheckReader;
 import ru.clevertec.checksystem.core.io.reader.JsonCheckReader;
 import ru.clevertec.checksystem.core.io.reader.XmlCheckReader;
 
-public class CheckReaderCreator extends ReaderCreator {
-    @Override
-    public CheckReader create(String format) throws Exception {
+public abstract class CheckReaderFactory {
+
+    public static CheckReader create(String format) throws Exception {
         if (format == null || format.isBlank()) {
             throw new IllegalArgumentException("Format cannot be null or empty.");
         }

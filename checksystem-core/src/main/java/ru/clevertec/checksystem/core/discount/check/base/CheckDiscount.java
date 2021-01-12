@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.discount.Discount;
+import ru.clevertec.checksystem.normalino.json.NormalinoIgnore;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class CheckDiscount extends Discount<CheckDiscount> {
@@ -23,6 +24,7 @@ public abstract class CheckDiscount extends Discount<CheckDiscount> {
         super(id, description, childDiscount);
     }
 
+    @NormalinoIgnore
     public Check getCheck() {
         return check;
     }

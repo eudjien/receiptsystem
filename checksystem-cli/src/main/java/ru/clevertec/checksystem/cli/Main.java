@@ -3,93 +3,103 @@ package ru.clevertec.checksystem.cli;
 import ru.clevertec.checksystem.core.DataSeed;
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.check.CheckItem;
-import ru.clevertec.checksystem.core.factory.PdfTemplateFactory;
-import ru.clevertec.checksystem.core.factory.reader.CheckReaderCreator;
-import ru.clevertec.checksystem.core.factory.writer.CheckWriterCreator;
-import ru.clevertec.checksystem.core.io.printer.CheckPrinter;
-import ru.clevertec.checksystem.core.io.printer.strategy.HtmlCheckPrintStrategy;
-import ru.clevertec.checksystem.core.io.printer.strategy.PdfCheckPrintStrategy;
-import ru.clevertec.checksystem.core.io.printer.strategy.TextCheckPrintStrategy;
+import ru.clevertec.checksystem.core.factory.ServiceFactory;
+import ru.clevertec.checksystem.core.log.LogLevel;
+import ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog;
+import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
+import ru.clevertec.checksystem.core.service.CheckIoService;
+import ru.clevertec.checksystem.core.service.CheckPrintingService;
+import ru.clevertec.checksystem.core.service.ICheckIoService;
+import ru.clevertec.checksystem.core.service.ICheckPrintingService;
+import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
-    static Pattern pattern = Pattern.compile("^-(?<key>.+)=(?<value>.+)$");
 
+    static boolean isServicesUseProxy;
+    static final Pattern pattern = Pattern.compile("^-(?<key>.+)=(?<value>.+)$");
+
+    @BeforeExecutionLog(level = LogLevel.DEBUG)
+    @AfterThrowExecutionLog
     public static void main(String[] args) throws Exception {
 
-        var checks = new ArrayList<Check>();
+        var argumentsFinder = new ArgumentsFinder(args);
 
-        var mode = findParameterOrThrow(args, Constants.PARAM_KEY_MODE);
+        isServicesUseProxy = argumentsFinder.findBoolOrDefault(Constants.Keys.PROXIED_SERVICES);
 
+        var checks = new NormalinoList<Check>();
+
+        var mode = argumentsFinder.findStringOrThrow(Constants.Keys.MODE);
+ 
         switch (mode) {
-            case "generate" -> {
-                var check = generateCheck(args);
-                var checkItems = generateCheckItems(args);
-                if (checkItems.isEmpty()) {
-                    throw new Exception("Check items not defined");
+            case Constants.Modes.GENERATE -> generate(argumentsFinder, checks);
+            case Constants.Modes.FILE_DESERIALIZE -> fileDeserialize(argumentsFinder, checks);
+            case Constants.Modes.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.Checks(), argumentsFinder));
+        }
+
+        if (argumentsFinder.findBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
+            fileSerialize(argumentsFinder, checks);
+        }
+
+        if (argumentsFinder.findBoolOrDefault(Constants.Keys.FILE_PRINT)) {
+            filePrint(argumentsFinder, checks);
+        }
+    }
+
+    static void generate(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+        var check = generateCheck(finder.getArguments());
+        var checkItems = generateCheckItems(finder.getArguments());
+        if (checkItems.isEmpty()) {
+            throw new Exception("Check items not defined");
+        }
+        check.setItems(checkItems);
+        applyCheckDiscounts(check, finder.getArguments());
+        applyCheckItemsDiscounts(check, finder.getArguments());
+        checks.add(check);
+    }
+
+    static void fileDeserialize(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+
+        var format = finder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
+        var srcPath = finder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
+        ICheckIoService ioService = ServiceFactory.instance(CheckIoService.class, isServicesUseProxy);
+        var deserializedChecks = ioService.deserializeFromFile(srcPath, format);
+        checks.addAll(applyFilterIfExist(deserializedChecks, finder));
+    }
+
+    static void fileSerialize(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+
+        var format = finder.findStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
+        var destPath = finder.findStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
+        ICheckIoService ioService = ServiceFactory.instance(CheckIoService.class, isServicesUseProxy);
+        ioService.serializeToFile(checks, destPath, format);
+    }
+
+    static void filePrint(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+
+        var printFormat = finder.findStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
+        var destPath = finder.findStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
+        ICheckPrintingService printingService = ServiceFactory.instance(CheckPrintingService.class, isServicesUseProxy);
+
+        switch (printFormat.toLowerCase()) {
+            case "text" -> printingService.printToTextFile(checks, destPath);
+            case "html" -> printingService.printToHtmlFile(checks, destPath);
+            case "pdf" -> {
+                if (finder.findBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
+                    printingService.printToPdfFile(checks, destPath,
+                            finder.findStringOrNull(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH),
+                            finder.findIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
+                } else {
+                    printingService.printToPdfFile(checks, destPath);
                 }
-                check.setItems(checkItems);
-                applyCheckDiscounts(check, args);
-                applyCheckItemsDiscounts(check, args);
-                checks.add(check);
             }
-            case "file-deserialize" -> {
-                var format = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_DESERIALIZE_FORMAT);
-                var path = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_DESERIALIZE_PATH);
-                var checkReader = new CheckReaderCreator().create(format);
-                var data = checkReader.readMany(Files.readAllBytes(Path.of(path)));
-                checks.addAll(applyFilterIfExist(data, args));
-            }
-            case "pre-defined" -> checks.addAll(applyFilterIfExist(DataSeed.Checks(), args));
+            default -> throw new Exception("Print format '" + printFormat + " 'not supported");
         }
-
-        if (hasEnabledSerializeFlag(args)) {
-            var format = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_SERIALIZE_FORMAT);
-            var path = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_SERIALIZE_PATH);
-            var checkWriter = new CheckWriterCreator().create(format);
-            Files.write(Path.of(path), checkWriter.write(checks));
-            System.out.println("Serialized to file: OK");
-        }
-
-        if (hasEnabledFilePrintFlag(args)) {
-            var printFormat = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_PRINT_FORMAT);
-            var printPath = findParameterOrThrow(args, Constants.PARAM_KEY_FILE_PRINT_PATH);
-            var checkPrinter = new CheckPrinter();
-            checkPrinter.setChecks(checks);
-            switch (printFormat) {
-                case "text" -> checkPrinter.setStrategy(new TextCheckPrintStrategy());
-                case "html" -> checkPrinter.setStrategy(new HtmlCheckPrintStrategy());
-                case "pdf" -> {
-                    var strategy = new PdfCheckPrintStrategy();
-                    var template = findParameter(args, Constants.PARAM_KEY_FILE_PRINT_PDF_TEMPLATE);
-                    if (template != null) {
-                        strategy.setTemplate(PdfTemplateFactory.create(template));
-                    }
-                    checkPrinter.setStrategy(strategy);
-                }
-                default -> throw new Exception("Print format '" + printFormat + " 'not supported");
-            }
-            var data = checkPrinter.printRaw();
-            Files.write(Path.of(printPath), data);
-            System.out.println("Printed to file: OK");
-        }
-
-        var printer = new CheckPrinter();
-        printer.setChecks(checks);
-        printer.setStrategy(new TextCheckPrintStrategy());
-
-//         for (var item : printer.print()) {
-//            System.out.println(new String(item.getData(), StandardCharsets.UTF_8));
-//         }
     }
 
     static void applyCheckDiscounts(Check check, String[] args) throws Exception {
@@ -122,7 +132,7 @@ public class Main {
     }
 
     static String[] getDiscountCardsFromArgs(String[] args) {
-        var list = new ArrayList<String>();
+        var list = new NormalinoList<String>();
         if (args == null) {
             return list.toArray(String[]::new);
         }
@@ -140,7 +150,7 @@ public class Main {
     }
 
     static CheckItemDiscountPair[] getDiscountCardItemsFromArgs(String[] args) {
-        var list = new ArrayList<CheckItemDiscountPair>();
+        var list = new NormalinoList<CheckItemDiscountPair>();
         if (args == null) {
             return list.toArray(CheckItemDiscountPair[]::new);
         }
@@ -204,7 +214,7 @@ public class Main {
     }
 
     static List<CheckItem> generateCheckItems(String[] args) throws Exception {
-        var checkItems = new ArrayList<CheckItem>();
+        var checkItems = new NormalinoList<CheckItem>();
         var id = 1;
 
         for (var arg : args) {
@@ -233,38 +243,10 @@ public class Main {
         return checkItems;
     }
 
-    static boolean hasEnabledSerializeFlag(String[] args) {
-        for (var arg : args) {
-            var matcher = pattern.matcher(arg);
-            if (matcher.matches()) {
-                var key = matcher.group("key");
-                var value = matcher.group("value");
-                if (key.equals("file-serialize") && (value.equals("true") || value.equals("1"))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    static boolean hasEnabledFilePrintFlag(String[] args) {
-        for (var arg : args) {
-            var matcher = pattern.matcher(arg);
-            if (matcher.matches()) {
-                var key = matcher.group("key");
-                var value = matcher.group("value");
-                if (key.equals("file-print") && (value.equals("true") || value.equals("1"))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    static List<Check> applyFilterIfExist(List<Check> checks, String[] args) {
-        var value = findParameter(args, Constants.PARAM_KEY_FILTER_ID);
+    static NormalinoList<Check> applyFilterIfExist(NormalinoList<Check> checks, ArgumentsFinder argumentsFinder) {
+        var value = argumentsFinder.findStringOrNull(Constants.Keys.FILTER_ID);
         if (value != null) {
-            var idList = new ArrayList<Integer>();
+            var idList = new NormalinoList<Integer>();
             var values = value.split(",");
             for (String s : values) {
                 try {
@@ -273,29 +255,10 @@ public class Main {
                 } catch (Exception ignored) {
                 }
             }
-            return checks.stream().filter(check -> idList.contains(check.getId())).collect(Collectors.toList());
+            return checks.stream()
+                    .filter(check -> idList.contains(check.getId()))
+                    .collect(Collectors.toCollection(NormalinoList<Check>::new));
         }
         return checks;
-    }
-
-    static String findParameter(String[] args, String key) {
-        for (var arg : args) {
-            var matcher = pattern.matcher(arg);
-            if (matcher.matches()) {
-                var argKey = matcher.group("key");
-                if (argKey.equals(key)) {
-                    return matcher.group("value").trim();
-                }
-            }
-        }
-        return null;
-    }
-
-    static String findParameterOrThrow(String[] args, String key) throws Exception {
-        var value = findParameter(args, key);
-        if (value == null) {
-            throw new Exception("Parameter '" + key + "' not defined");
-        }
-        return value;
     }
 }

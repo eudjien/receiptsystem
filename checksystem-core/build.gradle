@@ -2,22 +2,91 @@ plugins {
     id 'java-library'
 }
 
+configurations {
+    ajc
+    runtimeAgent
+}
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
+}
+
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    api 'com.fasterxml.jackson.core:jackson-core:2.11.3'
-    api 'com.fasterxml.jackson.core:jackson-annotations:2.11.3'
-    api 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
-    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.3'
-    api 'com.itextpdf:itext7-core:7.1.13'
-    api 'org.apache.commons:commons-lang3:3.11'
-    implementation gradleApi()
+sourceSets {
+    aspects {
+        java {
+            srcDir 'src/aspects/java'
+            include '**/*.java'
+            compileClasspath = sourceSets.main.compileClasspath
+            runtimeClasspath = sourceSets.main.runtimeClasspath
+        }
+    }
+    main {
+        java {
+            srcDir 'src/aspects/java'
+        }
+    }
 }
 
 group = 'ru.clevertec.checksystem'
 version = '1.0'
 description = 'checksystem-core'
 
-java.sourceCompatibility = JavaVersion.VERSION_15
+def jacksonVersion = '2.12.1'
+def slf4jVersion = '1.7.30'
+def log4jVersion = '2.14.0'
+def aspectjVersion = '1.9.6'
+
+dependencies {
+
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    api 'com.itextpdf:itext7-core:7.1.13'
+    api 'org.apache.commons:commons-lang3:3.11'
+
+    api "org.slf4j:slf4j-api:$slf4jVersion"
+    api "org.slf4j:slf4j-simple:$slf4jVersion"
+
+    api "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    api "org.apache.logging.log4j:log4j-api:$log4jVersion"
+
+    api "org.aspectj:aspectjrt:$aspectjVersion"
+    api "org.aspectj:aspectjweaver:$aspectjVersion"
+    ajc "org.aspectj:aspectjtools:$aspectjVersion"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// TODO: Find or create a plug-in for this instead.
+def aspectj = { sourceFileSet, destDir ->
+    ant.taskdef(
+            resource: "org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
+            classpath: configurations.ajc.asPath
+    )
+
+    ant.iajc(maxmem: "1024m",
+            fork: "true",
+            Xlint: "warning",
+            classpath: sourceFileSet.runtimeClasspath.asPath,
+            destDir: destDir,
+            source: project.sourceCompatibility,
+            target: project.targetCompatibility) {
+        sourceroots {
+            sourceFileSet.java.srcDirs.each { dir -> pathelement(path: dir) }
+        }
+    }
+}
+
+// TODO: Find or create a plug-in for this instead.
+compileJava {
+    doLast {
+        aspectj(project.sourceSets.aspects, sourceSets.main.java.outputDir)
+    }
+}

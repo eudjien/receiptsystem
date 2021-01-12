@@ -5,17 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.BaseEntity;
 import ru.clevertec.checksystem.core.discount.Discount;
 import ru.clevertec.checksystem.core.discount.check.base.CheckDiscount;
+import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 public class Check extends BaseEntity {
 
-    private final List<CheckItem> items = new ArrayList<>();
-    private final List<CheckDiscount> discounts = new ArrayList<>();
+    private final List<CheckItem> items = new NormalinoList<>();
+    private final List<CheckDiscount> discounts = new NormalinoList<>();
     private String name;
     private String description;
     private String address;

@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+
+import ru.clevertec.checksystem.core.utils.normalinolist.FuckDuckList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -127,7 +129,7 @@ public class ApiChecksServlet extends HttpServlet {
         }
     }
 
-    private List<Check> getDataSource(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private FuckDuckList<Check> getDataSource(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         var source = getSourceFromParamsOrDefault(req);
 
         if (source.equals("session")) {
@@ -153,17 +155,17 @@ public class ApiChecksServlet extends HttpServlet {
         return DataSeed.Checks();
     }
 
-    private List<Check> filterChecksById(List<Integer> ids, List<Check> dataSource) {
+    private FuckDuckList<Check> filterChecksById(List<Integer> ids, FuckDuckList<Check> dataSource) {
         try {
             return dataSource.stream().filter(a -> ids.contains(a.getId())).collect(Collectors.toList());
         } catch (Exception e) {
-            return new ArrayList<>();
+            return new FuckDuckList<>();
         }
     }
 
     private List<Integer> getIdsFromParams(HttpServletRequest req) {
         var idParam = req.getParameterValues("id");
-        var ids = new ArrayList<Integer>();
+        var ids = new FuckDuckList<Integer>();
         try {
             for (String id : idParam) {
                 var val = Integer.parseInt(id);

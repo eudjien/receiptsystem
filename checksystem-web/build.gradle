@@ -8,6 +8,10 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
+}
+
 dependencies {
     implementation project(':checksystem-core')
     providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
@@ -29,4 +33,3 @@ tomcatRunWar.stopPort = 8181
 group = 'ru.clevertec.checksystem'
 version = '1.0'
 description = 'checksystem-web'
-java.sourceCompatibility = JavaVersion.VERSION_15

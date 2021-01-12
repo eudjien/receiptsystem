@@ -2,13 +2,13 @@ package ru.clevertec.checksystem.core.io.printer;
 
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.io.printer.strategy.CheckPrintStrategy;
+import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CheckPrinter extends Printer<Check> {
 
-    private final List<Check> checks = new ArrayList<>();
+    private final NormalinoList<Check> checks = new NormalinoList<>();
 
     public CheckPrinter() {
     }
@@ -26,7 +26,7 @@ public class CheckPrinter extends Printer<Check> {
         setChecks(checks);
     }
 
-    public List<Check> getChecks() {
+    public NormalinoList<Check> getChecks() {
         return checks;
     }
 
@@ -40,7 +40,7 @@ public class CheckPrinter extends Printer<Check> {
     @Override
     public List<PrintResult> print() throws Exception {
 
-        var printedCheckList = new ArrayList<PrintResult>();
+        var printedCheckList = new NormalinoList<PrintResult>();
 
         for (var check : getChecks()) {
             printedCheckList.add(new PrintResult(check.getId(), getStrategy().getData(check)));

@@ -2,9 +2,7 @@ package ru.clevertec.checksystem.core.io.reader;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import ru.clevertec.checksystem.core.check.Check;
-
-import java.util.Arrays;
-import java.util.List;
+import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
 public class XmlCheckReader extends CheckReader {
 
@@ -16,7 +14,7 @@ public class XmlCheckReader extends CheckReader {
     }
 
     @Override
-    public List<Check> readMany(byte[] bytes) throws Exception {
-        return Arrays.asList(mapper.readValue(bytes, Check[].class));
+    public NormalinoList<Check> readMany(byte[] bytes) throws Exception {
+        return new NormalinoList<Check>(mapper.readValue(bytes, Check[].class));
     }
 }

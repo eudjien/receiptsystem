@@ -6,15 +6,15 @@ import ru.clevertec.checksystem.core.BaseEntity;
 import ru.clevertec.checksystem.core.Product;
 import ru.clevertec.checksystem.core.discount.Discount;
 import ru.clevertec.checksystem.core.discount.item.base.CheckItemDiscount;
+import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class CheckItem extends BaseEntity {
 
-    private final List<CheckItemDiscount> discounts = new ArrayList<>();
+    private final List<CheckItemDiscount> discounts = new NormalinoList<>();
     private Product product;
     private int quantity;
 

@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+
+import ru.clevertec.checksystem.core.utils.normalinolist.FuckDuckList;
+
 import java.util.List;
 
 @WebServlet("/checks")
@@ -34,7 +36,7 @@ public class ChecksServlet extends HttpServlet {
 
     private List<Integer> getIdsFromParams(HttpServletRequest req) {
         var idParam = req.getParameterValues("id");
-        var ids = new ArrayList<Integer>();
+        var ids = new FuckDuckList<Integer>();
         try {
             for (String id : idParam) {
                 var val = Integer.parseInt(id);
