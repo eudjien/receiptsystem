@@ -4,11 +4,12 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.log.execution.AfterExecutionLog;
-import ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.log.methodlogger.MethodLogger;
+import ru.clevertec.checksystem.core.log.methodlogger.MethodLoggerFormats;
 import ru.clevertec.checksystem.core.utils.AnnotationUtils;
 
 @Aspect
@@ -64,9 +65,7 @@ public class ExecutionLoggingAspect {
         methodLogger.log(ann.level(), ann.format(), method, jp.getArgs(), result);
     }
 
-    @AfterThrowing(
-            value = "anyPublicOperation() && withAfterThrowExecutionLogAnnotation()",
-            throwing = "throwable")
+    @AfterThrowing(value = "anyPublicOperation()", throwing = "throwable")
     public void afterThrowing(JoinPoint jp, Throwable throwable) {
 
         var methodSignature = getMethodSignature(jp);
@@ -74,13 +73,13 @@ public class ExecutionLoggingAspect {
         var targetClass =  methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
-        var ann =
-                AnnotationUtils.getPriorityAnnotation(AfterThrowExecutionLog.class, targetClass, method);
+        var format = "[EXECUTE ERROR] - " + MethodLoggerFormats.ReturnType + " " +
+                MethodLoggerFormats.MethodName +
+                "(" + MethodLoggerFormats.ArgumentsTypes + ") - " +
+                "(RETURN: " + MethodLoggerFormats.ReturnData + ")" + " - (ERROR: " + throwable.getMessage() + ")";
 
-        if (!ann.ignore()) {
-            var methodLogger = MethodLogger.instance(targetClass);
-            methodLogger.error(method, jp.getArgs(), throwable);
-        }
+        var methodLogger = MethodLogger.instance(targetClass);
+        methodLogger.log(LogLevel.ERROR, format, method, jp.getArgs());
     }
 
     @Pointcut("execution(public * *(..))")
@@ -104,11 +103,6 @@ public class ExecutionLoggingAspect {
     @Pointcut("(@within(ru.clevertec.checksystem.core.log.execution.AroundExecutionLog)" +
             "|| @annotation(ru.clevertec.checksystem.core.log.execution.AroundExecutionLog))")
     private void withAroundExecutionLogAnnotation() {
-    }
-
-    @Pointcut("(@within(ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog))")
-    private void withAfterThrowExecutionLogAnnotation() {
     }
 
     private static MethodSignature getMethodSignature(JoinPoint jp) {

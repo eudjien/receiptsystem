@@ -8,14 +8,12 @@ import ru.clevertec.checksystem.core.io.printer.strategy.TextCheckPrintStrategy;
 import ru.clevertec.checksystem.core.io.printer.template.pdf.FilePrintPdfTemplate;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.log.execution.AfterExecutionLog;
-import ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.utils.FileUtils;
 import ru.clevertec.checksystem.normalino.list.NormalinoList;
 
 @CheckService
-@AfterThrowExecutionLog
 @AroundExecutionLog
 public class CheckPrintingService implements ICheckPrintingService {
 

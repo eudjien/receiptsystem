@@ -1,10 +1,6 @@
 plugins {
     id 'java-library'
-}
-
-configurations {
-    ajc
-    ajw
+    id 'ru.clevertec.plugin.aspectj.ltw' version '1.0'
 }
 
 java {
@@ -38,7 +34,6 @@ description = 'checksystem-core'
 def jacksonVersion = '2.12.1'
 def slf4jVersion = '1.7.30'
 def log4jVersion = '2.14.0'
-def aspectjVersion = '1.9.6'
 
 dependencies {
 
@@ -54,39 +49,13 @@ dependencies {
 
     api "org.apache.logging.log4j:log4j-core:$log4jVersion"
     api "org.apache.logging.log4j:log4j-api:$log4jVersion"
-
-    api "org.aspectj:aspectjrt:$aspectjVersion"
-    api "org.aspectj:aspectjweaver:$aspectjVersion"
-    ajc "org.aspectj:aspectjtools:$aspectjVersion"
-    ajw "org.aspectj:aspectjweaver:$aspectjVersion"
 }
 
 test {
     useJUnitPlatform()
 }
 
-def aspectj = { sourceFileSet, destDir ->
-
-    ant.taskdef(
-            resource: "org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
-            classpath: configurations.ajc.asPath
-    )
-
-    ant.iajc(maxmem: "1024m",
-            fork: "true",
-            Xlint: "ignore",
-            classpath: sourceFileSet.runtimeClasspath.asPath,
-            destDir: destDir,
-            source: project.sourceCompatibility,
-            target: project.targetCompatibility) {
-        sourceroots {
-            sourceFileSet.java.srcDirs.each { dir -> pathelement(path: dir) }
-        }
-    }
-}
-
-compileJava {
-    doLast {
-        aspectj(project.sourceSets.aspects, sourceSets.main.java.outputDir)
-    }
+aspectjltw {
+    sourceSetPart = project.sourceSets.aspects
+    destinationDir = sourceSets.main.java.outputDir
 }

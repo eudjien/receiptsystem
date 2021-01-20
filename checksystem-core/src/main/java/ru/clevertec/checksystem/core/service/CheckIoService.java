@@ -7,7 +7,6 @@ import ru.clevertec.checksystem.core.io.reader.XmlCheckReader;
 import ru.clevertec.checksystem.core.io.writer.JsonCheckWriter;
 import ru.clevertec.checksystem.core.io.writer.XmlCheckWriter;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.utils.FileUtils;
 import ru.clevertec.checksystem.normalino.list.NormalinoList;
@@ -16,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @CheckService
-@AfterThrowExecutionLog
 @AroundExecutionLog(level = LogLevel.INFO)
 public class CheckIoService implements ICheckIoService {
 

@@ -38,13 +38,13 @@ test {
     testLogging.showStandardStreams = true;
     doFirst {
         jvmArgs additionalJvmArgs
-        jvmArgs "-javaagent:${coreProject.configurations.ajw.singleFile.absolutePath}"
+        coreProject.configurations.runtimeAgent.each { jvmArgs "-javaagent:${it.absolutePath}" }
     }
 }
 
 tasks.withType(JavaExec) {
     javaExec -> javaExec.doFirst {
         jvmArgs additionalJvmArgs
-        jvmArgs "-javaagent:${coreProject.configurations.ajw.singleFile.absolutePath}"
+        coreProject.configurations.runtimeAgent.each { jvmArgs "-javaagent:${it.absolutePath}" }
     }
 }

@@ -148,11 +148,6 @@ public class MethodLogger implements IMethodLogger {
                 : NormalinoJSON.toJsonString(result, false);
     }
 
-    private static String createSignatures(Method method) {
-        return method.getReturnType().getName()
-                + " " + method.getName() + "(" + createArgsName(method.getParameters()) + ")";
-    }
-
     private static String createArgsName(Parameter[] parameters) {
         return Arrays.stream(parameters).
                 map(Parameter::getParameterizedType)

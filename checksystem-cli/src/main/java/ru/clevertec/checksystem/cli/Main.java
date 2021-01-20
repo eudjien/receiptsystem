@@ -5,7 +5,6 @@ import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.check.CheckItem;
 import ru.clevertec.checksystem.core.factory.ServiceFactory;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.AfterThrowExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.service.CheckIoService;
 import ru.clevertec.checksystem.core.service.CheckPrintingService;
@@ -25,7 +24,6 @@ public class Main {
     static final Pattern pattern = Pattern.compile("^-(?<key>.+)=(?<value>.+)$");
 
     @BeforeExecutionLog(level = LogLevel.DEBUG)
-    @AfterThrowExecutionLog
     public static void main(String[] args) throws Exception {
 
         var argumentsFinder = new ArgumentsFinder(args);
