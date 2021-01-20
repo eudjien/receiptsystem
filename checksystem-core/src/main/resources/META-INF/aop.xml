@@ -1,0 +1,11 @@
+<aspectj>
+    <aspects>
+        <aspect name="ru.clevertec.checksystem.core.aspects.ExecutionLoggingAspect"/>
+    </aspects>
+    <weaver options="-Xset:weaveJavaxPackages=true"> <!-- -verbose -showWeaveInfo  -->
+        <exclude within="ru.clevertec.checksystem.core.aspects..*"/>
+        <include within="ru.clevertec.checksystem..*"/>
+    </weaver>
+</aspectj>
+
+<!--https://www.eclipse.org/aspectj/doc/next/devguide/ltw-configuration.html-->

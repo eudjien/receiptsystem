@@ -23,7 +23,7 @@ class ApplicationTests {
             "-ci=9:3", "-ci=10:1", "-ci=11:1", "-ci=12:1", "-ci=13:4", "-ci=14:2", "d-check=1", "d-item=6:5",
     };
 
-    static String resourcesPath = "src/test/resources";
+    static String resourcesPath = "../checksystem-core/src/test/resources";
     static String outFolder = "out";
 
     @AfterAll

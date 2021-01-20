@@ -4,7 +4,7 @@ plugins {
 
 configurations {
     ajc
-    runtimeAgent
+    ajw
 }
 
 java {
@@ -58,14 +58,15 @@ dependencies {
     api "org.aspectj:aspectjrt:$aspectjVersion"
     api "org.aspectj:aspectjweaver:$aspectjVersion"
     ajc "org.aspectj:aspectjtools:$aspectjVersion"
+    ajw "org.aspectj:aspectjweaver:$aspectjVersion"
 }
 
 test {
     useJUnitPlatform()
 }
 
-// TODO: Find or create a plug-in for this instead.
 def aspectj = { sourceFileSet, destDir ->
+
     ant.taskdef(
             resource: "org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
             classpath: configurations.ajc.asPath
@@ -73,7 +74,7 @@ def aspectj = { sourceFileSet, destDir ->
 
     ant.iajc(maxmem: "1024m",
             fork: "true",
-            Xlint: "warning",
+            Xlint: "ignore",
             classpath: sourceFileSet.runtimeClasspath.asPath,
             destDir: destDir,
             source: project.sourceCompatibility,
@@ -84,7 +85,6 @@ def aspectj = { sourceFileSet, destDir ->
     }
 }
 
-// TODO: Find or create a plug-in for this instead.
 compileJava {
     doLast {
         aspectj(project.sourceSets.aspects, sourceSets.main.java.outputDir)

@@ -5,7 +5,8 @@ plugins {
     id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.1.2"
 }
 
-def final topOffset = 94; // На сколько чек по отношению к шаблону будет смещен вниз
+// На сколько чек по отношению к шаблону будет смещен вниз
+def final topOffset = 94;
 
 pdfPrintSettings.runTaskName = "run"
 
