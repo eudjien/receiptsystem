@@ -1,11 +1,10 @@
 package ru.clevertec.checksystem.cli;
 
+import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
 import ru.clevertec.checksystem.core.DataSeed;
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.check.CheckItem;
 import ru.clevertec.checksystem.core.factory.ServiceFactory;
-import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.service.CheckIoService;
 import ru.clevertec.checksystem.core.service.CheckPrintingService;
 import ru.clevertec.checksystem.core.service.ICheckIoService;
@@ -20,54 +19,53 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static boolean isServicesUseProxy;
-    static final Pattern pattern = Pattern.compile("^-(?<key>.+)=(?<value>.+)$");
+    private static ArgumentsFinder argumentsFinder;
+    private static boolean isServicesUseProxy;
 
-    @BeforeExecutionLog(level = LogLevel.DEBUG)
     public static void main(String[] args) throws Exception {
 
-        var argumentsFinder = new ArgumentsFinder(args);
+        argumentsFinder = new ArgumentsFinder(args);
 
-        isServicesUseProxy = argumentsFinder.findBoolOrDefault(Constants.Keys.PROXIED_SERVICES);
+        isServicesUseProxy = argumentsFinder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES);
 
         var checks = new NormalinoList<Check>();
 
         var mode = argumentsFinder.findStringOrThrow(Constants.Keys.MODE);
- 
+
         switch (mode) {
             case Constants.Modes.GENERATE -> generate(argumentsFinder, checks);
-            case Constants.Modes.FILE_DESERIALIZE -> fileDeserialize(argumentsFinder, checks);
-            case Constants.Modes.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.Checks(), argumentsFinder));
+            case Constants.Modes.FILE_DESERIALIZE -> fileDeserialize(checks);
+            case Constants.Modes.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.Checks()));
         }
 
-        if (argumentsFinder.findBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
+        if (argumentsFinder.findFirstBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
             fileSerialize(argumentsFinder, checks);
         }
 
-        if (argumentsFinder.findBoolOrDefault(Constants.Keys.FILE_PRINT)) {
+        if (argumentsFinder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT)) {
             filePrint(argumentsFinder, checks);
         }
     }
 
     static void generate(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
-        var check = generateCheck(finder.getArguments());
-        var checkItems = generateCheckItems(finder.getArguments());
+        var check = generateCheck();
+        var checkItems = generateCheckItems();
         if (checkItems.isEmpty()) {
             throw new Exception("Check items not defined");
         }
         check.setItems(checkItems);
-        applyCheckDiscounts(check, finder.getArguments());
-        applyCheckItemsDiscounts(check, finder.getArguments());
+        applyCheckDiscounts(check);
+        applyCheckItemsDiscounts(check);
         checks.add(check);
     }
 
-    static void fileDeserialize(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+    static void fileDeserialize(NormalinoList<Check> checks) throws Exception {
 
-        var format = finder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
-        var srcPath = finder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
+        var format = argumentsFinder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
+        var srcPath = argumentsFinder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
         ICheckIoService ioService = ServiceFactory.instance(CheckIoService.class, isServicesUseProxy);
         var deserializedChecks = ioService.deserializeFromFile(srcPath, format);
-        checks.addAll(applyFilterIfExist(deserializedChecks, finder));
+        checks.addAll(applyFilterIfExist(deserializedChecks));
     }
 
     static void fileSerialize(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
@@ -88,10 +86,10 @@ public class Main {
             case "text" -> printingService.printToTextFile(checks, destPath);
             case "html" -> printingService.printToHtmlFile(checks, destPath);
             case "pdf" -> {
-                if (finder.findBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
+                if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
                     printingService.printToPdfFile(checks, destPath,
-                            finder.findStringOrNull(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH),
-                            finder.findIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
+                            finder.findFirstStringOrNull(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH),
+                            finder.findFirstIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
                 } else {
                     printingService.printToPdfFile(checks, destPath);
                 }
@@ -100,9 +98,9 @@ public class Main {
         }
     }
 
-    static void applyCheckDiscounts(Check check, String[] args) throws Exception {
+    static void applyCheckDiscounts(Check check) throws Exception {
         var discounts = DataSeed.CheckDiscounts();
-        var discountKeys = getDiscountCardsFromArgs(args);
+        var discountKeys = getDiscountCardsFromArgs();
         for (var key : discountKeys) {
             var discount = discounts.get(key);
             if (discount == null) {
@@ -112,9 +110,9 @@ public class Main {
         }
     }
 
-    static void applyCheckItemsDiscounts(Check check, String[] args) throws Exception {
+    static void applyCheckItemsDiscounts(Check check) throws Exception {
         var discounts = DataSeed.CheckItemDiscounts();
-        var checkItemDiscountPair = getDiscountCardItemsFromArgs(args);
+        var checkItemDiscountPair = getDiscountCardItemsFromArgs();
         for (var pair : checkItemDiscountPair) {
             var discount = discounts.get(pair.getDiscountKey());
             if (discount == null) {
@@ -129,120 +127,110 @@ public class Main {
         }
     }
 
-    static String[] getDiscountCardsFromArgs(String[] args) {
+    static String[] getDiscountCardsFromArgs() {
+
         var list = new NormalinoList<String>();
-        if (args == null) {
+
+        if (argumentsFinder.getArguments() == null || argumentsFinder.getArguments().isEmpty()) {
             return list.toArray(String[]::new);
         }
-        var regex = "^d-check=(?<key>\\w+)$";
-        var pattern = Pattern.compile(regex);
 
-        for (String arg : args) {
-            var matcher = pattern.matcher(arg);
-            if (matcher.matches()) {
-                var discountKey = matcher.group("key");
-                list.add(discountKey);
+        var dCheckArg = argumentsFinder.argumentByKey(Constants.Keys.CHECK_DISCOUNT);
+
+        if (dCheckArg != null) {
+            if (dCheckArg.hasValues()) {
+                list.addAll(dCheckArg.getValues());
             }
         }
+
         return list.toArray(String[]::new);
     }
 
-    static CheckItemDiscountPair[] getDiscountCardItemsFromArgs(String[] args) {
+    static CheckItemDiscountPair[] getDiscountCardItemsFromArgs() {
+
         var list = new NormalinoList<CheckItemDiscountPair>();
-        if (args == null) {
+
+        if (argumentsFinder.getArguments() == null || argumentsFinder.getArguments().isEmpty()) {
             return list.toArray(CheckItemDiscountPair[]::new);
         }
 
-        var regex = "^d-item=(?<id>\\d+):(?<key>\\w+)$";
-        var pattern = Pattern.compile(regex);
+        var pattern = Pattern.compile("^(?<id>\\d+):(?<key>\\w+)$");
 
-        for (String arg : args) {
-            var matcher = pattern.matcher(arg);
-            if (matcher.matches()) {
-                var productId = Integer.parseInt(matcher.group("id"));
-                var discountKey = matcher.group("key");
-                list.add(new CheckItemDiscountPair(productId, discountKey));
+        var dCheckItemArg = argumentsFinder.argumentByKey(Constants.Keys.CHECK_ITEM_DISCOUNT);
+
+        if (dCheckItemArg != null && dCheckItemArg.hasValues()) {
+
+            for (var value : dCheckItemArg.getValues()) {
+                var matcher = pattern.matcher(value);
+                if (matcher.find()) {
+                    var productId = Integer.parseInt(matcher.group("id"));
+                    var discountKey = matcher.group("key");
+                    list.add(new CheckItemDiscountPair(productId, discountKey));
+                }
             }
         }
 
         return list.toArray(CheckItemDiscountPair[]::new);
     }
 
-    static Check generateCheck(String[] args) throws ParseException {
-        var regex = "^-(?<key>\\w+)=(?<value>.+)$";
-
-        var pattern = Pattern.compile(regex);
+    static Check generateCheck() throws ParseException {
 
         var check = new Check();
 
-        for (var arg : args) {
+        for (var arg : argumentsFinder.getArguments()) {
 
-            var matcher = pattern.matcher(arg);
-
-            if (matcher.matches()) {
-                var key = matcher.group("key");
-                if (key != null) {
-                    if (key.equals("id")) {
-                        check.setId(Integer.parseInt(matcher.group("value")));
-                    }
-                    if (key.equals("name")) {
-                        check.setName(matcher.group("value"));
-                    }
-                    if (key.equals("description")) {
-                        check.setDescription(matcher.group("value"));
-                    }
-                    if (key.equals("address")) {
-                        check.setAddress(matcher.group("value"));
-                    }
-                    if (key.equals("cashier")) {
-                        check.setCashier(matcher.group("value"));
-                    }
-                    if (key.equals("phoneNumber")) {
-                        check.setPhoneNumber(matcher.group("value"));
-                    }
-                    if (key.equals("date")) {
-                        var dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-                        check.setDate(dateFormatter.parse(matcher.group("value")));
-                    }
-                }
+            if (arg.getKey().equals("id")) {
+                check.setId(Integer.parseInt(arg.firstValue()));
+            }
+            if (arg.getKey().equals("name")) {
+                check.setName(arg.firstValue());
+            }
+            if (arg.getKey().equals("description")) {
+                check.setDescription(arg.firstValue());
+            }
+            if (arg.getKey().equals("address")) {
+                check.setAddress(arg.firstValue());
+            }
+            if (arg.getKey().equals("cashier")) {
+                check.setCashier(arg.firstValue());
+            }
+            if (arg.getKey().equals("phoneNumber")) {
+                check.setPhoneNumber(arg.firstValue());
+            }
+            if (arg.getKey().equals("date")) {
+                var dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+                check.setDate(dateFormatter.parse(arg.firstValue()));
             }
         }
 
         return check;
     }
 
-    static List<CheckItem> generateCheckItems(String[] args) throws Exception {
+    static List<CheckItem> generateCheckItems() throws Exception {
+
         var checkItems = new NormalinoList<CheckItem>();
         var id = 1;
 
-        for (var arg : args) {
-
-            var matcher = pattern.matcher(arg);
-
-            if (matcher.matches()) {
-                var key = matcher.group("key");
-                if (key != null) {
-                    if (key.equals("ci")) {
-                        var s = matcher.group("value").split(":");
-                        var productId = Integer.parseInt(s[0]);
-                        var quantity = Integer.parseInt(s[1]);
-                        var product = DataSeed.Products().stream()
-                                .filter(a -> a.getId() == productId).findFirst().orElse(null);
-                        if (product == null) {
-                            throw new Exception("Product with id: " + productId + " not found");
-                        }
-                        var checkItem = new CheckItem(id++, product, quantity);
-                        checkItems.add(checkItem);
-                    }
+        for (var arg : argumentsFinder.getArguments()) {
+            if (arg.getKey().equals("ci")) {
+                var s = arg.firstValue().split(":");
+                var productId = Integer.parseInt(s[0]);
+                var quantity = Integer.parseInt(s[1]);
+                var product = DataSeed.Products().stream()
+                        .filter(a -> a.getId() == productId).findFirst().orElse(null);
+                if (product == null) {
+                    throw new Exception("Product with id: " + productId + " not found");
                 }
+                var checkItem = new CheckItem(id++, product, quantity);
+                checkItems.add(checkItem);
             }
         }
 
         return checkItems;
     }
 
-    static NormalinoList<Check> applyFilterIfExist(NormalinoList<Check> checks, ArgumentsFinder argumentsFinder) {
-        var value = argumentsFinder.findStringOrNull(Constants.Keys.FILTER_ID);
+    static NormalinoList<Check> applyFilterIfExist(NormalinoList<Check> checks) {
+        var value = argumentsFinder.findFirstStringOrNull(Constants.Keys.FILTER_ID);
         if (value != null) {
             var idList = new NormalinoList<Integer>();
             var values = value.split(",");

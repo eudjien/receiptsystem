@@ -39,36 +39,9 @@ public class MethodLogger implements IMethodLogger {
         }
     }
 
-    // int max(int, int, int)
     @Override
-    public void signatureNames(String level, Method method) {
-        log(level, "%rt %mn(%at)", method, null, null);
-    }
-
-    // int max(int, int, int) - (ARGS: [{value:5}, {value:6}, {value:7}]) - (RETURN: {value:7})
-    @Override
-    public void signatureData(String level, Method method, Object[] args, Object returnedData) {
-        log(level, "%rt %mn(%at) - (ARGS: %ad) - (RETURN: %rd)", method, args, returnedData);
-    }
-
-    // int max(int, int, int) - (ARGS: [{value:5}, {value:6}, {value:7}])
-    @Override
-    public void argumentData(String level, Method method, Object[] args) {
-        log(level, "%rt %mn(%at) - (ARGS: %ad)", method, args, null);
-    }
-
-    // int max(int, int, int) - (RETURN: {value:7})
-    @Override
-    public void returnedData(String level, Method method, Object returnedData) {
-        log(level, "%rt %mn(%at) - (RETURN: %rd)", method, null, returnedData);
-    }
-
-    // int max(int, int, int) - (ARGS: [{value:5}, {value:6}, {value:7}])
-    // Exception message..
-    @Override
-    public void error(Method method, Object[] args, Throwable throwable) {
-        log(LogLevel.ERROR, "%rt %mn(%at) - (ARGS: %rd)"
-                + " - " + throwable.toString(), method, null, null);
+    public void log(String level, String format, Method method) {
+        log(level, format, method,null);
     }
 
     @Override
@@ -106,7 +79,6 @@ public class MethodLogger implements IMethodLogger {
         }
     }
 
-    @BeforeExecutionLog
     private static String createMessage(String format, Method method, Object[] args, Object returnedData) {
 
         return Pattern.compile("%\\w+").matcher(format).replaceAll(mr -> {

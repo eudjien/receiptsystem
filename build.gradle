@@ -1,25 +1,6 @@
-import java.nio.file.Paths
-
 plugins {
     id "java"
-    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.1.2"
 }
-
-// На сколько чек по отношению к шаблону будет смещен вниз
-def final topOffset = 94;
-
-pdfPrintSettings.runTaskName = "run"
-
-pdfPrintSettings.inputFilePath = Paths.get("$rootDir", "examples", "checks_serialized.json")
-pdfPrintSettings.inputFileFormat = "json"
-
-pdfPrintSettings.templateIsUsed = true;
-pdfPrintSettings.templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
-pdfPrintSettings.topOffset = topOffset;
-pdfPrintSettings.templateOutput = Paths.get("$rootDir", "resources", "templates", "Clevertec_Template.pdf")
-
-pdfPrintSettings.outputPdfPath = Paths.get("$rootDir", "resources", 
-	"CHECKS_" + (pdfPrintSettings.templateIsUsed ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf")
 
 task cleanTemplateResources(type: Delete) {
     delete "$rootDir/resources"

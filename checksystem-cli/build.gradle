@@ -1,5 +1,6 @@
 plugins {
     id 'application'
+    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.1.5"
 }
 
 group = 'ru.clevertec.checksystem'
@@ -48,3 +49,16 @@ tasks.withType(JavaExec) {
         coreProject.configurations.runtimeAgent.each { jvmArgs "-javaagent:${it.absolutePath}" }
     }
 }
+
+def template = true;
+
+pdfPrintSettings.runTaskName = "run"
+pdfPrintSettings.inputFilePath = "$rootDir/../examples/checks_serialized.json"
+pdfPrintSettings.inputFileFormat = "json"
+
+pdfPrintSettings.templateIsUsed = template;
+pdfPrintSettings.templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
+pdfPrintSettings.topOffset = 94;
+pdfPrintSettings.templateOutput = "$rootDir/resources/templates/Clevertec_Template.pdf"
+
+pdfPrintSettings.outputPdfPath = "$rootDir/resources/CHECKS_" + (template ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf"

@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+
 def coreProjectName = "checksystem-core"
 include coreProjectName
 project(":$coreProjectName").projectDir = file("../$coreProjectName")

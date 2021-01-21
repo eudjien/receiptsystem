@@ -63,11 +63,10 @@ public class ServiceFactory {
                 throws InvocationTargetException, IllegalAccessException {
 
             serviceLogger.log(LogLevel.INFO, "%rt %mn(%at) - (ARGS: %ad)", method, args);
-            // serviceLogger.argumentData(LogLevel.INFO, method, args);
 
             var result = method.invoke(service, args);
 
-            serviceLogger.returnedData(LogLevel.INFO, method, result);
+            serviceLogger.log(LogLevel.INFO, "%rt %mn(%at) - (RETURN: %rd)", method, null, result);
 
             return result;
         }

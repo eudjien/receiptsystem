@@ -76,7 +76,7 @@ public class ExecutionLoggingAspect {
         var format = "[EXECUTE ERROR] - " + MethodLoggerFormats.ReturnType + " " +
                 MethodLoggerFormats.MethodName +
                 "(" + MethodLoggerFormats.ArgumentsTypes + ") - " +
-                "(RETURN: " + MethodLoggerFormats.ReturnData + ")" + " - (ERROR: " + throwable.getMessage() + ")";
+                "(ARGS: " + MethodLoggerFormats.ArgumentsData + ")" + " - (ERROR: " + throwable.getMessage() + ")";
 
         var methodLogger = MethodLogger.instance(targetClass);
         methodLogger.log(LogLevel.ERROR, format, method, jp.getArgs());

@@ -16,6 +16,9 @@ public final class Constants {
         public static final String FILE_PRINT_PDF_TEMPLATE_OFFSET = "file-print-pdf-template-offset";
         public static final String FILTER_ID = "filter-id";
         public static final String PROXIED_SERVICES = "proxied-services";
+
+        public static final String CHECK_DISCOUNT = "d-check";
+        public static final String CHECK_ITEM_DISCOUNT = "d-item";
     }
 
     public static final class Modes {
