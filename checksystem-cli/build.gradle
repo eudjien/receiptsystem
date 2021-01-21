@@ -1,6 +1,8 @@
+import java.nio.file.Paths
+
 plugins {
     id 'application'
-    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.1.5"
+    id 'ru.clevertec.checksystem.plugin.pdfprint' version "1.1.6"
 }
 
 group = 'ru.clevertec.checksystem'
@@ -52,13 +54,15 @@ tasks.withType(JavaExec) {
 
 def template = true;
 
-pdfPrintSettings.runTaskName = "run"
-pdfPrintSettings.inputFilePath = "$rootDir/../examples/checks_serialized.json"
-pdfPrintSettings.inputFileFormat = "json"
+pdfprint {
+    runTaskName = "run"
 
-pdfPrintSettings.templateIsUsed = template;
-pdfPrintSettings.templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
-pdfPrintSettings.topOffset = 94;
-pdfPrintSettings.templateOutput = "$rootDir/resources/templates/Clevertec_Template.pdf"
+    inputFilePath = Paths.get("$rootDir", "..", "examples", "checks_serialized.json")
+    inputFileFormat = "json"
+    outputPdfPath = Paths.get("$rootDir", "resources", "CHECKS_" + (template ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf")
 
-pdfPrintSettings.outputPdfPath = "$rootDir/resources/CHECKS_" + (template ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf"
+    templateIsUsed = template;
+    templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
+    topOffset = 94;
+    templateOutput = Paths.get("$rootDir", "resources", "templates", "Clevertec_Template.pdf")
+}

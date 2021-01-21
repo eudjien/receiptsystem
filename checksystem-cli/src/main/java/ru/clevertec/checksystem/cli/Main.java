@@ -19,35 +19,35 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    private static ArgumentsFinder argumentsFinder;
+    private static ArgumentsFinder finder;
     private static boolean isServicesUseProxy;
 
     public static void main(String[] args) throws Exception {
 
-        argumentsFinder = new ArgumentsFinder(args);
+        finder = new ArgumentsFinder(args);
 
-        isServicesUseProxy = argumentsFinder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES);
+        isServicesUseProxy = finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES);
 
         var checks = new NormalinoList<Check>();
 
-        var mode = argumentsFinder.findStringOrThrow(Constants.Keys.MODE);
+        var mode = finder.findFirstStringOrThrow(Constants.Keys.MODE);
 
         switch (mode) {
-            case Constants.Modes.GENERATE -> generate(argumentsFinder, checks);
+            case Constants.Modes.GENERATE -> generate(checks);
             case Constants.Modes.FILE_DESERIALIZE -> fileDeserialize(checks);
             case Constants.Modes.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.Checks()));
         }
 
-        if (argumentsFinder.findFirstBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
-            fileSerialize(argumentsFinder, checks);
+        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
+            fileSerialize(checks);
         }
 
-        if (argumentsFinder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT)) {
-            filePrint(argumentsFinder, checks);
+        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT)) {
+            filePrint(checks);
         }
     }
 
-    static void generate(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+    static void generate(NormalinoList<Check> checks) throws Exception {
         var check = generateCheck();
         var checkItems = generateCheckItems();
         if (checkItems.isEmpty()) {
@@ -61,25 +61,25 @@ public class Main {
 
     static void fileDeserialize(NormalinoList<Check> checks) throws Exception {
 
-        var format = argumentsFinder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
-        var srcPath = argumentsFinder.findStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
+        var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
+        var srcPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
         ICheckIoService ioService = ServiceFactory.instance(CheckIoService.class, isServicesUseProxy);
         var deserializedChecks = ioService.deserializeFromFile(srcPath, format);
         checks.addAll(applyFilterIfExist(deserializedChecks));
     }
 
-    static void fileSerialize(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+    static void fileSerialize(NormalinoList<Check> checks) throws Exception {
 
-        var format = finder.findStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
-        var destPath = finder.findStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
+        var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
+        var destPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
         ICheckIoService ioService = ServiceFactory.instance(CheckIoService.class, isServicesUseProxy);
         ioService.serializeToFile(checks, destPath, format);
     }
 
-    static void filePrint(ArgumentsFinder finder, NormalinoList<Check> checks) throws Exception {
+    static void filePrint(NormalinoList<Check> checks) throws Exception {
 
-        var printFormat = finder.findStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
-        var destPath = finder.findStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
+        var printFormat = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
+        var destPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
         ICheckPrintingService printingService = ServiceFactory.instance(CheckPrintingService.class, isServicesUseProxy);
 
         switch (printFormat.toLowerCase()) {
@@ -131,11 +131,11 @@ public class Main {
 
         var list = new NormalinoList<String>();
 
-        if (argumentsFinder.getArguments() == null || argumentsFinder.getArguments().isEmpty()) {
+        if (finder.getArguments() == null || finder.getArguments().isEmpty()) {
             return list.toArray(String[]::new);
         }
 
-        var dCheckArg = argumentsFinder.argumentByKey(Constants.Keys.CHECK_DISCOUNT);
+        var dCheckArg = finder.argumentByKey(Constants.Keys.CHECK_DISCOUNT);
 
         if (dCheckArg != null) {
             if (dCheckArg.hasValues()) {
@@ -150,13 +150,13 @@ public class Main {
 
         var list = new NormalinoList<CheckItemDiscountPair>();
 
-        if (argumentsFinder.getArguments() == null || argumentsFinder.getArguments().isEmpty()) {
+        if (finder.getArguments() == null || finder.getArguments().isEmpty()) {
             return list.toArray(CheckItemDiscountPair[]::new);
         }
 
         var pattern = Pattern.compile("^(?<id>\\d+):(?<key>\\w+)$");
 
-        var dCheckItemArg = argumentsFinder.argumentByKey(Constants.Keys.CHECK_ITEM_DISCOUNT);
+        var dCheckItemArg = finder.argumentByKey(Constants.Keys.CHECK_ITEM_DISCOUNT);
 
         if (dCheckItemArg != null && dCheckItemArg.hasValues()) {
 
@@ -177,7 +177,7 @@ public class Main {
 
         var check = new Check();
 
-        for (var arg : argumentsFinder.getArguments()) {
+        for (var arg : finder.getArguments()) {
 
             if (arg.getKey().equals("id")) {
                 check.setId(Integer.parseInt(arg.firstValue()));
@@ -211,7 +211,7 @@ public class Main {
         var checkItems = new NormalinoList<CheckItem>();
         var id = 1;
 
-        for (var arg : argumentsFinder.getArguments()) {
+        for (var arg : finder.getArguments()) {
             if (arg.getKey().equals("ci")) {
                 var s = arg.firstValue().split(":");
                 var productId = Integer.parseInt(s[0]);
@@ -230,7 +230,7 @@ public class Main {
     }
 
     static NormalinoList<Check> applyFilterIfExist(NormalinoList<Check> checks) {
-        var value = argumentsFinder.findFirstStringOrNull(Constants.Keys.FILTER_ID);
+        var value = finder.findFirstStringOrNull(Constants.Keys.FILTER_ID);
         if (value != null) {
             var idList = new NormalinoList<Integer>();
             var values = value.split(",");

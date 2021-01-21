@@ -63,7 +63,7 @@ public class ArgumentsFinder {
         return null;
     }
 
-    public String findStringOrThrow(String key) throws IllegalArgumentException {
+    public String findFirstStringOrThrow(String key) throws IllegalArgumentException {
         var value = findFirstStringOrNull(key);
         if (value == null) {
             throw new IllegalArgumentException("Parameter '" + key + "' is not defined");
