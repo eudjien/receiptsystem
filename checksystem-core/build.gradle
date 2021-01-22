@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'ru.clevertec.plugin.aspectj.ltw' version '1.0'
+    id 'ru.clevertec.plugin.aspectj.ltw' version '1.1'
 }
 
 java {
@@ -11,29 +11,13 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    aspects {
-        java {
-            srcDir 'src/aspects/java'
-            include '**/*.java'
-            compileClasspath = sourceSets.main.compileClasspath
-            runtimeClasspath = sourceSets.main.runtimeClasspath
-        }
-    }
-    main {
-        java {
-            srcDir 'src/aspects/java'
-        }
-    }
-}
+def jacksonVersion = '2.12.1',
+    slf4jVersion = '1.7.30',
+    log4jVersion = '2.14.0'
 
 group = 'ru.clevertec.checksystem'
 version = '1.0'
 description = 'checksystem-core'
-
-def jacksonVersion = '2.12.1'
-def slf4jVersion = '1.7.30'
-def log4jVersion = '2.14.0'
 
 dependencies {
 
@@ -55,7 +39,17 @@ test {
     useJUnitPlatform()
 }
 
+def aspectjSourceRoot = "src/aspects/java"
+
+sourceSets {
+    aspects.java.srcDir aspectjSourceRoot
+    main.java.srcDir aspectjSourceRoot
+}
+
 aspectjltw {
-    sourceSetPart = project.sourceSets.aspects
-    destinationDir = sourceSets.main.java.outputDir
+    xlint = "ignore"
+    fork = true
+    sourceRoots = sourceSets.aspects.java.srcDirs
+    destDir = sourceSets.main.java.outputDir
+    classpath = sourceSets.main.runtimeClasspath
 }

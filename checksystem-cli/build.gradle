@@ -21,7 +21,7 @@ repositories {
     mavenCentral()
 }
 
-def coreProject = project(":checksystem-core");
+def coreProject = project(":checksystem-core")
 
 dependencies {
     implementation coreProject
@@ -30,29 +30,22 @@ dependencies {
 
 sourceSets.main.resources.srcDirs += "${coreProject.projectDir}/src/main/resources"
 
-// https://www.eclipse.org/aspectj/doc/released/README-194.html
-def additionalJvmArgs = [
-        "--add-opens",
-        "java.base/java.lang=ALL-UNNAMED",
-]
+def applyJvmArgs = { o ->
+    o.jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED"]
+    coreProject.configurations.runtimeAgent.each { o.jvmArgs "-javaagent:${it.absolutePath}" }
+}
 
 test {
     useJUnitPlatform()
-    testLogging.showStandardStreams = true;
-    doFirst {
-        jvmArgs additionalJvmArgs
-        coreProject.configurations.runtimeAgent.each { jvmArgs "-javaagent:${it.absolutePath}" }
-    }
+    testLogging.showStandardStreams = true
+    doFirst { t -> applyJvmArgs(t) }
 }
 
 tasks.withType(JavaExec) {
-    javaExec -> javaExec.doFirst {
-        jvmArgs additionalJvmArgs
-        coreProject.configurations.runtimeAgent.each { jvmArgs "-javaagent:${it.absolutePath}" }
-    }
+    it.each { t -> doFirst { applyJvmArgs(t) } }
 }
 
-def printWithTemplate = true;
+def printWithTemplate = true
 
 pdfprint {
     runTaskName = "run"
@@ -61,8 +54,8 @@ pdfprint {
     inputFileFormat = "json"
     outputPdfPath = Paths.get("$rootDir", "resources", "CHECKS_" + (printWithTemplate ? "WITH" : "WITHOUT") + "_TEMPLATE.pdf")
 
-    withTemplate = printWithTemplate;
+    withTemplate = printWithTemplate
     templateUrl = "https://github.com/stebadmitriy/files/raw/main/Clevertec_Template.pdf"
-    topOffset = 94;
+    topOffset = 94
     templateOutput = Paths.get("$rootDir", "resources", "templates", "Clevertec_Template.pdf")
 }
