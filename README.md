@@ -24,22 +24,16 @@ gradlew pdfprint
 
 ### CLI arguments
 
-- **-mode=[generate/file-deserialize/pre-defined]**: этот аргумент всегда должен присутствовать, он отвечает за то что
-  будет делать программа при её запуске. Доступные значения:
+- **-mode=[generate/file-deserialize/pre-defined]**:
+  этот аргумент всегда должен присутствовать, он отвечает за то что будет делать программа при её запуске. Доступные
+  значения:
     - **generate:** сгенерировать чек из аргументов. При этом значении аргумента становятся доступны аргументы:
-        - **-id**, id чека
-        - **-name**, название чека
-        - **-description**, описание чека
-        - **-address**, аддресс чека
-        - **-cashier**, кассир чека
-        - **-phoneNumber**, телефон чека
-        - **-date**, дата чека
-        - **-ci=[productId:quantity]**, это команда добавляет продукт с указаным Id и количством в чек, этот аргумент
-          может повторяться
-        - **-d-check**, скидка на весь чек, этот аргумент может повторяться
-        - **-d-item**, скидка на определенный продукт в чеке, этот аргумент может повторяться
+        - **-generate-deserialize-source=[file path/data]**, входные данные из файла или текста
+        - **-generate-deserialize-format=[json]**, формат входящего файла или текста
+        - **-generate-deserialize-data=[input file path]**, путь файла если ```-generate-deserialize-source=file```
+          или текст если ```-generate-deserialize-source=data```
     - **file-deserialize=[json/xml]:** загрузить чеки из файла. При этом значении должны присуствывать аргументы:
-        - **-file-deserialize-path=[file_path]**, путь к файлу, который будет читатьс.
+        - **-file-deserialize-path=[file_path]**, путь к файлу, который будет читаться.
         - **-file-deserialize-format=[json/xml]**, формат файла, который будет читаться.
     - **pre-defined:** загрузить предопределенные чеки из памяти
 
@@ -55,24 +49,23 @@ ___
 - **-file-print=[true/false]**: этот аргумент говорит что все чеки которые были загружены или сгенерированы - будут
   записаны в файл в формате простого чека, например для покупателя (на эти чеки можно только смотреть, загружать обратно
   в программу нельзя). При этом аргументе должны присутствовать аргументы:
-    - **-file-print-path=[file_path]=:** путь к файлу для сохранения
-    - **-file-print-format=[text/html/pdf]=:** формат файла для сохранения
+    - **-file-print-path=[file_path]:** путь к файлу для сохранения
+    - **-file-print-format=[text/html/pdf]:** формат файла для сохранения
+    - **-pdf-print-template=[true/false]:** использовать шаблон или нет (только pdf). 
+      При этом аргументе доступны аргументы:
+         - **-pdf-print-template-path=[true/false]:** путь к файлу-шаблону
+         - **-pdf-print-template-offset=[0-*]:** вертикальное смешение контента по отношению к шаблону
 
 ---
 
-- **-filter-id=[id1,id2,id3]**: фильтрация чеков по Id, неважно откуда были загружены чеки, из файла или памяти этот
-  аргумент доступен при **-mode=[file-deserialize/pre-defined]**
+- **-input-filter-id=[id1,id2,id3]**: фильтрация чеков по Id, неважно откуда были загружены чеки, из файла или памяти этот
+  аргумент доступен при **-mode=[generate/file-deserialize/pre-defined]**
 
 ---
 
 - **-proxied-services=[true/false]**: подключить dynamic proxy для логирования сервисов
 
 ---
-
-> ***!!! ПАРАМЕТРЫ КОТОРЫЕ ЕЩЕ НЕ ОПИСАНЫ: !!!***
-> - pdf-print-template=[true/false]
-> - pdf-print-template-path=[true/false]
-> - pdf-print-template-offset=[0-*]
 
 ### Примеры комманд:
 
@@ -85,7 +78,7 @@ ___
 **Сгенерировать чек и сохранить его в файл в формате JSON:**
 
 ```
--mode=generate -file-serialize=true -file-serialize-format=json -file-serialize-path="C:/test/checks.json" -id=1 -name="Magazin 000" -description="Super magazin" -address="ul. Pupkina 1" -cashier="V. Pupkin" -phoneNumber="000000000000" -date="01.01.2007" -ci=1:1 -ci=2:1 -ci=3:1 -ci=2:5 -ci=5:1 -ci=6:8 -ci=7:15 -ci=8:67 -ci=9:3 -ci=10:1 -ci=11:1 -ci=12:1 -ci=13:4 -ci=14:2 d-check=1 d-item=6:5
+-mode=generate -generate-deserialize-source=file -generate-deserialize-format=json -generate-deserialize-data=C:/test/generated_checks.json -file-serialize=true -file-serialize-format=json -file-serialize-path="C:/test/checks.json"
 ```
 
 **Загрузить чеки из памяти:**

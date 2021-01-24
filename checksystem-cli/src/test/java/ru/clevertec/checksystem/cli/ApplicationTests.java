@@ -15,12 +15,11 @@ class ApplicationTests {
 
     final static boolean deleteOutputDirAfterAll = true;
 
-    static final String[] generateCheckArgs = new String[]{
-            "-mode=generate",
-            "-id=1", "-name=test name", "-description=test description", "-address=address address",
-            "-cashier=cashier address", "-phoneNumber=phoneNumber test", "-date=10.10.2010",
-            "-ci=1:1", "-ci=2:1", "-ci=3:1", "-ci=2:5", "-ci=5:1", "-ci=6:8", "-ci=7:15", "-ci=8:67",
-            "-ci=9:3", "-ci=10:1", "-ci=11:1", "-ci=12:1", "-ci=13:4", "-ci=14:2", "d-check=1", "d-item=6:5",
+    final String[] generateCheckArgs = new String[]{
+            argument(Constants.Keys.MODE, Constants.Mode.GENERATE),
+            argument(Constants.Keys.GENERATE_DESERIALIZE_SOURCE, Constants.Source.DATA),
+            argument(Constants.Keys.GENERATE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
+            argument(Constants.Keys.GENERATE_DESERIALIZE_DATA, "[{\"id\":1,\"name\":\"999 проблем\",\"description\":\"Компьютерный магазин\",\"address\":\"ул. Пушкина, д. Калатушкина\",\"cashier\":\"+375290000000\",\"phoneNumber\":\"Василий Пупкин\",\"date\":1611537871405,\"discountIds\":[3],\"items\":[{\"productId\":1,\"quantity\":3,\"discountIds\":[]},{\"productId\":2,\"quantity\":1,\"discountIds\":[]},{\"productId\":3,\"quantity\":8,\"discountIds\":[5]},{\"productId\":4,\"quantity\":9,\"discountIds\":[]},{\"productId\":5,\"quantity\":1,\"discountIds\":[]},{\"productId\":6,\"quantity\":2,\"discountIds\":[]}]},{\"id\":2,\"name\":\"342 элемент\",\"description\":\"Гипермаркет\",\"address\":\"ул. Элементова, д. 1\",\"cashier\":\"+375290000001\",\"phoneNumber\":\"Екатерина Пупкина\",\"date\":1611537871406,\"discountIds\":[1],\"items\":[{\"productId\":3,\"quantity\":8,\"discountIds\":[6,2]},{\"productId\":2,\"quantity\":10,\"discountIds\":[]},{\"productId\":4,\"quantity\":9,\"discountIds\":[]},{\"productId\":3,\"quantity\":8,\"discountIds\":[]},{\"productId\":6,\"quantity\":7,\"discountIds\":[3]},{\"productId\":8,\"quantity\":6,\"discountIds\":[]},{\"productId\":10,\"quantity\":5,\"discountIds\":[]}]},{\"id\":3,\"name\":\"Магазин №1\",\"description\":\"Продуктовый магазин\",\"address\":\"ул. Советская, д. 1001\",\"cashier\":\"+375290000002\",\"phoneNumber\":\"Алексей Пупкин\",\"date\":1611537871406,\"discountIds\":[2],\"items\":[{\"productId\":3,\"quantity\":15,\"discountIds\":[]},{\"productId\":5,\"quantity\":1,\"discountIds\":[]},{\"productId\":7,\"quantity\":1,\"discountIds\":[]},{\"productId\":9,\"quantity\":3,\"discountIds\":[]},{\"productId\":11,\"quantity\":11,\"discountIds\":[]},{\"productId\":13,\"quantity\":6,\"discountIds\":[]}]},{\"id\":4,\"name\":\"Магазин №2\",\"description\":\"Продуктовый магазин\",\"address\":\"ул. Свиридова, д. 1234\",\"cashier\":\"+375290000003\",\"phoneNumber\":\"Татьяна Пупкина\",\"date\":1611537871407,\"discountIds\":[4],\"items\":[{\"productId\":4,\"quantity\":15,\"discountIds\":[8]},{\"productId\":6,\"quantity\":1,\"discountIds\":[]},{\"productId\":8,\"quantity\":1,\"discountIds\":[]},{\"productId\":10,\"quantity\":3,\"discountIds\":[]},{\"productId\":12,\"quantity\":15,\"discountIds\":[1]},{\"productId\":14,\"quantity\":6,\"discountIds\":[]},{\"productId\":16,\"quantity\":3,\"discountIds\":[]},{\"productId\":18,\"quantity\":11,\"discountIds\":[]},{\"productId\":20,\"quantity\":6,\"discountIds\":[]}]}]")
     };
 
     static String resourcesPath = "../checksystem-core/src/test/resources";
@@ -47,11 +46,11 @@ class ApplicationTests {
         var outputFilePath = Path.of(absPath.toString(), outFolder, "[Serialized]_From_JSON.xml");
 
         var args = new String[]{
-                argument(Constants.Keys.MODE, Constants.Modes.FILE_DESERIALIZE),
-                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.MODE, Constants.Mode.FILE_DESERIALIZE),
+                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_DESERIALIZE_PATH, inputFilePath),
                 argument(Constants.Keys.FILE_SERIALIZE, true),
-                argument(Constants.Keys.FILE_SERIALIZE_FORMAT, Constants.Formats.IO.XML),
+                argument(Constants.Keys.FILE_SERIALIZE_FORMAT, Constants.Format.IO.XML),
                 argument(Constants.Keys.FILE_SERIALIZE_PATH, outputFilePath),
         };
 
@@ -67,11 +66,11 @@ class ApplicationTests {
         var outputFilePath = Path.of(absPath.toString(), outFolder, "[Serialized]_From_XML.json");
 
         var args = new String[]{
-                argument(Constants.Keys.MODE, Constants.Modes.FILE_DESERIALIZE),
-                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Formats.IO.XML),
+                argument(Constants.Keys.MODE, Constants.Mode.FILE_DESERIALIZE),
+                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Format.IO.XML),
                 argument(Constants.Keys.FILE_DESERIALIZE_PATH, inputFilePath),
                 argument(Constants.Keys.FILE_SERIALIZE, true),
-                argument(Constants.Keys.FILE_SERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.FILE_SERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_SERIALIZE_PATH, outputFilePath),
         };
 
@@ -84,6 +83,22 @@ class ApplicationTests {
     }
 
     @Test
+    public void generateCheckFromFileGoesWell() {
+
+        var absPath = Paths.get(resourcesPath).toAbsolutePath();
+        var inputFilePath = Path.of(absPath.toString(), "generated_checks.json");
+
+        final String[] generateCheckArgs = new String[]{
+                argument(Constants.Keys.MODE, Constants.Mode.GENERATE),
+                argument(Constants.Keys.GENERATE_DESERIALIZE_SOURCE, Constants.Source.FILE),
+                argument(Constants.Keys.GENERATE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
+                argument(Constants.Keys.GENERATE_DESERIALIZE_DATA, inputFilePath)
+        };
+
+        assertDoesNotThrow(() -> Main.main(generateCheckArgs));
+    }
+
+    @Test
     public void generateCheckThenWriteToJsonFileGoesWell() {
 
         var absPath = Paths.get(resourcesPath).toAbsolutePath();
@@ -91,7 +106,7 @@ class ApplicationTests {
 
         var serializeArgs = new String[]{
                 argument(Constants.Keys.FILE_SERIALIZE, true),
-                argument(Constants.Keys.FILE_SERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.FILE_SERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_SERIALIZE_PATH, outputFilePath),
         };
 
@@ -112,11 +127,11 @@ class ApplicationTests {
         var outputFilePath = Path.of(absPath.toString(), outFolder, "[Printed]_Simple.txt");
 
         var args = new String[]{
-                argument(Constants.Keys.MODE, Constants.Modes.FILE_DESERIALIZE),
-                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.MODE, Constants.Mode.FILE_DESERIALIZE),
+                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_DESERIALIZE_PATH, inputFilePath),
                 argument(Constants.Keys.FILE_PRINT, true),
-                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Formats.Print.TEXT),
+                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Format.Print.TEXT),
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
         };
 
@@ -132,11 +147,11 @@ class ApplicationTests {
         var outputFilePath = Path.of(absPath.toString(), outFolder, "[Printed]_Simple.html");
 
         var args = new String[]{
-                argument(Constants.Keys.MODE, Constants.Modes.FILE_DESERIALIZE),
-                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.MODE, Constants.Mode.FILE_DESERIALIZE),
+                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_DESERIALIZE_PATH, inputFilePath),
                 argument(Constants.Keys.FILE_PRINT, true),
-                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Formats.Print.HTML),
+                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Format.Print.HTML),
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
         };
 
@@ -152,11 +167,11 @@ class ApplicationTests {
         var outputFilePath = Path.of(absPath.toString(), outFolder, "[Printed]_Simple.pdf");
 
         var args = new String[]{
-                argument(Constants.Keys.MODE, Constants.Modes.FILE_DESERIALIZE),
-                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.MODE, Constants.Mode.FILE_DESERIALIZE),
+                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_DESERIALIZE_PATH, inputFilePath),
                 argument(Constants.Keys.FILE_PRINT, true),
-                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Formats.Print.PDF),
+                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Format.Print.PDF),
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
         };
 
@@ -175,11 +190,11 @@ class ApplicationTests {
         var outputFilePath = Path.of(absPath.toString(), outFolder, "[Printed]_With_Template.pdf");
 
         var args = new String[]{
-                argument(Constants.Keys.MODE, Constants.Modes.FILE_DESERIALIZE),
-                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Formats.IO.JSON),
+                argument(Constants.Keys.MODE, Constants.Mode.FILE_DESERIALIZE),
+                argument(Constants.Keys.FILE_DESERIALIZE_FORMAT, Constants.Format.IO.JSON),
                 argument(Constants.Keys.FILE_DESERIALIZE_PATH, inputFilePath),
                 argument(Constants.Keys.FILE_PRINT, true),
-                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Formats.Print.PDF),
+                argument(Constants.Keys.FILE_PRINT_FORMAT, Constants.Format.Print.PDF),
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
                 argument(Constants.Keys.FILE_PRINT_PDF_TEMPLATE, true),
                 argument(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH, templateFilePath),

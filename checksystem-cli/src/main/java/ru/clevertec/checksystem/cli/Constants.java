@@ -14,20 +14,25 @@ public final class Constants {
         public static final String FILE_PRINT_PDF_TEMPLATE = "file-print-pdf-template";
         public static final String FILE_PRINT_PDF_TEMPLATE_PATH = "file-print-pdf-template-path";
         public static final String FILE_PRINT_PDF_TEMPLATE_OFFSET = "file-print-pdf-template-offset";
-        public static final String FILTER_ID = "filter-id";
+        public static final String INPUT_FILTER_ID = "input-filter-id";
         public static final String PROXIED_SERVICES = "proxied-services";
-
-        public static final String CHECK_DISCOUNT = "d-check";
-        public static final String CHECK_ITEM_DISCOUNT = "d-item";
+        public static final String GENERATE_DESERIALIZE_SOURCE = "generate-deserialize-source";
+        public static final String GENERATE_DESERIALIZE_DATA = "generate-deserialize-data";
+        public static final String GENERATE_DESERIALIZE_FORMAT = "generate-deserialize-format";
     }
 
-    public static final class Modes {
+    public static final class Source {
+        public static final String FILE = "file";
+        public static final String DATA = "data";
+    }
+
+    public static final class Mode {
         public static final String GENERATE = "generate";
         public static final String FILE_DESERIALIZE = "file-deserialize";
         public static final String PRE_DEFINED = "pre-defined";
     }
 
-    public static final class Formats {
+    public static final class Format {
         public static final class Print {
             public static final String PDF = "pdf";
             public static final String TEXT = "text";

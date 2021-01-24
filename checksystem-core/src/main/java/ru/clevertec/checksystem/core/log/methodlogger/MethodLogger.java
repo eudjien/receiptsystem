@@ -59,9 +59,12 @@ public class MethodLogger implements IMethodLogger {
             throw new IllegalArgumentException("Argument 'format' cannot be null");
         }
 
-        if (returnedData != null && method.getReturnType() != returnedData.getClass()) {
+        if (returnedData != null && !method.getReturnType().isAssignableFrom(returnedData.getClass())) {
             throw new IllegalArgumentException(
-                    "Argument 'returnedData' can only be of the same type as the return type of the method");
+                    "Argument 'returnedData' can only be of the same type " +
+                            "as the return type of the method (" +
+                            "Method type: " + method.getReturnType().getName() + ", " +
+                            "Return type: " + returnedData.getClass().getName() + ")");
         }
 
         var message = createMessage(format, method, args, returnedData);

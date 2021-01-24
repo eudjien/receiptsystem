@@ -1,5 +1,6 @@
 package ru.clevertec.checksystem.core.factory;
 
+import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.io.writer.CheckWriter;
 import ru.clevertec.checksystem.core.io.writer.JsonCheckWriter;
 import ru.clevertec.checksystem.core.io.writer.XmlCheckWriter;
@@ -11,9 +12,9 @@ public abstract class CheckWriterFactory {
             throw new IllegalArgumentException("Format cannot be null or empty.");
         }
         return switch (format) {
-            case "json" -> new JsonCheckWriter();
-            case "xml" -> new XmlCheckWriter();
-            default -> throw new Exception("Format '" + format + "' not supported");
+            case Constants.Format.IO.JSON -> new JsonCheckWriter();
+            case Constants.Format.IO.XML -> new XmlCheckWriter();
+            default -> throw new IllegalArgumentException("Format '" + format + "' not supported");
         };
     }
 }

@@ -56,15 +56,19 @@ public class ArgumentsFinder {
         return pattern;
     }
 
-    public String findFirstStringOrNull(String key) {
+    public String findFirstStringOrDefault(String key) {
+        return findFirstStringOrDefault(key, null);
+    }
+
+    public String findFirstStringOrDefault(String key, String defaultValue) {
         if (arguments.containsKey(key)) {
             return arguments.get(key).firstValue();
         }
-        return null;
+        return defaultValue;
     }
 
     public String findFirstStringOrThrow(String key) throws IllegalArgumentException {
-        var value = findFirstStringOrNull(key);
+        var value = findFirstStringOrDefault(key);
         if (value == null) {
             throw new IllegalArgumentException("Parameter '" + key + "' is not defined");
         }
@@ -76,7 +80,7 @@ public class ArgumentsFinder {
     }
 
     public int findFirstIntOrDefault(String key, int defaultValue) {
-        var value = findFirstStringOrNull(key);
+        var value = findFirstStringOrDefault(key);
         if (value == null) {
             return defaultValue;
         }
@@ -88,7 +92,7 @@ public class ArgumentsFinder {
     }
 
     public boolean findFirstBoolOrDefault(String key, boolean defaultValue) {
-        var value = findFirstStringOrNull(key);
+        var value = findFirstStringOrDefault(key);
         if (value == null) {
             return defaultValue;
         }
