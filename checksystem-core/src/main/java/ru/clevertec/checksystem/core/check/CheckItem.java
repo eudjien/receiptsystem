@@ -6,7 +6,7 @@ import ru.clevertec.checksystem.core.BaseEntity;
 import ru.clevertec.checksystem.core.Product;
 import ru.clevertec.checksystem.core.discount.Discount;
 import ru.clevertec.checksystem.core.discount.item.base.CheckItemDiscount;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 import java.math.BigDecimal;
 import java.util.Collections;

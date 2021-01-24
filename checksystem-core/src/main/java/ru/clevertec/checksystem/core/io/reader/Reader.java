@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.io.reader;
 
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 public abstract class Reader<TInput, TOutput> {
     public Reader() {

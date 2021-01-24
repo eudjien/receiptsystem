@@ -3,8 +3,7 @@ package ru.clevertec.checksystem.core.log.methodlogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
-import ru.clevertec.checksystem.normalino.json.NormalinoJSON;
+import ru.clevertec.normalino.json.NormalinoJSON;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,7 +40,7 @@ public class MethodLogger implements IMethodLogger {
 
     @Override
     public void log(String level, String format, Method method) {
-        log(level, format, method,null);
+        log(level, format, method, null);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class MethodLogger implements IMethodLogger {
             throws InvocationTargetException, IllegalAccessException {
         return method.getReturnType().isAssignableFrom(Void.TYPE)
                 ? "VOID"
-                : NormalinoJSON.toJsonString(result, false);
+                : NormalinoJSON.stringify(result, false);
     }
 
     private static String createArgsName(Parameter[] parameters) {
@@ -128,6 +127,6 @@ public class MethodLogger implements IMethodLogger {
     }
 
     private static String createArgsData(Object[] args) throws InvocationTargetException, IllegalAccessException {
-        return NormalinoJSON.toJsonString(args, false);
+        return NormalinoJSON.stringify(args, false);
     }
 }

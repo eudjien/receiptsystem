@@ -2,7 +2,9 @@ package ru.clevertec.checksystem.core.io.reader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.clevertec.checksystem.core.check.Check;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
+
+import java.util.Arrays;
 
 public class JsonCheckReader extends CheckReader {
 
@@ -15,6 +17,6 @@ public class JsonCheckReader extends CheckReader {
 
     @Override
     public NormalinoList<Check> readMany(byte[] bytes) throws Exception {
-        return new NormalinoList<>(mapper.readValue(bytes, Check[].class));
+        return new NormalinoList<>(Arrays.asList(mapper.readValue(bytes, Check[].class)));
     }
 }

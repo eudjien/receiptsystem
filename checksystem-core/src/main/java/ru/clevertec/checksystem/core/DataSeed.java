@@ -9,7 +9,7 @@ import ru.clevertec.checksystem.core.discount.item.QuantityThresholdPercentOffCh
 import ru.clevertec.checksystem.core.discount.item.SimpleConstantCheckItemDiscount;
 import ru.clevertec.checksystem.core.discount.item.SimplePercentageOffCheckItemDiscount;
 import ru.clevertec.checksystem.core.discount.item.base.CheckItemDiscount;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -1,7 +1,7 @@
 package ru.clevertec.checksystem.core.service;
 
 import ru.clevertec.checksystem.core.check.Check;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 public interface ICheckPrintingService {
 

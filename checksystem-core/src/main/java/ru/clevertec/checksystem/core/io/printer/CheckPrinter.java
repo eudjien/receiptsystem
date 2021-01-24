@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.core.io.printer;
 
 import ru.clevertec.checksystem.core.check.Check;
 import ru.clevertec.checksystem.core.io.printer.strategy.CheckPrintStrategy;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 import java.util.List;
 

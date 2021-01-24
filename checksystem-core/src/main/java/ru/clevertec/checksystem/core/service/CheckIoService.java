@@ -9,7 +9,7 @@ import ru.clevertec.checksystem.core.io.writer.XmlCheckWriter;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.utils.FileUtils;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

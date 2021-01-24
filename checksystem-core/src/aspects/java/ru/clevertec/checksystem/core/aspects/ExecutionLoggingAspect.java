@@ -20,7 +20,7 @@ public class ExecutionLoggingAspect {
 
         var methodSignature = getMethodSignature(pjp);
 
-        var targetClass =  methodSignature.getDeclaringType();
+        var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
         var ann = AnnotationUtils.getPriorityAnnotation(AroundExecutionLog.class, targetClass, method);
@@ -40,7 +40,7 @@ public class ExecutionLoggingAspect {
 
         var methodSignature = getMethodSignature(jp);
 
-        var targetClass =  methodSignature.getDeclaringType();
+        var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
         var ann = AnnotationUtils.getPriorityAnnotation(BeforeExecutionLog.class, targetClass, method);
@@ -56,7 +56,7 @@ public class ExecutionLoggingAspect {
 
         var methodSignature = getMethodSignature(jp);
 
-        var targetClass =  methodSignature.getDeclaringType();
+        var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
         var ann = AnnotationUtils.getPriorityAnnotation(AfterExecutionLog.class, targetClass, method);
@@ -70,7 +70,7 @@ public class ExecutionLoggingAspect {
 
         var methodSignature = getMethodSignature(jp);
 
-        var targetClass =  methodSignature.getDeclaringType();
+        var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
         var format = "[EXECUTE ERROR] - " + MethodLoggerFormats.ReturnType + " " +
@@ -106,7 +106,7 @@ public class ExecutionLoggingAspect {
     }
 
     private static MethodSignature getMethodSignature(JoinPoint jp) {
-        return (MethodSignature)(jp.getStaticPart() != null
+        return (MethodSignature) (jp.getStaticPart() != null
                 ? jp.getStaticPart().getSignature()
                 : jp.getSignature());
     }

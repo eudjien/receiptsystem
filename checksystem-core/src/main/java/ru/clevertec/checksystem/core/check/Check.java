@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.BaseEntity;
 import ru.clevertec.checksystem.core.discount.Discount;
 import ru.clevertec.checksystem.core.discount.check.base.CheckDiscount;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 import java.math.BigDecimal;
 import java.util.Collections;

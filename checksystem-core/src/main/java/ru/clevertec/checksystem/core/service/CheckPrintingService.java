@@ -11,7 +11,7 @@ import ru.clevertec.checksystem.core.log.execution.AfterExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.utils.FileUtils;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 @CheckService
 @AroundExecutionLog

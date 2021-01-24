@@ -9,7 +9,7 @@ import ru.clevertec.checksystem.core.service.CheckIoService;
 import ru.clevertec.checksystem.core.service.CheckPrintingService;
 import ru.clevertec.checksystem.core.service.ICheckIoService;
 import ru.clevertec.checksystem.core.service.ICheckPrintingService;
-import ru.clevertec.checksystem.normalino.list.NormalinoList;
+import ru.clevertec.normalino.list.NormalinoList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
