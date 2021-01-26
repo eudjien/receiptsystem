@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import ru.clevertec.checksystem.core.utils.normalinolist.FuckDuckList;
+import ru.clevertec.checksystem.core.util.normalinolist.FuckDuckList;
 
 import java.util.List;
 

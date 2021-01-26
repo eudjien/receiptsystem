@@ -19,6 +19,9 @@ public final class Constants {
         public static final String GENERATE_DESERIALIZE_SOURCE = "generate-deserialize-source";
         public static final String GENERATE_DESERIALIZE_DATA = "generate-deserialize-data";
         public static final String GENERATE_DESERIALIZE_FORMAT = "generate-deserialize-format";
+        public static final String GENERATE_FILE_SERIALIZE = "generate-file-serialize";
+        public static final String GENERATE_FILE_SERIALIZE_FORMAT = "generate-file-serialize-format";
+        public static final String GENERATE_FILE_SERIALIZE_PATH = "generate-file-serialize-path";
     }
 
     public static final class Source {

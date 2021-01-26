@@ -2,15 +2,15 @@ package ru.clevertec.checksystem.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.clevertec.checksystem.core.DataSeed;
-import ru.clevertec.checksystem.core.check.Check;
+import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.factory.reader.CheckReaderCreator;
-import ru.clevertec.checksystem.core.print.CheckPrinter;
-import ru.clevertec.checksystem.core.print.strategy.HtmlCheckPrintStrategy;
-import ru.clevertec.checksystem.core.print.strategy.PdfCheckPrintStrategy;
-import ru.clevertec.checksystem.core.print.strategy.TextCheckPrintStrategy;
-import ru.clevertec.checksystem.core.io.writer.CheckWriter;
-import ru.clevertec.checksystem.core.io.writer.JsonCheckWriter;
-import ru.clevertec.checksystem.core.io.writer.XmlCheckWriter;
+import ru.clevertec.checksystem.core.io.print.CheckPrinter;
+import ru.clevertec.checksystem.core.io.print.strategy.HtmlCheckPrintStrategy;
+import ru.clevertec.checksystem.core.io.print.strategy.PdfCheckPrintStrategy;
+import ru.clevertec.checksystem.core.io.print.strategy.TextCheckPrintStrategy;
+import ru.clevertec.checksystem.core.io.write.CheckWriter;
+import ru.clevertec.checksystem.core.io.write.JsonCheckWriter;
+import ru.clevertec.checksystem.core.io.write.XmlCheckWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import ru.clevertec.checksystem.core.utils.normalinolist.FuckDuckList;
+import ru.clevertec.checksystem.core.util.normalinolist.FuckDuckList;
 
 import java.util.Arrays;
 import java.util.List;

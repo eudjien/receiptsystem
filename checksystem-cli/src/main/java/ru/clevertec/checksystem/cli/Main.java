@@ -1,13 +1,21 @@
 package ru.clevertec.checksystem.cli;
 
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
-import ru.clevertec.checksystem.core.DataSeed;
-import ru.clevertec.checksystem.core.check.Check;
-import ru.clevertec.checksystem.core.factory.ServiceFactory;
-import ru.clevertec.checksystem.core.service.*;
+import ru.clevertec.checksystem.core.data.DataSeed;
+import ru.clevertec.checksystem.core.ProxyIdentifier;
+import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
+import ru.clevertec.checksystem.core.common.service.IIoCheckService;
+import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
+import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
+import ru.clevertec.checksystem.core.service.GenerateCheckService;
+import ru.clevertec.checksystem.core.service.IoCheckService;
+import ru.clevertec.checksystem.core.service.PrintingCheckService;
 import ru.clevertec.normalino.list.NormalinoList;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -15,20 +23,21 @@ import java.util.stream.Collectors;
 public class Main {
 
     private static ArgumentsFinder finder;
-    private static boolean isServicesUseProxy;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, IOException, NoSuchFieldException {
 
         finder = new ArgumentsFinder(args);
 
-        isServicesUseProxy = finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES);
+        ProxyIdentifier.setProxied(finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
 
         var checks = new NormalinoList<Check>();
 
         var mode = finder.findFirstStringOrThrow(Constants.Keys.MODE);
 
         switch (mode) {
-            case Constants.Mode.GENERATE -> generate(checks);
+            case Constants.Mode.GENERATE -> generatedDeserialize(checks);
             case Constants.Mode.FILE_DESERIALIZE -> fileDeserialize(checks);
             case Constants.Mode.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.checks()));
         }
@@ -40,12 +49,18 @@ public class Main {
         if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT)) {
             filePrint(checks);
         }
+
+        if (finder.findFirstBoolOrDefault(Constants.Keys.GENERATE_FILE_SERIALIZE)) {
+            generatedSerialize(checks);
+        }
     }
 
-    static void generate(Collection<Check> checks) throws Exception {
+    static void generatedDeserialize(Collection<Check> checkCollection)
+            throws IOException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, InvocationTargetException {
 
         IGenerateCheckService generateCheckService =
-                ServiceFactory.instance(GenerateCheckService.class, isServicesUseProxy);
+                ServiceFactory.instance(GenerateCheckService.class);
 
         var source = finder.findFirstStringOrThrow(Constants.Keys.GENERATE_DESERIALIZE_SOURCE);
 
@@ -61,49 +76,71 @@ public class Main {
                     "Incorrect value for '" + Constants.Keys.GENERATE_DESERIALIZE_SOURCE + "' argument");
         };
 
-        checks.addAll(applyFilterIfExist(checkList));
+        checkCollection.addAll(applyFilterIfExist(checkList));
     }
 
-    static void fileDeserialize(NormalinoList<Check> checks) throws Exception {
+    static void generatedSerialize(Collection<Check> checkCollection)
+            throws IOException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, InvocationTargetException {
+
+        IGenerateCheckService generateCheckService = ServiceFactory.instance(GenerateCheckService.class);
+
+        var format = finder.findFirstStringOrThrow(Constants.Keys.GENERATE_FILE_SERIALIZE_FORMAT);
+        var destinationPath = finder.findFirstStringOrThrow(Constants.Keys.GENERATE_FILE_SERIALIZE_PATH);
+
+        generateCheckService.toGenerated(checkCollection, new File(destinationPath), format);
+    }
+
+    static void fileDeserialize(Collection<Check> checkCollection)
+            throws IOException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, InvocationTargetException {
 
         var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
-        var srcPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
-        IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class, isServicesUseProxy);
-        var deserializedChecks = ioService.deserializeFromFile(srcPath, format);
-        checks.addAll(applyFilterIfExist(deserializedChecks));
+        var sourcePath = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
+        IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class);
+        var deserializedChecks = ioService.deserialize(new File(sourcePath), format);
+        checkCollection.addAll(applyFilterIfExist(deserializedChecks));
     }
 
-    static void fileSerialize(NormalinoList<Check> checks) throws Exception {
+    static void fileSerialize(Collection<Check> checkCollection)
+            throws IOException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, InvocationTargetException {
 
         var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
-        var destPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
-        IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class, isServicesUseProxy);
-        ioService.serializeToFile(checks, new File(destPath), format);
+        var destinationPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
+        IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class);
+        ioService.serialize(checkCollection, new File(destinationPath), format);
     }
 
-    static void filePrint(NormalinoList<Check> checks) throws Exception {
+    static void filePrint(Collection<Check> checkCollection)
+            throws IllegalArgumentException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, InvocationTargetException, IOException {
 
         var printFormat = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
-        var destPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
-        IPrintingCheckService printingService = ServiceFactory.instance(PrintingCheckService.class, isServicesUseProxy);
+        var destinationPath = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
+        IPrintingCheckService printingService =
+                ServiceFactory.instance(PrintingCheckService.class);
 
         switch (printFormat.toLowerCase()) {
-            case Constants.Format.Print.TEXT -> printingService.printToTextFile(checks, destPath);
-            case Constants.Format.Print.HTML -> printingService.printToHtmlFile(checks, destPath);
+            case Constants.Format.Print.TEXT -> printingService.printToText(checkCollection, new File(destinationPath));
+            case Constants.Format.Print.HTML -> printingService.printToHtml(checkCollection, new File(destinationPath));
             case Constants.Format.Print.PDF -> {
                 if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
-                    printingService.printToPdfFile(checks, destPath,
-                            finder.findFirstStringOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH),
+                    var pdfTemplatePath =
+                            finder.findFirstStringOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH);
+                    printingService.printWithTemplateToPdf(checkCollection, new File(destinationPath),
+                            new File(pdfTemplatePath),
                             finder.findFirstIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
+
                 } else {
-                    printingService.printToPdfFile(checks, destPath);
+                    printingService.printToPdf(checkCollection, new File(destinationPath));
                 }
             }
-            default -> throw new Exception("Print format '" + printFormat + " 'not supported");
+            default -> throw new IllegalArgumentException("Print format '" + printFormat + " 'not supported");
         }
     }
 
-    static Collection<Check> applyFilterIfExist(Collection<Check> checks) {
+    static Collection<Check> applyFilterIfExist(Collection<Check> checkCollection) {
         var value = finder.findFirstStringOrDefault(Constants.Keys.INPUT_FILTER_ID);
         if (value != null) {
             var idList = new NormalinoList<Integer>();
@@ -115,10 +152,10 @@ public class Main {
                 } catch (Exception ignored) {
                 }
             }
-            return checks.stream()
+            return checkCollection.stream()
                     .filter(check -> idList.contains(check.getId()))
                     .collect(Collectors.toCollection(NormalinoList<Check>::new));
         }
-        return checks;
+        return checkCollection;
     }
 }

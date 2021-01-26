@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.normalino.json.NormalinoJSON;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -96,18 +95,10 @@ public class MethodLogger implements IMethodLogger {
                     return Matcher.quoteReplacement(createArgsName(method.getParameters()));
                 }
                 case MethodLoggerFormats.ArgumentsData -> {
-                    try {
-                        return Matcher.quoteReplacement(createArgsData(args));
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    return Matcher.quoteReplacement(createArgsData(args));
                 }
                 case MethodLoggerFormats.ReturnData -> {
-                    try {
-                        return Matcher.quoteReplacement(createResult(method, returnedData));
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    return Matcher.quoteReplacement(createResult(method, returnedData));
                 }
             }
 
@@ -115,8 +106,7 @@ public class MethodLogger implements IMethodLogger {
         });
     }
 
-    private static String createResult(Method method, Object result)
-            throws InvocationTargetException, IllegalAccessException {
+    private static String createResult(Method method, Object result) {
         return method.getReturnType().isAssignableFrom(Void.TYPE)
                 ? "VOID"
                 : NormalinoJSON.stringify(result, false);
@@ -129,7 +119,7 @@ public class MethodLogger implements IMethodLogger {
                 .reduce((a, b) -> a + ", " + b).orElse("");
     }
 
-    private static String createArgsData(Object[] args) throws InvocationTargetException, IllegalAccessException {
+    private static String createArgsData(Object[] args) {
         return NormalinoJSON.stringify(args, false);
     }
 }

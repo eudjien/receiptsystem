@@ -8,13 +8,11 @@ import java.util.*;
 
 public abstract class NormalinoJSON {
 
-    public static String stringify(Object obj)
-            throws InvocationTargetException, IllegalAccessException {
+    public static String stringify(Object obj) {
         return stringify(obj, false);
     }
 
-    public static String stringify(Object obj, boolean formatted)
-            throws InvocationTargetException, IllegalAccessException {
+    public static String stringify(Object obj, boolean formatted) {
 
         var sb = new StringBuilder();
 
@@ -30,8 +28,7 @@ public abstract class NormalinoJSON {
     }
 
     protected static void appendObject(StringBuilder sb, int deep,
-                                       boolean isAssignable, boolean commaInTheEnd, Object obj, boolean formatted)
-            throws InvocationTargetException, IllegalAccessException {
+                                       boolean isAssignable, boolean commaInTheEnd, Object obj, boolean formatted) {
 
         if (obj == null) {
             sb.append("null");
@@ -117,8 +114,7 @@ public abstract class NormalinoJSON {
     }
 
     private static void appendArray(StringBuilder sb, int deep,
-                                    boolean commaInTheEnd, Object[] array, boolean isFormatted)
-            throws InvocationTargetException, IllegalAccessException {
+                                    boolean commaInTheEnd, Object[] array, boolean isFormatted) {
 
         if (array == null) {
             sb.append("null");
@@ -175,8 +171,7 @@ public abstract class NormalinoJSON {
         }
     }
 
-    private static Collection<Map.Entry<String, Object>> getJsonKeyValuePairs(Object obj)
-            throws InvocationTargetException, IllegalAccessException {
+    private static Collection<Map.Entry<String, Object>> getJsonKeyValuePairs(Object obj) {
 
         var list = new ArrayList<Map.Entry<String, Object>>();
 
@@ -190,7 +185,13 @@ public abstract class NormalinoJSON {
                     }
 
                     var methodName = normalizeKey(method.getName());
-                    var methodResult = method.invoke(obj);
+
+                    Object methodResult = null;
+                    try {
+                        methodResult = method.invoke(obj);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
                     list.add(new AbstractMap.SimpleEntry<>(methodName, methodResult));
                 }
             }
