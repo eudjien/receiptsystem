@@ -1,8 +1,8 @@
 package ru.clevertec.checksystem.core.common.builder;
 
+import ru.clevertec.checksystem.core.common.IBuildable;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
-import ru.clevertec.checksystem.core.common.IBuildable;
 import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
 
 import java.util.Date;

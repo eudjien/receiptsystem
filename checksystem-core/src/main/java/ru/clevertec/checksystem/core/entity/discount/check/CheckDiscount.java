@@ -2,8 +2,8 @@ package ru.clevertec.checksystem.core.entity.discount.check;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.common.check.ICheckComposable;
+import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.normalino.json.NormalinoIgnore;
 
@@ -39,8 +39,8 @@ public abstract class CheckDiscount extends Discount<CheckDiscount> implements I
             throw new IllegalArgumentException("Argument 'check' cannot be null");
         }
         this.check = check;
-        if (getChildDiscount() != null) {
-            getChildDiscount().setCheck(check);
+        if (getDependentDiscount() != null) {
+            getDependentDiscount().setCheck(check);
         }
     }
 }

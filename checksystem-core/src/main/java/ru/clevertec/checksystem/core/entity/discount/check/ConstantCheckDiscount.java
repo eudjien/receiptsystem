@@ -26,9 +26,9 @@ public abstract class ConstantCheckDiscount extends CheckDiscount implements ICo
 
     @JsonCreator
     public ConstantCheckDiscount(
-            int id, String description, BigDecimal constant, CheckDiscount childDiscount)
+            int id, String description, BigDecimal constant, CheckDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, childDiscount);
+        super(id, description, dependentDiscount);
         setConstant(constant);
     }
 
@@ -44,12 +44,12 @@ public abstract class ConstantCheckDiscount extends CheckDiscount implements ICo
     }
 
     @Override
-    public BigDecimal discountSum() {
+    public BigDecimal discountAmount() {
 
-        var childDiscountSum = getChildDiscount() != null
-                ? getChildDiscount().discountSum() : BigDecimal.ZERO;
+        var dependentDiscountAmount = getDependentDiscount() != null
+                ? getDependentDiscount().discountAmount() : BigDecimal.ZERO;
         var itemsDiscountSum = getCheck().itemsDiscountSum();
 
-        return constant.add(childDiscountSum).add(itemsDiscountSum);
+        return constant.add(dependentDiscountAmount).add(itemsDiscountSum);
     }
 }

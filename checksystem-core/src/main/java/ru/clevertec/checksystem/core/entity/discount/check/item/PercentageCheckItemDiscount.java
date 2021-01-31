@@ -25,9 +25,9 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
     }
 
     public PercentageCheckItemDiscount(
-            int id, String description, double percent, CheckItemDiscount childDiscount)
+            int id, String description, double percent, CheckItemDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, childDiscount);
+        super(id, description, dependentDiscount);
         setPercent(percent);
     }
 
@@ -42,19 +42,19 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
         this.percent = percent;
     }
 
-    public BigDecimal discountSum() {
+    public BigDecimal discountAmount() {
 
         var subTotal = getCheckItem().subTotal();
-        var childDiscountSum = BigDecimal.ZERO;
+        var dependentDiscountAmount = BigDecimal.ZERO;
 
-        if (getChildDiscount() != null) {
-            subTotal = subTotal.subtract(getChildDiscount().discountSum());
-            childDiscountSum = getChildDiscount().discountSum();
+        if (getDependentDiscount() != null) {
+            subTotal = subTotal.subtract(getDependentDiscount().discountAmount());
+            dependentDiscountAmount = getDependentDiscount().discountAmount();
         }
 
         var discount = subTotal.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)
                 .multiply(BigDecimal.valueOf(percent));
 
-        return discount.add(childDiscountSum);
+        return discount.add(dependentDiscountAmount);
     }
 }

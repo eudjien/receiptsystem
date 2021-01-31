@@ -8,5 +8,5 @@ public interface IDiscountBuilder<T, R extends IDiscountBuilder<T, R>> extends I
 
     R setDescription(String description) throws IllegalArgumentException;
 
-    R setChildDiscount(T discount) throws IllegalArgumentException;
+    R setDependentDiscount(T discount) throws IllegalArgumentException;
 }

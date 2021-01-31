@@ -2,8 +2,8 @@ package ru.clevertec.checksystem.core.entity.discount.check.item;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.common.builder.discount.check.item.ISimplePercentageCheckItemDiscountBuilder;
+import ru.clevertec.checksystem.core.entity.check.CheckItem;
 
 public final class SimplePercentageCheckItemDiscount extends PercentageCheckItemDiscount {
 
@@ -25,9 +25,9 @@ public final class SimplePercentageCheckItemDiscount extends PercentageCheckItem
             @JsonProperty("id") int id,
             @JsonProperty("description") String description,
             @JsonProperty("percent") double percent,
-            @JsonProperty("childDiscount") CheckItemDiscount checkItemDiscount)
+            @JsonProperty("dependentDiscount") CheckItemDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, percent, checkItemDiscount);
+        super(id, description, percent, dependentDiscount);
     }
 
     public static class BuilderSimple implements ISimplePercentageCheckItemDiscountBuilder {
@@ -50,9 +50,9 @@ public final class SimplePercentageCheckItemDiscount extends PercentageCheckItem
         }
 
         @Override
-        public ISimplePercentageCheckItemDiscountBuilder setChildDiscount(CheckItemDiscount checkItemDiscount)
+        public ISimplePercentageCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount)
                 throws IllegalArgumentException {
-            this.simplePercentageCheckItemDiscount.setChildDiscount(checkItemDiscount);
+            this.simplePercentageCheckItemDiscount.setDependentDiscount(checkItemDiscount);
             return this;
         }
 

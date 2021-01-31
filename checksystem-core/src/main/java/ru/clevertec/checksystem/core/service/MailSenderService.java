@@ -1,9 +1,9 @@
 package ru.clevertec.checksystem.core.service;
 
 import ru.clevertec.checksystem.core.Constants;
-import ru.clevertec.checksystem.core.dto.Mail;
 import ru.clevertec.checksystem.core.auth.MailAuthenticator;
 import ru.clevertec.checksystem.core.common.service.IMailService;
+import ru.clevertec.checksystem.core.dto.Mail;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 
 import javax.mail.*;
@@ -40,12 +40,12 @@ public class MailSenderService extends EventEmitter<Object> implements IMailServ
                 configProperties.getProperty(Constants.Properties.Config.Mail.USERNAME)));
         message.setRecipients(Message.RecipientType.TO, mail.getToAddresses());
         message.setSubject(mail.getSubject());
-        message.setContent(createContent(mail));
+        message.setContent(createMessageContent(mail));
 
         return message;
     }
 
-    private Multipart createContent(Mail mail) throws MessagingException, IOException {
+    private Multipart createMessageContent(Mail mail) throws MessagingException, IOException {
 
         var multipart = new MimeMultipart();
 

@@ -2,8 +2,8 @@ package ru.clevertec.checksystem.core.entity.discount.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.common.builder.discount.check.IConstantCheckDiscountBuilder;
+import ru.clevertec.checksystem.core.entity.check.Check;
 
 import java.math.BigDecimal;
 
@@ -28,9 +28,9 @@ public final class SimpleConstantCheckDiscount extends ConstantCheckDiscount {
             @JsonProperty("id") int id,
             @JsonProperty("description") String description,
             @JsonProperty("constant") BigDecimal constant,
-            @JsonProperty("childDiscount") CheckDiscount childDiscount)
+            @JsonProperty("dependentDiscount") CheckDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, constant, childDiscount);
+        super(id, description, constant, dependentDiscount);
     }
 
     public static class Builder implements IConstantCheckDiscountBuilder {
@@ -52,9 +52,9 @@ public final class SimpleConstantCheckDiscount extends ConstantCheckDiscount {
         }
 
         @Override
-        public IConstantCheckDiscountBuilder setChildDiscount(CheckDiscount discount)
+        public IConstantCheckDiscountBuilder setDependentDiscount(CheckDiscount discount)
                 throws IllegalArgumentException {
-            this.simpleConstantCheckDiscount.setChildDiscount(discount);
+            this.simpleConstantCheckDiscount.setDependentDiscount(discount);
             return this;
         }
 

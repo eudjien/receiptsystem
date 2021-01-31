@@ -2,8 +2,8 @@ package ru.clevertec.checksystem.core.entity.discount.check.item;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.common.check.ICheckItemComposable;
+import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.normalino.json.NormalinoIgnore;
 
@@ -24,9 +24,9 @@ public abstract class CheckItemDiscount extends Discount<CheckItemDiscount> impl
         super(id, description);
     }
 
-    public CheckItemDiscount(int id, String description, CheckItemDiscount childDiscount)
+    public CheckItemDiscount(int id, String description, CheckItemDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, childDiscount);
+        super(id, description, dependentDiscount);
     }
 
     @NormalinoIgnore
@@ -39,8 +39,8 @@ public abstract class CheckItemDiscount extends Discount<CheckItemDiscount> impl
             throw new IllegalArgumentException("Check item cannot be null");
         }
         this.checkItem = checkItem;
-        if (getChildDiscount() != null) {
-            getChildDiscount().setCheckItem(checkItem);
+        if (getDependentDiscount() != null) {
+            getDependentDiscount().setCheckItem(checkItem);
         }
     }
 }

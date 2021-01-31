@@ -1,13 +1,13 @@
 package ru.clevertec.checksystem.core.service;
 
-import ru.clevertec.checksystem.core.entity.BaseEntity;
+import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
+import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
 import ru.clevertec.checksystem.core.data.DataSeed;
+import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.entity.check.GeneratedCheck;
 import ru.clevertec.checksystem.core.entity.check.GeneratedCheckItem;
-import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
-import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckReaderFactory;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckWriterFactory;

@@ -1,12 +1,12 @@
 package ru.clevertec.checksystem.cli;
 
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
-import ru.clevertec.checksystem.core.data.DataSeed;
 import ru.clevertec.checksystem.core.ProxyIdentifier;
-import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
 import ru.clevertec.checksystem.core.common.service.IIoCheckService;
 import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
+import ru.clevertec.checksystem.core.data.DataSeed;
+import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.service.GenerateCheckService;
 import ru.clevertec.checksystem.core.service.IoCheckService;
@@ -26,7 +26,7 @@ public class Main {
 
     public static void main(String[] args)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, IOException, NoSuchFieldException {
+            IllegalAccessException, IOException {
 
         finder = new ArgumentsFinder(args);
 

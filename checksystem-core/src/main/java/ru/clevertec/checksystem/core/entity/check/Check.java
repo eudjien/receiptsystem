@@ -2,10 +2,10 @@ package ru.clevertec.checksystem.core.entity.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.common.IDiscountable;
 import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
 import ru.clevertec.checksystem.core.common.check.ICheckItemAggregable;
+import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
@@ -212,7 +212,7 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
     }
 
     public BigDecimal checkDiscountsSum() {
-        return getDiscounts().stream().map(Discount::discountSum)
+        return getDiscounts().stream().map(Discount::discountAmount)
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }

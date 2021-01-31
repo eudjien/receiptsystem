@@ -2,8 +2,8 @@ package ru.clevertec.checksystem.core.entity.discount.check.item;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.common.builder.discount.check.item.IThresholdPercentageCheckItemDiscountBuilder;
+import ru.clevertec.checksystem.core.entity.check.CheckItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,9 +35,9 @@ public final class ThresholdPercentageCheckItemDiscount extends PercentageCheckI
             @JsonProperty("description") String description,
             @JsonProperty("percent") double percent,
             @JsonProperty("threshold") int threshold,
-            @JsonProperty("childDiscount") CheckItemDiscount childDiscount)
+            @JsonProperty("dependentDiscount") CheckItemDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, percent, childDiscount);
+        super(id, description, percent, dependentDiscount);
         setThreshold(threshold);
     }
 
@@ -53,24 +53,24 @@ public final class ThresholdPercentageCheckItemDiscount extends PercentageCheckI
     }
 
     @Override
-    public BigDecimal discountSum() {
+    public BigDecimal discountAmount() {
 
         var total = getCheckItem().subTotal();
-        var childDiscountSum = BigDecimal.ZERO;
+        var dependentDiscountAmount = BigDecimal.ZERO;
 
-        if (getChildDiscount() != null) {
-            total = total.subtract(getChildDiscount().discountSum());
-            childDiscountSum = getChildDiscount().discountSum();
+        if (getDependentDiscount() != null) {
+            total = total.subtract(getDependentDiscount().discountAmount());
+            dependentDiscountAmount = getDependentDiscount().discountAmount();
         }
 
         if (getCheckItem().getQuantity() <= threshold) {
-            return childDiscountSum;
+            return dependentDiscountAmount;
         }
 
         var discount = total.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)
                 .multiply(BigDecimal.valueOf(getPercent()));
 
-        return discount.add(childDiscountSum);
+        return discount.add(dependentDiscountAmount);
     }
 
     public static class Builder implements IThresholdPercentageCheckItemDiscountBuilder {
@@ -92,9 +92,9 @@ public final class ThresholdPercentageCheckItemDiscount extends PercentageCheckI
         }
 
         @Override
-        public IThresholdPercentageCheckItemDiscountBuilder setChildDiscount(CheckItemDiscount checkItemDiscount)
+        public IThresholdPercentageCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount)
                 throws IllegalArgumentException {
-            this.thresholdPercentageCheckItemDiscount.setChildDiscount(checkItemDiscount);
+            this.thresholdPercentageCheckItemDiscount.setDependentDiscount(checkItemDiscount);
             return this;
         }
 

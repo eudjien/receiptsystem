@@ -28,9 +28,9 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
 
     @JsonCreator
     public PercentageCheckDiscount(
-            int id, String description, double percent, CheckDiscount childDiscount)
+            int id, String description, double percent, CheckDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, childDiscount);
+        super(id, description, dependentDiscount);
         setPercent(percent);
     }
 
@@ -48,22 +48,22 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
     }
 
     @Override
-    public BigDecimal discountSum() {
+    public BigDecimal discountAmount() {
 
         var subTotal = getCheck().subTotal();
-        var childDiscountSum = BigDecimal.ZERO;
-        var itemsDiscountSum = getCheck().itemsDiscountSum();
+        var dependentDiscountAmount = BigDecimal.ZERO;
+        var itemsDiscountAmount = getCheck().itemsDiscountSum();
 
-        if (getChildDiscount() != null) {
-            subTotal = subTotal.subtract(getChildDiscount().discountSum());
-            childDiscountSum = getChildDiscount().discountSum();
+        if (getDependentDiscount() != null) {
+            subTotal = subTotal.subtract(getDependentDiscount().discountAmount());
+            dependentDiscountAmount = getDependentDiscount().discountAmount();
         }
 
-        subTotal = subTotal.subtract(itemsDiscountSum);
+        subTotal = subTotal.subtract(itemsDiscountAmount);
 
         var discount = subTotal.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)
                 .multiply(BigDecimal.valueOf(percent));
 
-        return discount.add(childDiscountSum).add(itemsDiscountSum);
+        return discount.add(dependentDiscountAmount).add(itemsDiscountAmount);
     }
 }

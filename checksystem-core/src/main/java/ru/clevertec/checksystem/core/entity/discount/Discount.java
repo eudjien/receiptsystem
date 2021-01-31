@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public abstract class Discount<T extends Discount<T>> extends BaseEntity {
 
     private String description;
-    private T childDiscount;
+    private T dependentDiscount;
 
     protected Discount() {
     }
@@ -21,15 +21,15 @@ public abstract class Discount<T extends Discount<T>> extends BaseEntity {
         setDescription(description);
     }
 
-    public Discount(String description, T childDiscount) throws IllegalArgumentException {
+    public Discount(String description, T dependentDiscount) throws IllegalArgumentException {
         setDescription(description);
-        setChildDiscount(childDiscount);
+        setDependentDiscount(dependentDiscount);
     }
 
-    public Discount(int id, String description, T childDiscount) throws IllegalArgumentException {
+    public Discount(int id, String description, T dependentDiscount) throws IllegalArgumentException {
         super(id);
         setDescription(description);
-        setChildDiscount(childDiscount);
+        setDependentDiscount(dependentDiscount);
     }
 
     public String getDescription() {
@@ -43,13 +43,13 @@ public abstract class Discount<T extends Discount<T>> extends BaseEntity {
         this.description = description;
     }
 
-    public T getChildDiscount() {
-        return childDiscount;
+    public T getDependentDiscount() {
+        return dependentDiscount;
     }
 
-    public void setChildDiscount(T discount) {
-        childDiscount = discount;
+    public void setDependentDiscount(T discount) {
+        dependentDiscount = discount;
     }
 
-    public abstract BigDecimal discountSum();
+    public abstract BigDecimal discountAmount();
 }

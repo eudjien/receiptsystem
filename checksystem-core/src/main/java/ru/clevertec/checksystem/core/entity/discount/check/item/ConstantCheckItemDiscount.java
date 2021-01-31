@@ -26,9 +26,9 @@ public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implem
 
     @JsonCreator
     public ConstantCheckItemDiscount(
-            int id, String description, BigDecimal constant, CheckItemDiscount childDiscount)
+            int id, String description, BigDecimal constant, CheckItemDiscount dependentDiscount)
             throws IllegalArgumentException {
-        super(id, description, childDiscount);
+        super(id, description, dependentDiscount);
         setConstant(constant);
     }
 
@@ -45,9 +45,9 @@ public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implem
     }
 
     @Override
-    public BigDecimal discountSum() {
-        var childDiscountsSum = getChildDiscount() != null
-                ? getChildDiscount().discountSum() : BigDecimal.ZERO;
-        return childDiscountsSum.add(constant);
+    public BigDecimal discountAmount() {
+        var dependentDiscountAmount = getDependentDiscount() != null
+                ? getDependentDiscount().discountAmount() : BigDecimal.ZERO;
+        return dependentDiscountAmount.add(constant);
     }
 }

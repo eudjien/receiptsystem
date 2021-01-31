@@ -5,7 +5,7 @@ import ru.clevertec.checksystem.core.common.event.IEventListener;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target(ElementType.TYPE)
 @Repeatable(Subscribes.class)
 public @interface Subscribe {
 
