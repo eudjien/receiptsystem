@@ -24,34 +24,39 @@ public class Main {
 
     private static ArgumentsFinder finder;
 
-    public static void main(String[] args)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, IOException {
+    public static void main(String[] args) {
 
-        finder = new ArgumentsFinder(args);
+        try {
 
-        ProxyIdentifier.setProxied(finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
+            finder = new ArgumentsFinder(args);
 
-        var checks = new NormalinoList<Check>();
+            ProxyIdentifier.setProxied(finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
 
-        var mode = finder.findFirstStringOrThrow(Constants.Keys.MODE);
+            var checks = new NormalinoList<Check>();
 
-        switch (mode) {
-            case Constants.Mode.GENERATE -> generatedDeserialize(checks);
-            case Constants.Mode.FILE_DESERIALIZE -> fileDeserialize(checks);
-            case Constants.Mode.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.checks()));
+            var mode = finder.findFirstStringOrThrow(Constants.Keys.MODE);
+
+            switch (mode) {
+                case Constants.Mode.GENERATE -> generatedDeserialize(checks);
+                case Constants.Mode.FILE_DESERIALIZE -> fileDeserialize(checks);
+                case Constants.Mode.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.checks()));
+            }
+
+            if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
+                fileSerialize(checks);
+            }
+
+            if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT)) {
+                filePrint(checks);
+            }
+
+            if (finder.findFirstBoolOrDefault(Constants.Keys.GENERATE_FILE_SERIALIZE)) {
+                generatedSerialize(checks);
+            }
         }
-
-        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_SERIALIZE)) {
-            fileSerialize(checks);
-        }
-
-        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT)) {
-            filePrint(checks);
-        }
-
-        if (finder.findFirstBoolOrDefault(Constants.Keys.GENERATE_FILE_SERIALIZE)) {
-            generatedSerialize(checks);
+        catch (InvocationTargetException | NoSuchMethodException | InstantiationException
+                | IllegalAccessException | IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
