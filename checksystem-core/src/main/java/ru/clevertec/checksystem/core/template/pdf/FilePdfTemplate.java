@@ -1,5 +1,8 @@
 package ru.clevertec.checksystem.core.template.pdf;
 
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,10 +30,8 @@ public class FilePdfTemplate extends PdfTemplate {
         return file;
     }
 
-    public void setFile(File templateFile) {
-        if (templateFile == null) {
-            throw new IllegalArgumentException("Argument 'templateFile' cannot be null");
-        }
+    public void setFile(File templateFile) throws ArgumentNullException {
+        ThrowUtils.Argument.theNull("templateFile", templateFile);
         this.file = templateFile;
     }
 }

@@ -34,53 +34,52 @@ public final class SimpleConstantCheckItemDiscount extends ConstantCheckItemDisc
 
     public static class Builder implements IConstantCheckItemDiscountBuilder {
 
-        private final SimpleConstantCheckItemDiscount simpleConstantCheckItemDiscount
-                = new SimpleConstantCheckItemDiscount();
+        private final SimpleConstantCheckItemDiscount discount = new SimpleConstantCheckItemDiscount();
 
         @Override
         public IConstantCheckItemDiscountBuilder setId(int id)
                 throws IllegalArgumentException {
-            simpleConstantCheckItemDiscount.setId(id);
+            discount.setId(id);
             return this;
         }
 
         @Override
         public IConstantCheckItemDiscountBuilder setDescription(String description)
                 throws IllegalArgumentException {
-            simpleConstantCheckItemDiscount.setDescription(description);
+            discount.setDescription(description);
             return this;
         }
 
         @Override
         public IConstantCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount)
                 throws IllegalArgumentException {
-            this.simpleConstantCheckItemDiscount.setDependentDiscount(checkItemDiscount);
+            this.discount.setDependentDiscount(checkItemDiscount);
             return this;
         }
 
         @Override
         public IConstantCheckItemDiscountBuilder setCheckItem(CheckItem checkItem) {
-            simpleConstantCheckItemDiscount.setCheckItem(checkItem);
+            discount.setCheckItem(checkItem);
             return this;
         }
 
         @Override
         public IConstantCheckItemDiscountBuilder setConstant(BigDecimal constant) {
-            simpleConstantCheckItemDiscount.setConstant(constant);
+            discount.setConstant(constant);
             return this;
         }
 
         @Override
         public SimpleConstantCheckItemDiscount build() throws IllegalArgumentException {
             throwIfInvalid();
-            return simpleConstantCheckItemDiscount;
+            return discount;
         }
 
         private void throwIfInvalid() throws IllegalArgumentException {
-            if (simpleConstantCheckItemDiscount.getDescription() == null) {
+            if (discount.getDescription() == null) {
                 throw new IllegalArgumentException("Description required to build SimpleConstantCheckItemDiscount");
             }
-            if (simpleConstantCheckItemDiscount.getConstant() == null) {
+            if (discount.getConstant() == null) {
                 throw new IllegalArgumentException("Constant required to build SimpleConstantCheckItemDiscount");
             }
         }

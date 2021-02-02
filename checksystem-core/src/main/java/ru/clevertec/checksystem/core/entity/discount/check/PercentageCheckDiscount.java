@@ -1,7 +1,11 @@
 package ru.clevertec.checksystem.core.entity.discount.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IPercentageable;
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
+import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,26 +14,22 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
 
     private double percent;
 
-    protected PercentageCheckDiscount()
-            throws IllegalArgumentException {
+    protected PercentageCheckDiscount() throws IllegalArgumentException {
     }
 
-    public PercentageCheckDiscount(String description, double percent)
-            throws IllegalArgumentException {
+    public PercentageCheckDiscount(String description, double percent) throws ArgumentNullException, ArgumentOutOfRangeException {
         super(description);
         setPercent(percent);
     }
 
-    public PercentageCheckDiscount(int id, String description, double percent)
-            throws IllegalArgumentException {
+    public PercentageCheckDiscount(int id, String description, double percent) throws ArgumentNullException, ArgumentOutOfRangeException {
         super(id, description);
         setPercent(percent);
     }
 
     @JsonCreator
     public PercentageCheckDiscount(
-            int id, String description, double percent, CheckDiscount dependentDiscount)
-            throws IllegalArgumentException {
+            int id, String description, double percent, CheckDiscount dependentDiscount) throws ArgumentNullException, ArgumentOutOfRangeException {
         super(id, description, dependentDiscount);
         setPercent(percent);
     }
@@ -40,17 +40,15 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
     }
 
     @Override
-    public void setPercent(double percent) throws IllegalArgumentException {
-        if (this.percent < 0 || this.percent > 100) {
-            throw new IllegalArgumentException("Discount percent out of range (0-100)");
-        }
+    public void setPercent(double percent) throws ArgumentOutOfRangeException {
+        ThrowUtils.Argument.outOfRange("percent", percent, Constants.Percent.MIN, Constants.Percent.MAX);
         this.percent = percent;
     }
 
     @Override
     public BigDecimal discountAmount() {
 
-        var subTotal = getCheck().subTotal();
+        var subTotal = getCheck().subTotalAmount();
         var dependentDiscountAmount = BigDecimal.ZERO;
         var itemsDiscountAmount = getCheck().itemsDiscountSum();
 
@@ -61,7 +59,7 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
 
         subTotal = subTotal.subtract(itemsDiscountAmount);
 
-        var discount = subTotal.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)
+        var discount = subTotal.divide(BigDecimal.valueOf(Constants.Percent.MAX), RoundingMode.HALF_EVEN)
                 .multiply(BigDecimal.valueOf(percent));
 
         return discount.add(dependentDiscountAmount).add(itemsDiscountAmount);

@@ -2,6 +2,8 @@ package ru.clevertec.checksystem.core.entity.discount.check.item;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import ru.clevertec.checksystem.core.common.IConstable;
+import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
 
@@ -13,13 +15,13 @@ public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implem
     }
 
     public ConstantCheckItemDiscount(String description, BigDecimal constant)
-            throws IllegalArgumentException {
+            throws ArgumentOutOfRangeException {
         super(description);
         setConstant(constant);
     }
 
     public ConstantCheckItemDiscount(int id, String description, BigDecimal constant)
-            throws IllegalArgumentException {
+            throws ArgumentOutOfRangeException {
         super(id, description);
         setConstant(constant);
     }
@@ -27,7 +29,7 @@ public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implem
     @JsonCreator
     public ConstantCheckItemDiscount(
             int id, String description, BigDecimal constant, CheckItemDiscount dependentDiscount)
-            throws IllegalArgumentException {
+            throws ArgumentOutOfRangeException {
         super(id, description, dependentDiscount);
         setConstant(constant);
     }
@@ -36,18 +38,16 @@ public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implem
         return constant;
     }
 
-    public void setConstant(BigDecimal constant)
-            throws IllegalArgumentException {
-        if (constant.doubleValue() < 0) {
-            throw new IllegalArgumentException("Discount value cannot be less than 0");
-        }
+    public void setConstant(BigDecimal constant) throws ArgumentOutOfRangeException {
+        ThrowUtils.Argument.lessThan("constant", constant, BigDecimal.ZERO);
         this.constant = constant;
     }
 
     @Override
     public BigDecimal discountAmount() {
         var dependentDiscountAmount = getDependentDiscount() != null
-                ? getDependentDiscount().discountAmount() : BigDecimal.ZERO;
+                ? getDependentDiscount().discountAmount()
+                : BigDecimal.ZERO;
         return dependentDiscountAmount.add(constant);
     }
 }

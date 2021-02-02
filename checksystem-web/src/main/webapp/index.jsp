@@ -36,17 +36,17 @@
         </div>
 
     </div>
-
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/popper.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
-    <script type="application/javascript">
-        const customFile = document.querySelector('.custom-file');
-        customFileInput = customFile.querySelector('.custom-file-input');
-        customFileLabel = customFile.querySelector('.custom-file-label');
-        customFileInput.addEventListener('change', function (e) {
-            customFileLabel.innerText = customFileInput.files[0].name;
-        });
-    </script>
+</div>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-3.5.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/popper.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script>
+<script type="application/javascript">
+    const customFile = document.querySelector('.custom-file');
+    customFileInput = customFile.querySelector('.custom-file-input');
+    customFileLabel = customFile.querySelector('.custom-file-label');
+    customFileInput.addEventListener('change', function (e) {
+        customFileLabel.innerText = customFileInput.files[0].name;
+    });
+</script>
 </body>
 </html>

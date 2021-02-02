@@ -4,11 +4,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.check.item.IThresholdPercentageCheckItemDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
+import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public final class ThresholdPercentageCheckItemDiscount extends PercentageCheckItemDiscount {
+
+    private static final int MIN_THRESHOLD = 1;
 
     private int threshold;
 
@@ -45,17 +50,15 @@ public final class ThresholdPercentageCheckItemDiscount extends PercentageCheckI
         return threshold;
     }
 
-    public void setThreshold(int threshold) throws IllegalArgumentException {
-        if (threshold < 1) {
-            throw new IllegalArgumentException("Threshold cannot be less than 1");
-        }
+    public void setThreshold(int threshold) throws ArgumentOutOfRangeException {
+        ThrowUtils.Argument.lessThan("threshold", threshold, MIN_THRESHOLD);
         this.threshold = threshold;
     }
 
     @Override
     public BigDecimal discountAmount() {
 
-        var total = getCheckItem().subTotal();
+        var total = getCheckItem().subTotalAmount();
         var dependentDiscountAmount = BigDecimal.ZERO;
 
         if (getDependentDiscount() != null) {
@@ -75,55 +78,55 @@ public final class ThresholdPercentageCheckItemDiscount extends PercentageCheckI
 
     public static class Builder implements IThresholdPercentageCheckItemDiscountBuilder {
 
-        private final ThresholdPercentageCheckItemDiscount thresholdPercentageCheckItemDiscount = new ThresholdPercentageCheckItemDiscount();
+        private final ThresholdPercentageCheckItemDiscount discount = new ThresholdPercentageCheckItemDiscount();
 
         @Override
         public IThresholdPercentageCheckItemDiscountBuilder setId(int id)
                 throws IllegalArgumentException {
-            thresholdPercentageCheckItemDiscount.setId(id);
+            discount.setId(id);
             return this;
         }
 
         @Override
         public IThresholdPercentageCheckItemDiscountBuilder setDescription(String description)
                 throws IllegalArgumentException {
-            thresholdPercentageCheckItemDiscount.setDescription(description);
+            discount.setDescription(description);
             return this;
         }
 
         @Override
-        public IThresholdPercentageCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount)
+        public IThresholdPercentageCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount discount)
                 throws IllegalArgumentException {
-            this.thresholdPercentageCheckItemDiscount.setDependentDiscount(checkItemDiscount);
+            this.discount.setDependentDiscount(discount);
             return this;
         }
 
         @Override
-        public IThresholdPercentageCheckItemDiscountBuilder setCheckItem(CheckItem checkItem) {
-            thresholdPercentageCheckItemDiscount.setCheckItem(checkItem);
+        public IThresholdPercentageCheckItemDiscountBuilder setCheckItem(CheckItem checkItem) throws ArgumentNullException {
+            discount.setCheckItem(checkItem);
             return this;
         }
 
         @Override
-        public IThresholdPercentageCheckItemDiscountBuilder setPercent(double percent) {
-            thresholdPercentageCheckItemDiscount.setPercent(percent);
+        public IThresholdPercentageCheckItemDiscountBuilder setPercent(double percent) throws ArgumentOutOfRangeException {
+            discount.setPercent(percent);
             return this;
         }
 
         @Override
-        public IThresholdPercentageCheckItemDiscountBuilder setThreshold(int threshold) {
-            thresholdPercentageCheckItemDiscount.setThreshold(threshold);
+        public IThresholdPercentageCheckItemDiscountBuilder setThreshold(int threshold) throws ArgumentOutOfRangeException {
+            discount.setThreshold(threshold);
             return this;
         }
 
         @Override
         public ThresholdPercentageCheckItemDiscount build() throws IllegalArgumentException {
             throwIfInvalid();
-            return thresholdPercentageCheckItemDiscount;
+            return discount;
         }
 
         private void throwIfInvalid() throws IllegalArgumentException {
-            if (thresholdPercentageCheckItemDiscount.getDescription() == null) {
+            if (discount.getDescription() == null) {
                 throw new IllegalArgumentException(
                         "Description required to build ThresholdPercentageCheckItemDiscount");
             }

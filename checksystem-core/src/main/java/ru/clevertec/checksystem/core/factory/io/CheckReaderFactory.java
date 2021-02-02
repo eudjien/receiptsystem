@@ -1,20 +1,25 @@
 package ru.clevertec.checksystem.core.factory.io;
 
 import ru.clevertec.checksystem.core.Constants;
+import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.io.read.ICheckReader;
 import ru.clevertec.checksystem.core.io.read.JsonCheckReader;
 import ru.clevertec.checksystem.core.io.read.XmlCheckReader;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
-public abstract class CheckReaderFactory {
+public final class CheckReaderFactory {
+
+    private CheckReaderFactory() {
+    }
 
     public static ICheckReader create(String format) throws IllegalArgumentException {
-        if (format == null || format.isBlank()) {
-            throw new IllegalArgumentException("Format cannot be null or empty.");
-        }
+
+        ThrowUtils.Argument.nullOrBlank("format", format);
+
         return switch (format) {
             case Constants.Format.IO.JSON -> new JsonCheckReader();
             case Constants.Format.IO.XML -> new XmlCheckReader();
-            default -> throw new IllegalArgumentException("Format '" + format + "' not supported");
+            default -> throw new ArgumentUnsupportedException("format");
         };
     }
 }

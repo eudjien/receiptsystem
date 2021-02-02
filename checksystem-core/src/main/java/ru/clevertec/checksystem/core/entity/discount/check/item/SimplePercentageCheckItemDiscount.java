@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.check.item.ISimplePercentageCheckItemDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 
 public final class SimplePercentageCheckItemDiscount extends PercentageCheckItemDiscount {
 
@@ -32,50 +33,47 @@ public final class SimplePercentageCheckItemDiscount extends PercentageCheckItem
 
     public static class BuilderSimple implements ISimplePercentageCheckItemDiscountBuilder {
 
-        private final SimplePercentageCheckItemDiscount simplePercentageCheckItemDiscount
-                = new SimplePercentageCheckItemDiscount();
+        private final SimplePercentageCheckItemDiscount discount = new SimplePercentageCheckItemDiscount();
 
         @Override
         public ISimplePercentageCheckItemDiscountBuilder setId(int id)
                 throws IllegalArgumentException {
-            simplePercentageCheckItemDiscount.setId(id);
+            discount.setId(id);
             return this;
         }
 
         @Override
-        public ISimplePercentageCheckItemDiscountBuilder setDescription(String description)
-                throws IllegalArgumentException {
-            simplePercentageCheckItemDiscount.setDescription(description);
+        public ISimplePercentageCheckItemDiscountBuilder setDescription(String description) throws ArgumentNullException {
+            discount.setDescription(description);
             return this;
         }
 
         @Override
-        public ISimplePercentageCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount)
-                throws IllegalArgumentException {
-            this.simplePercentageCheckItemDiscount.setDependentDiscount(checkItemDiscount);
+        public ISimplePercentageCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount discount) {
+            this.discount.setDependentDiscount(discount);
             return this;
         }
 
         @Override
-        public ISimplePercentageCheckItemDiscountBuilder setCheckItem(CheckItem checkItem) {
-            simplePercentageCheckItemDiscount.setCheckItem(checkItem);
+        public ISimplePercentageCheckItemDiscountBuilder setCheckItem(CheckItem checkItem) throws ArgumentNullException {
+            discount.setCheckItem(checkItem);
             return this;
         }
 
         @Override
-        public ISimplePercentageCheckItemDiscountBuilder setPercent(double percent) {
-            simplePercentageCheckItemDiscount.setPercent(percent);
+        public ISimplePercentageCheckItemDiscountBuilder setPercent(double percent) throws ArgumentNullException {
+            discount.setPercent(percent);
             return this;
         }
 
         @Override
         public SimplePercentageCheckItemDiscount build() throws IllegalArgumentException {
             throwIfInvalid();
-            return simplePercentageCheckItemDiscount;
+            return discount;
         }
 
         private void throwIfInvalid() throws IllegalArgumentException {
-            if (simplePercentageCheckItemDiscount.getDescription() == null) {
+            if (discount.getDescription() == null) {
                 throw new IllegalArgumentException(
                         "Description required to build SimplePercentageCheckItemDiscount");
             }

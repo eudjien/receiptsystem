@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class CollectionUtils {
+public final class CollectionUtils {
 
     public static <T> void putAll(List<T> destination, Collection<T> sources, Comparator<? super T> comparator) {
         for (var source : sources) {

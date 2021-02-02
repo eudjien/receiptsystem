@@ -33,7 +33,7 @@ public class Subscription<T> implements IUnsubscribable, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (!unsubscribed) {
             unsubscribe();
         }

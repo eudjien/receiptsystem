@@ -7,6 +7,7 @@ import ru.clevertec.checksystem.core.common.service.IIoCheckService;
 import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
 import ru.clevertec.checksystem.core.data.DataSeed;
 import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.service.GenerateCheckService;
 import ru.clevertec.checksystem.core.service.IoCheckService;
@@ -53,15 +54,14 @@ public class Main {
             if (finder.findFirstBoolOrDefault(Constants.Keys.GENERATE_FILE_SERIALIZE)) {
                 generatedSerialize(checks);
             }
-        }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException
                 | IllegalAccessException | IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
     static void generatedDeserialize(Collection<Check> checkCollection)
-            throws IOException, NoSuchMethodException, InstantiationException,
+            throws IOException, ArgumentUnsupportedException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, InvocationTargetException {
 
         IGenerateCheckService generateCheckService =
@@ -77,8 +77,7 @@ public class Main {
         Collection<Check> checkList = switch (source) {
             case Constants.Source.FILE -> generateCheckService.fromGenerated(new File(dataOrPath), format);
             case Constants.Source.DATA -> generateCheckService.fromGenerated(dataOrPath.getBytes(StandardCharsets.UTF_8), format);
-            default -> throw new IllegalArgumentException(
-                    "Incorrect value for '" + Constants.Keys.GENERATE_DESERIALIZE_SOURCE + "' argument");
+            default -> throw new ArgumentUnsupportedException(Constants.Keys.GENERATE_DESERIALIZE_SOURCE, source);
         };
 
         checkCollection.addAll(applyFilterIfExist(checkList));
@@ -118,7 +117,7 @@ public class Main {
     }
 
     static void filePrint(Collection<Check> checkCollection)
-            throws IllegalArgumentException, NoSuchMethodException, InstantiationException,
+            throws ArgumentUnsupportedException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, InvocationTargetException, IOException {
 
         var printFormat = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
@@ -141,7 +140,7 @@ public class Main {
                     printingService.printToPdf(checkCollection, new File(destinationPath));
                 }
             }
-            default -> throw new IllegalArgumentException("Print format '" + printFormat + " 'not supported");
+            default -> throw new ArgumentUnsupportedException(Constants.Keys.FILE_PRINT_FORMAT, printFormat);
         }
     }
 

@@ -2,6 +2,12 @@ package ru.clevertec.checksystem.core;
 
 public abstract class Constants {
 
+    public static final class Percent {
+
+        public static final double MIN = 0;
+        public static final double MAX = 100;
+    }
+
     public static final class Format {
 
         public static final class IO {

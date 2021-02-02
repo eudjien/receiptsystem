@@ -2,7 +2,9 @@ package ru.clevertec.checksystem.core.log.methodlogger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.log.LogLevel;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.normalino.json.NormalinoJSON;
 
 import java.lang.reflect.Method;
@@ -14,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MethodLogger implements IMethodLogger {
+
+    private final static String DIFFERENT_TYPES_MESSAGE =
+            "Argument '%s' can only be of the same type as the return type of the method (Method type: %s, Return type: %s)";
 
     private final Logger logger;
     private static final HashMap<Class<?>, MethodLogger> instances = new HashMap<>();
@@ -38,45 +43,40 @@ public class MethodLogger implements IMethodLogger {
     }
 
     @Override
-    public void log(String level, String format, Method method) {
+    public void log(String level, String format, Method method) throws ArgumentUnsupportedException {
         log(level, format, method, null);
     }
 
     @Override
-    public void log(String level, String format, Method method, Object[] args) {
+    public void log(String level, String format, Method method, Object[] args) throws ArgumentUnsupportedException {
         log(level, format, method, args, null);
     }
 
     @Override
-    public void log(String level, String format, Method method, Object[] args, Object returnedData) {
+    public void log(String level, String format, Method method, Object[] args, Object returnedData) throws ArgumentUnsupportedException {
 
         if (level.equals(LogLevel.NONE)) {
             return;
         }
 
-        if (method == null) {
-            throw new IllegalArgumentException("Argument 'format' cannot be null");
-        }
+        ThrowUtils.Argument.theNull("format", method);
 
         if (returnedData != null && !method.getReturnType().isAssignableFrom(returnedData.getClass())) {
-            throw new IllegalArgumentException(
-                    "Argument 'returnedData' can only be of the same type " +
-                            "as the return type of the method (" +
-                            "Method type: " + method.getReturnType().getName() + ", " +
-                            "Return type: " + returnedData.getClass().getName() + ")");
+            throw new IllegalArgumentException(String.format(DIFFERENT_TYPES_MESSAGE,
+                    "returnedData", method.getReturnType().getName(), returnedData.getClass().getName()));
         }
 
         var message = createMessage(format, method, args, returnedData);
         log(level, message);
     }
 
-    private void log(String level, String message) {
+    private void log(String level, String message) throws ArgumentUnsupportedException {
         switch (level) {
             case LogLevel.INFO -> logger.info(message);
             case LogLevel.DEBUG -> logger.debug(message);
             case LogLevel.TRACE -> logger.trace(message);
             case LogLevel.ERROR -> logger.error(message);
-            default -> throw new IllegalArgumentException("Argument 'level' contains not supported value");
+            default -> throw new ArgumentUnsupportedException("level");
         }
     }
 

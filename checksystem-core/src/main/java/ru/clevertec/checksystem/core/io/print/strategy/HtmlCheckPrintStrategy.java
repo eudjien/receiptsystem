@@ -94,11 +94,11 @@ public class HtmlCheckPrintStrategy extends CheckPrintStrategy {
             case REPLACEMENT_DATE -> Matcher.quoteReplacement(dateFormatter.format(check.getDate()));
             case REPLACEMENT_TIME -> Matcher.quoteReplacement(timeFormatter.format(check.getDate()));
             case REPLACEMENT_SUBTOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + check.subTotal().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + check.subTotalAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_DISCOUNTS -> Matcher.quoteReplacement(
-                    getCurrency() + check.discountSum().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + check.discountsAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_TOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + check.total().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + check.totalAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM -> Matcher.quoteReplacement(getCheckItemsContent(check, item, discountedItem));
             default -> mr.group();
         });
@@ -111,11 +111,11 @@ public class HtmlCheckPrintStrategy extends CheckPrintStrategy {
             case REPLACEMENT_ITEM_PRICE -> Matcher.quoteReplacement(
                     getCurrency() + checkItem.getProduct().getPrice().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM_SUBTOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + checkItem.subTotal().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + checkItem.subTotalAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM_DISCOUNTS -> Matcher.quoteReplacement(
-                    getCurrency() + checkItem.discountsSum().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + checkItem.discountsAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM_TOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + checkItem.total().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + checkItem.totalAmount().setScale(getScale(), RoundingMode.CEILING));
             default -> rm.group();
         });
     }
@@ -124,7 +124,7 @@ public class HtmlCheckPrintStrategy extends CheckPrintStrategy {
         if (check.getCheckItems() != null) {
             var stringBuilder = new StringBuilder();
             for (var checkItem : check.getCheckItems()) {
-                if (checkItem.discountsSum().doubleValue() > 0) {
+                if (checkItem.discountsAmount().doubleValue() > 0) {
                     stringBuilder.append(replaceItemValues(checkItem, discountedItem));
                 } else {
                     stringBuilder.append(replaceItemValues(checkItem, item));

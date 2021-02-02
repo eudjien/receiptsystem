@@ -16,7 +16,9 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.template.pdf.PdfTemplate;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,11 +63,9 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
     }
 
     @Override
-    public byte[] getData(Check check) throws IOException {
+    public byte[] getData(Check check) throws IOException, ArgumentNullException {
 
-        if (check == null) {
-            throw new IllegalArgumentException("Check cannot be null.");
-        }
+        ThrowUtils.Argument.theNull("check", check);
 
         return creteCheckPdfBytes(check);
     }
@@ -73,9 +73,7 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
     @Override
     public byte[] getCombinedData(Collection<Check> checkCollection) throws IllegalArgumentException, IOException {
 
-        if (checkCollection == null || checkCollection.isEmpty()) {
-            throw new IllegalArgumentException("Argument 'checkCollection' cannot be null or empty");
-        }
+        ThrowUtils.Argument.nullOrEmpty("checkCollection", checkCollection);
 
         var os = new ByteArrayOutputStream();
 
@@ -184,19 +182,19 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
                             .setMultipliedLeading(LINE_HEIGHT_MD)
                             .setTextAlignment(TextAlignment.RIGHT)));
 
-            var totalParagraph = new Paragraph(getCurrency() + item.subTotal()
+            var totalParagraph = new Paragraph(getCurrency() + item.subTotalAmount()
                     .setScale(getScale(), RoundingMode.CEILING))
                     .setMultipliedLeading(LINE_HEIGHT_MD)
                     .setTextAlignment(TextAlignment.RIGHT);
             table.addCell(new Cell().setBorder(Border.NO_BORDER).add(totalParagraph));
 
-            if (item.discountsSum().doubleValue() > 0) {
+            if (item.discountsAmount().doubleValue() > 0) {
                 totalParagraph.setLineThrough();
                 table.addCell(new Cell(1, 4)
                         .setBorder(Border.NO_BORDER)
-                        .add(new Paragraph("Discount: " + getCurrency() + item.discountsSum()
+                        .add(new Paragraph("Discount: " + getCurrency() + item.discountsAmount()
                                 .setScale(getScale(), RoundingMode.CEILING) + " = "
-                                + getCurrency() + item.total().setScale(getScale(), RoundingMode.CEILING))
+                                + getCurrency() + item.totalAmount().setScale(getScale(), RoundingMode.CEILING))
                                 .setMultipliedLeading(LINE_HEIGHT_MD)
                                 .setTextAlignment(TextAlignment.RIGHT)));
             }
@@ -210,11 +208,11 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
                 .useAllAvailableWidth()
                 .setBorder(Border.NO_BORDER);
 
-        addResultTableRow(table, "SUBTOTAL", getCurrency() + check.subTotal()
+        addResultTableRow(table, "SUBTOTAL", getCurrency() + check.subTotalAmount()
                 .setScale(getScale(), RoundingMode.CEILING));
-        addResultTableRow(table, "DISCOUNTS", getCurrency() + check.discountSum()
+        addResultTableRow(table, "DISCOUNTS", getCurrency() + check.discountsAmount()
                 .setScale(getScale(), RoundingMode.CEILING));
-        addResultTableRow(table, "TOTAL", getCurrency() + check.total()
+        addResultTableRow(table, "TOTAL", getCurrency() + check.totalAmount()
                 .setScale(getScale(), RoundingMode.CEILING));
 
         return table;

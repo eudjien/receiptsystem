@@ -1,6 +1,8 @@
 package ru.clevertec.checksystem.core.io.print.strategy;
 
 import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +13,9 @@ import java.util.stream.Stream;
 
 public class TextCheckPrintStrategy extends CheckPrintStrategy {
 
-    private int spaceCount = 4;
+    private static final int MIN_SPACE_COUNT = 1;
+
+    private int spacesNumber = 4;
 
     public TextCheckPrintStrategy() {
     }
@@ -27,15 +31,13 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
                 .reduce((a, b) -> a + '\n' + b).map(String::getBytes).orElse(null);
     }
 
-    public int getSpaceCount() {
-        return spaceCount;
+    public int getSpacesNumber() {
+        return spacesNumber;
     }
 
-    public void setSpaceCount(int spaceCount) throws IllegalArgumentException {
-        if (spaceCount < 1) {
-            throw new IllegalArgumentException("Space count cannot be less than 1");
-        }
-        this.spaceCount = spaceCount;
+    public void setSpacesNumber(int spacesNumber) throws ArgumentOutOfRangeException {
+        ThrowUtils.Argument.lessThan("spacesNumber", spacesNumber, MIN_SPACE_COUNT);
+        this.spacesNumber = spacesNumber;
     }
 
     private byte[] createCheck(Check check) {
@@ -48,7 +50,7 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
         var strBuilder = new StringBuilder();
 
         var fullwidth = maxProductNameLength + maxPriceLength
-                + maxQuantityLength + maxAmountLength + (getSpaceCount() * 3);
+                + maxQuantityLength + maxAmountLength + (getSpacesNumber() * 3);
         double halfWidth = fullwidth / 2d;
 
         appendLineCenter(strBuilder, fullwidth, cropIfOutOfBounds(check.getName(), fullwidth));
@@ -86,13 +88,13 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
         strBuilder.append("\n");
 
         appendLineCenter(strBuilder, maxQuantityLength, getHeaderQuantity());
-        strBuilder.append(" ".repeat(getSpaceCount()));
+        strBuilder.append(" ".repeat(getSpacesNumber()));
 
         appendLineLeft(strBuilder, maxProductNameLength, getHeaderName());
-        strBuilder.append(" ".repeat(getSpaceCount()));
+        strBuilder.append(" ".repeat(getSpacesNumber()));
 
         appendLineRight(strBuilder, maxPriceLength, getHeaderPrice());
-        strBuilder.append(" ".repeat(getSpaceCount()));
+        strBuilder.append(" ".repeat(getSpacesNumber()));
 
         appendLineRight(strBuilder, maxAmountLength, getHeaderTotal());
 
@@ -102,28 +104,28 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
 
             // Quantity
             appendLineCenter(strBuilder, maxQuantityLength, item.getQuantity() + "");
-            strBuilder.append(" ".repeat(getSpaceCount()));
+            strBuilder.append(" ".repeat(getSpacesNumber()));
 
             // Name
             appendLineLeft(strBuilder, maxProductNameLength, item.getProduct().getName());
-            strBuilder.append(" ".repeat(getSpaceCount()));
+            strBuilder.append(" ".repeat(getSpacesNumber()));
 
             // Price
             appendLineRight(strBuilder, maxPriceLength, getCurrency() + item.getProduct().getPrice()
                     .setScale(getScale(), RoundingMode.CEILING));
-            strBuilder.append(" ".repeat(getSpaceCount()));
+            strBuilder.append(" ".repeat(getSpacesNumber()));
 
             // Sum
-            appendLineRight(strBuilder, maxAmountLength, getCurrency() + item.subTotal()
+            appendLineRight(strBuilder, maxAmountLength, getCurrency() + item.subTotalAmount()
                     .setScale(getScale(), RoundingMode.CEILING));
             strBuilder.append("\n");
 
             // Discount
-            if (item.discountsSum().doubleValue() > 0) {
+            if (item.discountsAmount().doubleValue() > 0) {
                 appendLineRight(strBuilder, fullwidth,
-                        "Discount: -" + getCurrency() + item.discountsSum()
+                        "Discount: -" + getCurrency() + item.discountsAmount()
                                 .setScale(getScale(), RoundingMode.CEILING)
-                                + " = " + getCurrency() + item.total().setScale(getScale(), RoundingMode.CEILING));
+                                + " = " + getCurrency() + item.totalAmount().setScale(getScale(), RoundingMode.CEILING));
                 strBuilder.append("\n");
             }
         }
@@ -132,17 +134,17 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
         strBuilder.append("\n");
 
         appendLineLeft(strBuilder, (int) Math.floor(halfWidth), "SUBTOTAL");
-        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + check.subTotal()
+        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + check.subTotalAmount()
                 .setScale(getScale(), RoundingMode.CEILING).toString());
         strBuilder.append("\n");
 
         appendLineLeft(strBuilder, (int) Math.floor(halfWidth), "DISCOUNTS");
-        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + check.discountSum()
+        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + check.discountsAmount()
                 .setScale(getScale(), RoundingMode.CEILING).toString());
         strBuilder.append("\n");
 
         appendLineLeft(strBuilder, (int) Math.floor(halfWidth), "TOTAL");
-        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + check.total()
+        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + check.totalAmount()
                 .setScale(getScale(), RoundingMode.CEILING).toString());
         strBuilder.append("\n");
 
@@ -196,7 +198,7 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
 
     private Stream<Integer> getAmountLengths(Check check) {
         var list = check.getCheckItems().stream()
-                .map(a -> (getCurrency() + a.total()
+                .map(a -> (getCurrency() + a.totalAmount()
                         .setScale(getScale(), RoundingMode.CEILING).toString()).length())
                 .collect(Collectors.toList());
         list.add(getHeaderTotal().length());

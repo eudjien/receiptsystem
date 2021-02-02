@@ -185,7 +185,7 @@ public class ApiChecksServlet extends HttpServlet {
         if (formatParam != null) {
             var availableTypes = new String[]{"html", "text", "json", "html-json", "text-json"};
             var index = Arrays.binarySearch(availableTypes, formatParam);
-            if (index != -1) {
+            if (index > -1) {
                 format = formatParam;
             }
         }
@@ -202,7 +202,7 @@ public class ApiChecksServlet extends HttpServlet {
         var availableTypes = new String[]{"print", "serialize"};
         if (typeParam != null) {
             var index = Arrays.binarySearch(availableTypes, typeParam);
-            if (index != -1) {
+            if (index > -1) {
                 return typeParam;
             }
         }

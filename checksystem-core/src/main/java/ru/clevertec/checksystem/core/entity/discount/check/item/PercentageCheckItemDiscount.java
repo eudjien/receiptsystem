@@ -1,6 +1,9 @@
 package ru.clevertec.checksystem.core.entity.discount.check.item;
 
+import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IPercentageable;
+import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,20 +16,20 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
     }
 
     public PercentageCheckItemDiscount(String description, double percent)
-            throws IllegalArgumentException {
+            throws ArgumentOutOfRangeException {
         super(description);
         setPercent(percent);
     }
 
     public PercentageCheckItemDiscount(int id, String description, double percent)
-            throws IllegalArgumentException {
+            throws ArgumentOutOfRangeException {
         super(id, description);
         setPercent(percent);
     }
 
     public PercentageCheckItemDiscount(
             int id, String description, double percent, CheckItemDiscount dependentDiscount)
-            throws IllegalArgumentException {
+            throws ArgumentOutOfRangeException {
         super(id, description, dependentDiscount);
         setPercent(percent);
     }
@@ -35,16 +38,14 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
         return percent;
     }
 
-    public void setPercent(double percent) throws IllegalArgumentException {
-        if (this.percent < 0 || this.percent > 100) {
-            throw new IllegalArgumentException("Discount percent out of range (0-100)");
-        }
+    public void setPercent(double percent) throws ArgumentOutOfRangeException {
+        ThrowUtils.Argument.outOfRange("percent", percent, Constants.Percent.MIN, Constants.Percent.MAX);
         this.percent = percent;
     }
 
     public BigDecimal discountAmount() {
 
-        var subTotal = getCheckItem().subTotal();
+        var subTotal = getCheckItem().subTotalAmount();
         var dependentDiscountAmount = BigDecimal.ZERO;
 
         if (getDependentDiscount() != null) {
@@ -52,7 +53,7 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
             dependentDiscountAmount = getDependentDiscount().discountAmount();
         }
 
-        var discount = subTotal.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)
+        var discount = subTotal.divide(BigDecimal.valueOf(Constants.Percent.MAX), RoundingMode.HALF_EVEN)
                 .multiply(BigDecimal.valueOf(percent));
 
         return discount.add(dependentDiscountAmount);

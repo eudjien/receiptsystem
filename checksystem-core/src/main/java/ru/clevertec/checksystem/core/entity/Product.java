@@ -3,6 +3,9 @@ package ru.clevertec.checksystem.core.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IProductBuilder;
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
+import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
 
@@ -33,7 +36,8 @@ public class Product extends BaseEntity {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws IllegalArgumentException {
+        ThrowUtils.Argument.nullOrBlank("name", name);
         this.name = name;
     }
 
@@ -41,7 +45,12 @@ public class Product extends BaseEntity {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(BigDecimal price) throws ArgumentNullException, ArgumentOutOfRangeException {
+
+        var parameterName = "price";
+        ThrowUtils.Argument.theNull(parameterName, price);
+        ThrowUtils.Argument.lessThan(parameterName, price, BigDecimal.ZERO);
+
         this.price = price;
     }
 
@@ -56,13 +65,13 @@ public class Product extends BaseEntity {
         }
 
         @Override
-        public IProductBuilder setName(String name) {
+        public IProductBuilder setName(String name) throws IllegalArgumentException {
             product.setName(name);
             return this;
         }
 
         @Override
-        public IProductBuilder setPrice(BigDecimal price) {
+        public IProductBuilder setPrice(BigDecimal price) throws ArgumentNullException, ArgumentOutOfRangeException {
             product.setPrice(price);
             return this;
         }

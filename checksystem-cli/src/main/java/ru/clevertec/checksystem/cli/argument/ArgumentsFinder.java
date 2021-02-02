@@ -1,5 +1,8 @@
 package ru.clevertec.checksystem.cli.argument;
 
+import ru.clevertec.checksystem.core.exception.ArgumentNullException;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,11 +21,9 @@ public class ArgumentsFinder {
         return new HashSet<>(arguments.values());
     }
 
-    public void addArguments(String[] arguments) {
+    public void addArguments(String[] arguments) throws ArgumentNullException {
 
-        if (arguments == null) {
-            throw new IllegalArgumentException("arguments cannot be null");
-        }
+        ThrowUtils.Argument.theNull("arguments", arguments);
 
         for (var arg : arguments) {
             var matcher = pattern.matcher(arg);
