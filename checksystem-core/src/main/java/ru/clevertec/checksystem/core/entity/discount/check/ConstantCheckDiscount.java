@@ -48,7 +48,7 @@ public abstract class ConstantCheckDiscount extends CheckDiscount implements ICo
                 ? getDependentDiscount().discountAmount()
                 : BigDecimal.ZERO;
 
-        var itemsDiscountSum = getCheck().itemsDiscountSum();
+        var itemsDiscountSum = getCheck().itemsDiscountAmount();
 
         return constant.add(dependentDiscountAmount).add(itemsDiscountSum);
     }

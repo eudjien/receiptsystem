@@ -26,8 +26,8 @@ public abstract class CheckDiscount extends Discount<CheckDiscount> implements I
         super(id, description);
     }
 
-    public CheckDiscount(int id, String description, CheckDiscount childCheckDiscount) throws ArgumentNullException {
-        super(id, description, childCheckDiscount);
+    public CheckDiscount(int id, String description, CheckDiscount dependentDiscount) throws ArgumentNullException {
+        super(id, description, dependentDiscount);
     }
 
     @StringifyIgnore

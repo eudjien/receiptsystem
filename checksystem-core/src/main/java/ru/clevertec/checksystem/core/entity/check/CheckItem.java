@@ -1,8 +1,11 @@
 package ru.clevertec.checksystem.core.entity.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.ICheckItemBuilder;
+import ru.clevertec.checksystem.core.common.check.ICheckComposable;
+import ru.clevertec.checksystem.core.common.check.ICheckItemComposable;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.Product;
@@ -17,12 +20,16 @@ import ru.clevertec.customlib.list.SinglyLinkedList;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDiscount> {
+public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDiscount>, ICheckComposable {
 
     private final static int MIN_QUANTITY = 1;
 
     private final List<CheckItemDiscount> discounts = new SinglyLinkedList<>();
     private Product product;
+
+    @JsonIgnore
+    private Check check;
+
     private int quantity;
 
     private CheckItem() {
@@ -39,8 +46,7 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
         setQuantity(quantity);
     }
 
-    public CheckItem(Product product, int quantity, Collection<CheckItemDiscount> discounts)
-            throws ArgumentNullException {
+    public CheckItem(Product product, int quantity, Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
         setProduct(product);
         setQuantity(quantity);
         setDiscounts(discounts);
@@ -104,42 +110,28 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
         this.discounts.clear();
 
         if (discounts != null) {
-            this.discounts.addAll(discounts);
-            for (var discount : discounts) {
-                discount.setCheckItem(this);
-            }
+            discounts.forEach(discount -> discount.setCheckItem(this));
+            putDiscounts(discounts);
         }
     }
 
     @Override
     public void putDiscounts(Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
-
         ThrowUtils.Argument.theNull("discounts", discounts);
-
-        CollectionUtils.putAll(this.discounts, discounts, Comparator.comparingInt(BaseEntity::getId));
-
-        for (var discount : discounts) {
-            discount.setCheckItem(this);
-        }
+        discounts.forEach(this::putDiscount);
     }
 
     @Override
     public void putDiscount(CheckItemDiscount discount) throws ArgumentNullException {
-
         ThrowUtils.Argument.theNull("discount", discount);
-
         discount.setCheckItem(this);
         CollectionUtils.put(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
     }
 
     @Override
     public void removeDiscounts(Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
-
         ThrowUtils.Argument.theNull("discounts", discounts);
-
-        for (var discount : discounts) {
-            removeDiscount(discount);
-        }
+        discounts.forEach(this::removeDiscount);
     }
 
     @Override
@@ -147,11 +139,20 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
 
         ThrowUtils.Argument.theNull("discount", discount);
 
-        var index = Collections.binarySearch(
-                discounts, discount, Comparator.comparingInt(BaseEntity::getId));
-        if (index > -1) {
+        var index = Collections.binarySearch(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
+
+        if (index > -1)
             this.discounts.remove(index);
-        }
+    }
+
+    @Override
+    public Check getCheck() {
+        return check;
+    }
+
+    @Override
+    public void setCheck(Check check) throws IllegalArgumentException {
+        this.check = check;
     }
 
     public static class Builder implements ICheckItemBuilder {

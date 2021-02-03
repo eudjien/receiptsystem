@@ -17,7 +17,7 @@ public final class ThrowUtils {
 
         public static <T> void theNull(String parameterName, T argument) throws ArgumentNullException {
             if (argument == null) {
-                throw new ArgumentNullException(String.format(THROW_IF_NULL_FORMAT, parameterName));
+                throw new ArgumentNullException(THROW_IF_NULL_FORMAT, parameterName);
             }
         }
 

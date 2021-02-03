@@ -7,4 +7,8 @@ public class ArgumentNullException extends IllegalArgumentException {
     public ArgumentNullException(String parameterName) {
         super(String.format(MESSAGE_FORMAT, parameterName));
     }
+
+    public ArgumentNullException(String format, Object... args) {
+        super(String.format(format, args));
+    }
 }

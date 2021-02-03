@@ -50,7 +50,7 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
 
         var subTotal = getCheck().subTotalAmount();
         var dependentDiscountAmount = BigDecimal.ZERO;
-        var itemsDiscountAmount = getCheck().itemsDiscountSum();
+        var itemsDiscountAmount = getCheck().itemsDiscountAmount();
 
         if (getDependentDiscount() != null) {
             subTotal = subTotal.subtract(getDependentDiscount().discountAmount());
