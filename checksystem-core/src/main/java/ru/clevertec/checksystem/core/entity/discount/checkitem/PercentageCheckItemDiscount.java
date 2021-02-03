@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.entity.discount.check.item;
+package ru.clevertec.checksystem.core.entity.discount.checkitem;
 
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IPercentageable;

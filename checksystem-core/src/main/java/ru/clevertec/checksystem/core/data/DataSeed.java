@@ -6,10 +6,10 @@ import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
 import ru.clevertec.checksystem.core.entity.discount.check.SimpleConstantCheckDiscount;
 import ru.clevertec.checksystem.core.entity.discount.check.SimplePercentageCheckDiscount;
-import ru.clevertec.checksystem.core.entity.discount.check.item.CheckItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.check.item.SimpleConstantCheckItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.check.item.SimplePercentageCheckItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.check.item.ThresholdPercentageCheckItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.checkitem.SimpleConstantCheckItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.checkitem.SimplePercentageCheckItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.checkitem.ThresholdPercentageCheckItemDiscount;
 import ru.clevertec.normalino.list.NormalinoList;
 
 import javax.mail.internet.AddressException;

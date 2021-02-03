@@ -7,7 +7,7 @@ import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.Product;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
-import ru.clevertec.checksystem.core.entity.discount.check.item.CheckItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount;
 import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
@@ -101,12 +101,13 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
     @Override
     public void setDiscounts(Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
 
-        ThrowUtils.Argument.theNull("discounts", discounts);
-
         this.discounts.clear();
-        this.discounts.addAll(discounts);
-        for (var discount : discounts) {
-            discount.setCheckItem(this);
+
+        if (discounts != null) {
+            this.discounts.addAll(discounts);
+            for (var discount : discounts) {
+                discount.setCheckItem(this);
+            }
         }
     }
 

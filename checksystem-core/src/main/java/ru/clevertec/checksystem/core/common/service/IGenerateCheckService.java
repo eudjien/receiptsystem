@@ -1,7 +1,7 @@
 package ru.clevertec.checksystem.core.common.service;
 
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.entity.check.GeneratedCheck;
+import ru.clevertec.checksystem.core.dto.GeneratedCheck;
 
 import java.io.File;
 import java.io.IOException;

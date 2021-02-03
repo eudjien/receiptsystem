@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.entity.discount.check.item;
+package ru.clevertec.checksystem.core.entity.discount.checkitem;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

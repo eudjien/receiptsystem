@@ -61,8 +61,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void outOfRange(String parameterName, double value, double minInclusive, double maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, double value, double minInclusive, double maxInclusive) throws ArgumentOutOfRangeException {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }

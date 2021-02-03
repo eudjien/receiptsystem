@@ -15,7 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(OrderAnnotation.class)
-class Tests {
+class ArgumentTests {
+
+    final Application application = new Application();
 
     private final static boolean deleteOutputDirAfterAll = true;
 
@@ -50,7 +52,7 @@ class Tests {
     @Order(1)
     @Test
     public void throwsWhenNoMode() {
-        assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{}));
+        assertThrows(IllegalArgumentException.class, () -> application.start(new String[]{}));
     }
 
     @Order(2)
@@ -66,7 +68,7 @@ class Tests {
                 argument(Constants.Keys.FILE_SERIALIZE_PATH, outputFilePath)
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(3)
@@ -85,7 +87,7 @@ class Tests {
                 argument(Constants.Keys.FILE_SERIALIZE_PATH, outputFilePath),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(4)
@@ -104,7 +106,7 @@ class Tests {
                 argument(Constants.Keys.FILE_SERIALIZE_PATH, outputFilePath),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(5)
@@ -123,7 +125,7 @@ class Tests {
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(6)
@@ -142,7 +144,7 @@ class Tests {
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(7)
@@ -165,7 +167,7 @@ class Tests {
                 argument(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET, templateOffset),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(8)
@@ -184,7 +186,7 @@ class Tests {
                 argument(Constants.Keys.FILE_PRINT_PATH, outputFilePath),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(9)
@@ -210,7 +212,7 @@ class Tests {
                 argument(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET, templateOffset),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(10)
@@ -227,7 +229,7 @@ class Tests {
                 argument(Constants.Keys.GENERATE_FILE_SERIALIZE_PATH, outputFilePath),
         };
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(11)
@@ -247,7 +249,7 @@ class Tests {
                 Arrays.stream(serializeArgs))
                 .toArray(String[]::new);
 
-        assertDoesNotThrow(() -> Main.main(args));
+        assertDoesNotThrow(() -> application.start(args));
     }
 
     @Order(12)
