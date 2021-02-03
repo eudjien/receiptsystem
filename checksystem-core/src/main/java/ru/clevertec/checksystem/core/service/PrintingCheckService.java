@@ -25,24 +25,21 @@ import java.util.Collection;
 public class PrintingCheckService extends EventEmitter<Object> implements IPrintingCheckService {
 
     @Override
-    public void printToHtml(Collection<Check> checkCollection, File destinationFile)
-            throws IllegalArgumentException, IOException {
+    public void printToHtml(Collection<Check> checkCollection, File destinationFile) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
         FileUtils.writeBytesToFile(checkPrinter.printRaw(), destinationFile);
         emitPrintOver(checkCollection, destinationFile);
     }
 
     @Override
-    public void printToHtml(Collection<Check> checkCollection, OutputStream outputStream)
-            throws IllegalArgumentException, IOException {
+    public void printToHtml(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
         outputStream.write(checkPrinter.printRaw());
         emitPrintOver(checkCollection);
     }
 
     @Override
-    public String printToHtml(Collection<Check> checkCollection)
-            throws IllegalArgumentException, IOException {
+    public String printToHtml(Collection<Check> checkCollection) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
         var html = new String(checkPrinter.printRaw());
         emitPrintOver(checkCollection);
@@ -50,24 +47,21 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
     }
 
     @Override
-    public void printToPdf(Collection<Check> checkCollection, File destinationFile)
-            throws IllegalArgumentException, IOException {
+    public void printToPdf(Collection<Check> checkCollection, File destinationFile) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
         FileUtils.writeBytesToFile(checkPrinter.printRaw(), destinationFile);
         emitPrintOver(checkCollection, destinationFile);
     }
 
     @Override
-    public void printToPdf(Collection<Check> checkCollection, OutputStream outputStream)
-            throws IllegalArgumentException, IOException {
+    public void printToPdf(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
         outputStream.write(checkPrinter.printRaw());
         emitPrintOver(checkCollection);
     }
 
     @Override
-    public byte[] printToPdf(Collection<Check> checkCollection)
-            throws IllegalArgumentException, IOException {
+    public byte[] printToPdf(Collection<Check> checkCollection) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
         var pdfBytes = checkPrinter.printRaw();
         emitPrintOver(checkCollection);
@@ -75,21 +69,17 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
     }
 
     @Override
-    public void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile)
-            throws IllegalArgumentException, IOException {
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile) throws IOException {
         printWithTemplateToPdf(checkCollection, destinationFile, templateFile, 0);
     }
 
     @Override
-    public void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile)
-            throws IllegalArgumentException, IOException {
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile) throws IOException {
         printWithTemplateToPdf(checkCollection, outputStream, templateFile, 0);
     }
 
     @Override
-    public void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile,
-                                       File templateFile, int templateTopOffset)
-            throws IllegalArgumentException, IOException {
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile, int templateTopOffset) throws IOException {
 
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
 
@@ -102,9 +92,7 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
     }
 
     @Override
-    public void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream,
-                                       File templateFile, int templateTopOffset)
-            throws IllegalArgumentException, IOException {
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile, int templateTopOffset) throws IOException {
 
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
 
@@ -118,16 +106,13 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
 
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
-    public byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile)
-            throws IllegalArgumentException, IOException {
-
+    public byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile) throws IOException {
         return printWithTemplateToPdf(checkCollection, templateFile, 0);
     }
 
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
-    public byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile, int templateTopOffset)
-            throws IllegalArgumentException, IOException {
+    public byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile, int templateTopOffset) throws IOException {
 
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
 
@@ -142,24 +127,21 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
     }
 
     @Override
-    public void printToText(Collection<Check> checkCollection, File destinationFile)
-            throws IllegalArgumentException, IOException {
+    public void printToText(Collection<Check> checkCollection, File destinationFile) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.TEXT, checkCollection);
         FileUtils.writeBytesToFile(checkPrinter.printRaw(), destinationFile);
         emitPrintOver(checkCollection, destinationFile);
     }
 
     @Override
-    public void printToText(Collection<Check> checkCollection, OutputStream outputStream)
-            throws IllegalArgumentException, IOException {
+    public void printToText(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.TEXT, checkCollection);
         outputStream.write(checkPrinter.printRaw());
         emitPrintOver(checkCollection);
     }
 
     @Override
-    public String printToText(Collection<Check> checkCollection)
-            throws IllegalArgumentException, IOException {
+    public String printToText(Collection<Check> checkCollection) throws IOException {
         var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.TEXT, checkCollection);
         var text = new String(checkPrinter.printRaw());
         emitPrintOver(checkCollection);

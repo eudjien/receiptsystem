@@ -12,7 +12,7 @@ public final class CheckReaderFactory {
     private CheckReaderFactory() {
     }
 
-    public static ICheckReader create(String format) throws IllegalArgumentException {
+    public static ICheckReader create(String format) {
 
         ThrowUtils.Argument.nullOrBlank("format", format);
 

@@ -4,9 +4,9 @@ import ru.clevertec.checksystem.core.common.IBuildable;
 
 public interface IDiscountBuilder<T, R extends IDiscountBuilder<T, R>> extends IBuildable<T> {
 
-    R setId(int id) throws IllegalArgumentException;
+    R setId(int id);
 
-    R setDescription(String description) throws IllegalArgumentException;
+    R setDescription(String description);
 
-    R setDependentDiscount(T discount) throws IllegalArgumentException;
+    R setDependentDiscount(T discount);
 }

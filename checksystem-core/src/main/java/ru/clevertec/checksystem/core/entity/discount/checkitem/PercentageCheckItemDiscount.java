@@ -2,7 +2,6 @@ package ru.clevertec.checksystem.core.entity.discount.checkitem;
 
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IPercentageable;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
@@ -15,17 +14,17 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
     protected PercentageCheckItemDiscount() {
     }
 
-    public PercentageCheckItemDiscount(String description, double percent) throws ArgumentOutOfRangeException {
+    public PercentageCheckItemDiscount(String description, double percent) {
         super(description);
         setPercent(percent);
     }
 
-    public PercentageCheckItemDiscount(int id, String description, double percent) throws ArgumentOutOfRangeException {
+    public PercentageCheckItemDiscount(int id, String description, double percent) {
         super(id, description);
         setPercent(percent);
     }
 
-    public PercentageCheckItemDiscount(int id, String description, double percent, CheckItemDiscount dependentDiscount) throws ArgumentOutOfRangeException {
+    public PercentageCheckItemDiscount(int id, String description, double percent, CheckItemDiscount dependentDiscount) {
         super(id, description, dependentDiscount);
         setPercent(percent);
     }
@@ -34,7 +33,7 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
         return percent;
     }
 
-    public void setPercent(double percent) throws ArgumentOutOfRangeException {
+    public void setPercent(double percent) {
         ThrowUtils.Argument.outOfRange("percent", percent, Constants.Percent.MIN, Constants.Percent.MAX);
         this.percent = percent;
     }

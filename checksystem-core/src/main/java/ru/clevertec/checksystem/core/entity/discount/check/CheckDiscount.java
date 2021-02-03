@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.clevertec.checksystem.core.common.check.ICheckComposable;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.customlib.json.StringifyIgnore;
 
@@ -18,15 +17,15 @@ public abstract class CheckDiscount extends Discount<CheckDiscount> implements I
     protected CheckDiscount() {
     }
 
-    public CheckDiscount(String description) throws ArgumentNullException {
+    public CheckDiscount(String description) {
         super(description);
     }
 
-    public CheckDiscount(int id, String description) throws ArgumentNullException {
+    public CheckDiscount(int id, String description) {
         super(id, description);
     }
 
-    public CheckDiscount(int id, String description, CheckDiscount dependentDiscount) throws ArgumentNullException {
+    public CheckDiscount(int id, String description, CheckDiscount dependentDiscount) {
         super(id, description, dependentDiscount);
     }
 
@@ -35,9 +34,9 @@ public abstract class CheckDiscount extends Discount<CheckDiscount> implements I
         return check;
     }
 
-    public void setCheck(Check check) throws ArgumentNullException {
+    public void setCheck(Check check) {
 
-        ThrowUtils.Argument.theNull("check", check);
+        ThrowUtils.Argument.nullValue("check", check);
 
         this.check = check;
         if (getDependentDiscount() != null) {

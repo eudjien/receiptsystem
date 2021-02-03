@@ -1,6 +1,5 @@
 package ru.clevertec.checksystem.cli.argument;
 
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.util.HashMap;
@@ -21,9 +20,9 @@ public class ArgumentsFinder {
         return new HashSet<>(arguments.values());
     }
 
-    public void addArguments(String[] arguments) throws ArgumentNullException {
+    public void addArguments(String[] arguments) {
 
-        ThrowUtils.Argument.theNull("arguments", arguments);
+        ThrowUtils.Argument.nullValue("arguments", arguments);
 
         for (var arg : arguments) {
             var matcher = pattern.matcher(arg);
@@ -68,7 +67,7 @@ public class ArgumentsFinder {
         return defaultValue;
     }
 
-    public String findFirstStringOrThrow(String key) throws IllegalArgumentException {
+    public String findFirstStringOrThrow(String key) {
         var value = findFirstStringOrDefault(key);
         if (value == null) {
             throw new IllegalArgumentException("Parameter '" + key + "' is not defined");

@@ -11,7 +11,7 @@ public final class GeneratedCheckWriterFactory {
     private GeneratedCheckWriterFactory() {
     }
 
-    public static IGeneratedCheckWriter create(String format) throws IllegalArgumentException {
+    public static IGeneratedCheckWriter create(String format) {
 
         ThrowUtils.Argument.nullOrBlank("format", format);
 

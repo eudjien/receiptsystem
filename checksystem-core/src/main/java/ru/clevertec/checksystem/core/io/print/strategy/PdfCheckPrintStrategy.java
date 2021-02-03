@@ -16,7 +16,6 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.template.pdf.PdfTemplate;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
@@ -63,15 +62,15 @@ public class PdfCheckPrintStrategy extends CheckPrintStrategy {
     }
 
     @Override
-    public byte[] getData(Check check) throws IOException, ArgumentNullException {
+    public byte[] getData(Check check) throws IOException {
 
-        ThrowUtils.Argument.theNull("check", check);
+        ThrowUtils.Argument.nullValue("check", check);
 
         return creteCheckPdfBytes(check);
     }
 
     @Override
-    public byte[] getCombinedData(Collection<Check> checkCollection) throws IllegalArgumentException, IOException {
+    public byte[] getCombinedData(Collection<Check> checkCollection) throws IOException {
 
         ThrowUtils.Argument.nullOrEmpty("checkCollection", checkCollection);
 

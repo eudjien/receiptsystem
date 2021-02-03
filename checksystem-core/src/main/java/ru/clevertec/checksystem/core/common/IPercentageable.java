@@ -4,5 +4,5 @@ public interface IPercentageable {
 
     double getPercent();
 
-    void setPercent(double percent) throws IllegalArgumentException;
+    void setPercent(double percent);
 }

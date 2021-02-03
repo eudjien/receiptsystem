@@ -15,14 +15,13 @@ public final class ThrowUtils {
         private static final String THROW_IF_GREATER_THAN_FORMAT = "The '%s' argument's value '%b' greater be less than %b";
         private static final String THROW_IF_LESS_THAN_FORMAT = "The '%s' argument's value '%b' cannot be less than %b";
 
-        public static <T> void theNull(String parameterName, T argument) throws ArgumentNullException {
+        public static <T> void nullValue(String parameterName, T argument) {
             if (argument == null) {
                 throw new ArgumentNullException(THROW_IF_NULL_FORMAT, parameterName);
             }
         }
 
-        public static void outOfRange(String parameterName, int value, int minInclusive, int maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, int value, int minInclusive, int maxInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }
@@ -31,8 +30,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void outOfRange(String parameterName, short value, short minInclusive, short maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, short value, short minInclusive, short maxInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }
@@ -41,8 +39,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void outOfRange(String parameterName, long value, long minInclusive, long maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, long value, long minInclusive, long maxInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }
@@ -51,8 +48,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void outOfRange(String parameterName, float value, float minInclusive, float maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, float value, float minInclusive, float maxInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }
@@ -61,7 +57,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void outOfRange(String parameterName, double value, double minInclusive, double maxInclusive) throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, double value, double minInclusive, double maxInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }
@@ -70,8 +66,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void outOfRange(String parameterName, BigDecimal value, BigDecimal minInclusive, BigDecimal maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void outOfRange(String parameterName, BigDecimal value, BigDecimal minInclusive, BigDecimal maxInclusive) {
             if (value.compareTo(minInclusive) < 0) {
                 throw new ArgumentOutOfRangeException(parameterName, value, minInclusive, maxInclusive);
             }
@@ -80,8 +75,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static <T> void nullOrEmpty(String parameterName, Collection<T> collection)
-                throws IllegalArgumentException {
+        public static <T> void nullOrEmpty(String parameterName, Collection<T> collection) {
 
             if (collection == null) {
                 throw new ArgumentNullException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
@@ -91,7 +85,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static <T> void nullOrEmpty(String parameterName, T[] argument) throws ArgumentNullException {
+        public static <T> void nullOrEmpty(String parameterName, T[] argument) {
             if (argument == null) {
                 throw new ArgumentNullException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
             }
@@ -100,8 +94,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void nullOrEmpty(String parameterName, String str)
-                throws IllegalArgumentException {
+        public static void nullOrEmpty(String parameterName, String str) {
             if (str == null) {
                 throw new ArgumentNullException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
             }
@@ -110,8 +103,7 @@ public final class ThrowUtils {
             }
         }
 
-        public static void nullOrBlank(String parameterName, String str)
-                throws IllegalArgumentException {
+        public static void nullOrBlank(String parameterName, String str) {
             if (str == null) {
                 throw new ArgumentNullException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
             }
@@ -120,85 +112,73 @@ public final class ThrowUtils {
             }
         }
 
-        public static void greaterThan(String parameterName, int value, int maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void greaterThan(String parameterName, int value, int maxInclusive) {
             if (value < maxInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
             }
         }
 
-        public static void greaterThan(String parameterName, short value, short maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void greaterThan(String parameterName, short value, short maxInclusive) {
             if (value < maxInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
             }
         }
 
-        public static void greaterThan(String parameterName, long value, long maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void greaterThan(String parameterName, long value, long maxInclusive) {
             if (value < maxInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
             }
         }
 
-        public static void greaterThan(String parameterName, float value, float maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void greaterThan(String parameterName, float value, float maxInclusive) {
             if (value < maxInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
             }
         }
 
-        public static void greaterThan(String parameterName, Double value, Double maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void greaterThan(String parameterName, Double value, Double maxInclusive) {
             if (value < maxInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
             }
         }
 
-        public static void greaterThan(String parameterName, BigDecimal value, BigDecimal maxInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void greaterThan(String parameterName, BigDecimal value, BigDecimal maxInclusive) {
             if (value.compareTo(maxInclusive) < 0) {
                 throw new ArgumentOutOfRangeException(String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
             }
         }
 
-        public static void lessThan(String parameterName, int value, int minInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void lessThan(String parameterName, int value, int minInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));
             }
         }
 
-        public static void lessThan(String parameterName, short value, short minInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void lessThan(String parameterName, short value, short minInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));
             }
         }
 
-        public static void lessThan(String parameterName, long value, long minInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void lessThan(String parameterName, long value, long minInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));
             }
         }
 
-        public static void lessThan(String parameterName, float value, float minInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void lessThan(String parameterName, float value, float minInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));
             }
         }
 
-        public static void lessThan(String parameterName, Double value, Double minInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void lessThan(String parameterName, Double value, Double minInclusive) {
             if (value < minInclusive) {
                 throw new ArgumentOutOfRangeException(String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));
             }
         }
 
-        public static void lessThan(String parameterName, BigDecimal value, BigDecimal minInclusive)
-                throws ArgumentOutOfRangeException {
+        public static void lessThan(String parameterName, BigDecimal value, BigDecimal minInclusive) {
             if (value.compareTo(minInclusive) < 0) {
                 throw new ArgumentOutOfRangeException(String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));
             }

@@ -9,50 +9,33 @@ import java.util.Collection;
 
 public interface IPrintingCheckService extends IService {
 
-    void printToHtml(Collection<Check> checkCollection, File destinationFile)
-            throws IllegalArgumentException, IOException;
+    void printToHtml(Collection<Check> checkCollection, File destinationFile) throws IOException;
 
-    void printToHtml(Collection<Check> checkCollection, OutputStream outputStream)
-            throws IllegalArgumentException, IOException;
+    void printToHtml(Collection<Check> checkCollection, OutputStream outputStream) throws IOException;
 
-    String printToHtml(Collection<Check> checkCollection)
-            throws IllegalArgumentException, IOException;
+    String printToHtml(Collection<Check> checkCollection) throws IOException;
 
-    void printToPdf(Collection<Check> checkCollection, File destinationFile)
-            throws IllegalArgumentException, IOException;
+    void printToPdf(Collection<Check> checkCollection, File destinationFile) throws IOException;
 
-    void printToPdf(Collection<Check> checkCollection, OutputStream outputStream)
-            throws IllegalArgumentException, IOException;
+    void printToPdf(Collection<Check> checkCollection, OutputStream outputStream) throws IOException;
 
-    byte[] printToPdf(Collection<Check> checkCollection)
-            throws IllegalArgumentException, IOException;
+    byte[] printToPdf(Collection<Check> checkCollection) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile)
-            throws IllegalArgumentException, IOException;
+    void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream stream, File templateFile)
-            throws IllegalArgumentException, IOException;
+    void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream stream, File templateFile) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile,
-                                File templateFile, int templateTopOffset)
-            throws IllegalArgumentException, IOException;
+    void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile, int templateTopOffset) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream,
-                                File templateFile, int templateTopOffset)
-            throws IllegalArgumentException, IOException;
+    void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile, int templateTopOffset) throws IOException;
 
-    byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile)
-            throws IllegalArgumentException, IOException;
+    byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile) throws IOException;
 
-    byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile, int templateOffset)
-            throws IllegalArgumentException, IOException;
+    byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile, int templateOffset) throws IOException;
 
-    void printToText(Collection<Check> checkCollection, File destinationFile)
-            throws IllegalArgumentException, IOException;
+    void printToText(Collection<Check> checkCollection, File destinationFile) throws IOException;
 
-    void printToText(Collection<Check> checkCollection, OutputStream outputStream)
-            throws IllegalArgumentException, IOException;
+    void printToText(Collection<Check> checkCollection, OutputStream outputStream) throws IOException;
 
-    String printToText(Collection<Check> checkCollection)
-            throws IllegalArgumentException, IOException;
+    String printToText(Collection<Check> checkCollection) throws IOException;
 }

@@ -4,6 +4,6 @@ public interface IConstable<T> {
 
     T getConstant();
 
-    void setConstant(T constant) throws IllegalArgumentException;
+    void setConstant(T constant);
 }
 

@@ -3,8 +3,6 @@ package ru.clevertec.checksystem.core.entity.discount.check;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IPercentageable;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
@@ -14,22 +12,22 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
 
     private double percent;
 
-    protected PercentageCheckDiscount() throws IllegalArgumentException {
+    protected PercentageCheckDiscount() {
     }
 
-    public PercentageCheckDiscount(String description, double percent) throws ArgumentNullException, ArgumentOutOfRangeException {
+    public PercentageCheckDiscount(String description, double percent) {
         super(description);
         setPercent(percent);
     }
 
-    public PercentageCheckDiscount(int id, String description, double percent) throws ArgumentNullException, ArgumentOutOfRangeException {
+    public PercentageCheckDiscount(int id, String description, double percent) {
         super(id, description);
         setPercent(percent);
     }
 
     @JsonCreator
     public PercentageCheckDiscount(
-            int id, String description, double percent, CheckDiscount dependentDiscount) throws ArgumentNullException, ArgumentOutOfRangeException {
+            int id, String description, double percent, CheckDiscount dependentDiscount) {
         super(id, description, dependentDiscount);
         setPercent(percent);
     }
@@ -40,7 +38,7 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
     }
 
     @Override
-    public void setPercent(double percent) throws ArgumentOutOfRangeException {
+    public void setPercent(double percent) {
         ThrowUtils.Argument.outOfRange("percent", percent, Constants.Percent.MIN, Constants.Percent.MAX);
         this.percent = percent;
     }

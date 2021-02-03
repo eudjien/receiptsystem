@@ -16,11 +16,11 @@ public final class CheckPrinterFactory {
     private CheckPrinterFactory() {
     }
 
-    public static CheckPrinter create(String format) throws IllegalArgumentException {
+    public static CheckPrinter create(String format) {
         return create(format, null);
     }
 
-    public static CheckPrinter create(String format, Collection<Check> checkCollection) throws IllegalArgumentException {
+    public static CheckPrinter create(String format, Collection<Check> checkCollection) {
 
         ThrowUtils.Argument.nullOrBlank("format", format);
 

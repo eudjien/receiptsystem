@@ -4,24 +4,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.check.IConstantCheckDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 
 import java.math.BigDecimal;
 
 public final class SimpleConstantCheckDiscount extends ConstantCheckDiscount {
 
-    protected SimpleConstantCheckDiscount() {
-        super();
+    public SimpleConstantCheckDiscount() {
     }
 
-    public SimpleConstantCheckDiscount(String description, BigDecimal constant)
-            throws IllegalArgumentException {
+    public SimpleConstantCheckDiscount(String description, BigDecimal constant) {
         super(description, constant);
     }
 
-    public SimpleConstantCheckDiscount(int id, String description, BigDecimal constant)
-            throws IllegalArgumentException {
+    public SimpleConstantCheckDiscount(int id, String description, BigDecimal constant) {
         super(id, description, constant);
     }
 
@@ -30,7 +25,7 @@ public final class SimpleConstantCheckDiscount extends ConstantCheckDiscount {
             @JsonProperty("id") int id,
             @JsonProperty("description") String description,
             @JsonProperty("constant") BigDecimal constant,
-            @JsonProperty("dependentDiscount") CheckDiscount dependentDiscount) throws IllegalArgumentException {
+            @JsonProperty("dependentDiscount") CheckDiscount dependentDiscount) {
         super(id, description, constant, dependentDiscount);
     }
 
@@ -39,14 +34,13 @@ public final class SimpleConstantCheckDiscount extends ConstantCheckDiscount {
         private final SimpleConstantCheckDiscount discount = new SimpleConstantCheckDiscount();
 
         @Override
-        public IConstantCheckDiscountBuilder setId(int id)
-                throws IllegalArgumentException {
+        public IConstantCheckDiscountBuilder setId(int id) {
             discount.setId(id);
             return this;
         }
 
         @Override
-        public IConstantCheckDiscountBuilder setDescription(String description) throws ArgumentNullException {
+        public IConstantCheckDiscountBuilder setDescription(String description) {
             discount.setDescription(description);
             return this;
         }
@@ -58,24 +52,24 @@ public final class SimpleConstantCheckDiscount extends ConstantCheckDiscount {
         }
 
         @Override
-        public IConstantCheckDiscountBuilder setCheck(Check check) throws ArgumentNullException {
+        public IConstantCheckDiscountBuilder setCheck(Check check) {
             discount.setCheck(check);
             return this;
         }
 
         @Override
-        public IConstantCheckDiscountBuilder setConstant(BigDecimal constant) throws ArgumentOutOfRangeException {
+        public IConstantCheckDiscountBuilder setConstant(BigDecimal constant) {
             discount.setConstant(constant);
             return this;
         }
 
         @Override
-        public SimpleConstantCheckDiscount build() throws IllegalArgumentException {
+        public SimpleConstantCheckDiscount build() {
             throwIfInvalid();
             return discount;
         }
 
-        private void throwIfInvalid() throws IllegalArgumentException {
+        private void throwIfInvalid() {
             if (discount.getDescription() == null) {
                 throw new IllegalArgumentException("Description required to build SimpleConstantCheckDiscount");
             }

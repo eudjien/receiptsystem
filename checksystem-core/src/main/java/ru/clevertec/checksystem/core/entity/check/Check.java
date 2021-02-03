@@ -8,7 +8,6 @@ import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.customlib.list.SinglyLinkedList;
@@ -27,14 +26,14 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
     private String cashier;
     private Date date;
 
-    private Check() {
+    public Check() {
     }
 
     public Check(int id) {
         super(id);
     }
 
-    public Check(int id, String name, String description, String address, String phoneNumber, String cashier, Date date) throws ArgumentNullException {
+    public Check(int id, String name, String description, String address, String phoneNumber, String cashier, Date date) {
         super(id);
         this.name = name;
         this.description = description;
@@ -54,8 +53,7 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
             @JsonProperty("cashier") String cashier,
             @JsonProperty("date") Date date,
             @JsonProperty("checkItems") Collection<CheckItem> checkItems,
-            @JsonProperty("discounts") Collection<CheckDiscount> discounts)
-            throws ArgumentNullException {
+            @JsonProperty("discounts") Collection<CheckDiscount> discounts) {
         super(id);
         setName(name);
         setDescription(description);
@@ -120,7 +118,7 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
     }
 
     public void setCheckItems(Collection<CheckItem> checkItems) {
-        ThrowUtils.Argument.theNull("checkItems", checkItems);
+        ThrowUtils.Argument.nullValue("checkItems", checkItems);
         checkItems.forEach(checkItem -> checkItem.setCheck(this));
         this.checkItems.clear();
         putCheckItems(checkItems);
@@ -132,30 +130,30 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
     }
 
     @Override
-    public void setDiscounts(Collection<CheckDiscount> discounts) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discounts", discounts);
+    public void setDiscounts(Collection<CheckDiscount> discounts) {
+        ThrowUtils.Argument.nullValue("discounts", discounts);
         discounts.forEach(discount -> discount.setCheck(this));
         this.discounts.clear();
         this.discounts.addAll(discounts);
     }
 
     @Override
-    public void putDiscounts(Collection<CheckDiscount> discounts) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discounts", discounts);
+    public void putDiscounts(Collection<CheckDiscount> discounts) {
+        ThrowUtils.Argument.nullValue("discounts", discounts);
         discounts.forEach(this::putDiscount);
     }
 
     @Override
-    public void putDiscount(CheckDiscount discount) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discount", discount);
+    public void putDiscount(CheckDiscount discount) {
+        ThrowUtils.Argument.nullValue("discount", discount);
         discount.setCheck(this);
         CollectionUtils.put(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
     }
 
     @Override
-    public void removeDiscounts(Collection<CheckDiscount> discounts) throws ArgumentNullException {
+    public void removeDiscounts(Collection<CheckDiscount> discounts) {
 
-        ThrowUtils.Argument.theNull("discounts", discounts);
+        ThrowUtils.Argument.nullValue("discounts", discounts);
 
         for (var discount : discounts) {
             removeDiscount(discount);
@@ -163,32 +161,32 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
     }
 
     @Override
-    public void removeDiscount(CheckDiscount discount) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discount", discount);
+    public void removeDiscount(CheckDiscount discount) {
+        ThrowUtils.Argument.nullValue("discount", discount);
         var index = Collections.binarySearch(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
         if (index > -1)
             this.discounts.remove(index);
     }
 
-    public void putCheckItem(CheckItem checkItem) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("checkItem", checkItem);
+    public void putCheckItem(CheckItem checkItem) {
+        ThrowUtils.Argument.nullValue("checkItem", checkItem);
         CollectionUtils.put(checkItems, checkItem, Comparator.comparingInt(BaseEntity::getId));
     }
 
-    public void putCheckItems(Collection<CheckItem> checkItems) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("checkItems", checkItems);
+    public void putCheckItems(Collection<CheckItem> checkItems) {
+        ThrowUtils.Argument.nullValue("checkItems", checkItems);
         checkItems.forEach(this::putCheckItem);
     }
 
-    public void deleteCheckItem(CheckItem checkItem) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("checkItem", checkItem);
+    public void deleteCheckItem(CheckItem checkItem) {
+        ThrowUtils.Argument.nullValue("checkItem", checkItem);
         var index = Collections.binarySearch(checkItems, checkItem, Comparator.comparingInt(BaseEntity::getId));
         if (index > -1)
             this.checkItems.remove(index);
     }
 
-    public void deleteCheckItems(Collection<CheckItem> checkItems) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("checkItems", checkItems);
+    public void deleteCheckItems(Collection<CheckItem> checkItems) {
+        ThrowUtils.Argument.nullValue("checkItems", checkItems);
         checkItems.forEach(this::deleteCheckItem);
     }
 

@@ -1,7 +1,6 @@
 package ru.clevertec.checksystem.core.io.print.strategy;
 
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 public abstract class CheckPrintStrategy implements IPrintStrategy<Check> {
@@ -22,7 +21,7 @@ public abstract class CheckPrintStrategy implements IPrintStrategy<Check> {
         return scale;
     }
 
-    public void setScale(int scale) throws ArgumentOutOfRangeException {
+    public void setScale(int scale) {
         ThrowUtils.Argument.lessThan("scale", scale, MIN_SCALE);
         this.scale = scale;
     }

@@ -6,5 +6,5 @@ public interface ICheckItemComposable {
 
     CheckItem getCheckItem();
 
-    void setCheckItem(CheckItem checkItem) throws IllegalArgumentException;
+    void setCheckItem(CheckItem checkItem);
 }

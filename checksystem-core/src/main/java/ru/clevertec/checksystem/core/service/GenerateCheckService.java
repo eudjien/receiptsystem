@@ -3,11 +3,11 @@ package ru.clevertec.checksystem.core.service;
 import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
 import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
 import ru.clevertec.checksystem.core.data.DataSeed;
+import ru.clevertec.checksystem.core.dto.GeneratedCheck;
+import ru.clevertec.checksystem.core.dto.GeneratedCheckItem;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
-import ru.clevertec.checksystem.core.dto.GeneratedCheck;
-import ru.clevertec.checksystem.core.dto.GeneratedCheckItem;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckReaderFactory;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckWriterFactory;
@@ -63,27 +63,23 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
         return checkGenerateArray;
     }
 
-    public void toGenerated(Collection<Check> checkCollection, File destinationFile, String format)
-            throws IllegalArgumentException, IOException {
+    public void toGenerated(Collection<Check> checkCollection, File destinationFile, String format) throws IOException {
         var generatedChecks = toGenerated(checkCollection);
         var generateCheckReader = GeneratedCheckWriterFactory.create(format);
         generateCheckReader.write(generatedChecks, destinationFile);
     }
 
-    public Collection<Check> fromGenerated(File sourceFile, String format)
-            throws IllegalArgumentException, IOException {
+    public Collection<Check> fromGenerated(File sourceFile, String format) throws IOException {
         var generateCheckReader = GeneratedCheckReaderFactory.create(format);
         return fromGenerated(generateCheckReader.read(sourceFile));
     }
 
-    public Collection<Check> fromGenerated(byte[] bytes, String format)
-            throws NoSuchElementException, IllegalArgumentException, IOException {
+    public Collection<Check> fromGenerated(byte[] bytes, String format) throws NoSuchElementException, IllegalArgumentException, IOException {
         var generateCheckReader = GeneratedCheckReaderFactory.create(format);
         return fromGenerated(generateCheckReader.read(bytes));
     }
 
-    public Collection<Check> fromGenerated(Collection<GeneratedCheck> generatedChecks)
-            throws NoSuchElementException, IllegalArgumentException {
+    public Collection<Check> fromGenerated(Collection<GeneratedCheck> generatedChecks) {
 
         var checkList = new SinglyLinkedList<Check>();
 
@@ -112,8 +108,7 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
         return checkList;
     }
 
-    private void addCheckItemsInMemory(ICheckBuilder checkBuilder, Collection<GeneratedCheckItem> generatedCheckItems)
-            throws NoSuchElementException {
+    private void addCheckItemsInMemory(ICheckBuilder checkBuilder, Collection<GeneratedCheckItem> generatedCheckItems) {
 
         var products = DataSeed.products();
 
@@ -139,8 +134,7 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
         }
     }
 
-    private void addCheckItemDiscountsInMemory(CheckItem checkItem, Collection<Integer> checkItemDiscountIds)
-            throws NoSuchElementException, IllegalArgumentException {
+    private void addCheckItemDiscountsInMemory(CheckItem checkItem, Collection<Integer> checkItemDiscountIds) {
 
         var checkItemDiscounts = DataSeed.checkItemDiscounts();
 
@@ -154,8 +148,7 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
         }
     }
 
-    private void addCheckDiscountsInMemory(ICheckBuilder checkBuilder, Collection<Integer> checkDiscountIds)
-            throws NoSuchElementException, IllegalArgumentException {
+    private void addCheckDiscountsInMemory(ICheckBuilder checkBuilder, Collection<Integer> checkDiscountIds) {
 
         var checkDiscounts = DataSeed.checkDiscounts();
 

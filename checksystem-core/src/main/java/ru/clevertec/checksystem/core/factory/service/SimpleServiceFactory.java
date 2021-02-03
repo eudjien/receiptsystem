@@ -11,15 +11,11 @@ public abstract class SimpleServiceFactory {
     private static final Map<Class<?>, Object> services = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    public static <E extends IService> E instance(Class<? extends IService> serviceClass)
-            throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+    public static <E extends IService> E instance(Class<? extends IService> serviceClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         return (E) getOrCreate(serviceClass);
     }
 
-    private static Object getOrCreate(Class<? extends IService> serviceClass)
-            throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException {
+    private static Object getOrCreate(Class<? extends IService> serviceClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         if (services.containsKey(serviceClass)) {
             return services.get(serviceClass);

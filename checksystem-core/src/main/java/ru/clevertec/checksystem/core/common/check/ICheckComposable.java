@@ -6,5 +6,5 @@ public interface ICheckComposable {
 
     Check getCheck();
 
-    void setCheck(Check check) throws IllegalArgumentException;
+    void setCheck(Check check);
 }

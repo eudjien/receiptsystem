@@ -12,7 +12,7 @@ public final class CheckWriterFactory {
     private CheckWriterFactory() {
     }
 
-    public static ICheckWriter create(String format) throws IllegalArgumentException {
+    public static ICheckWriter create(String format) {
 
         ThrowUtils.Argument.nullOrBlank("format", format);
 

@@ -5,14 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.ICheckItemBuilder;
 import ru.clevertec.checksystem.core.common.check.ICheckComposable;
-import ru.clevertec.checksystem.core.common.check.ICheckItemComposable;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.Product;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.customlib.list.SinglyLinkedList;
@@ -32,21 +29,21 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
 
     private int quantity;
 
-    private CheckItem() {
+    public CheckItem() {
     }
 
-    public CheckItem(Product product, int quantity) throws ArgumentNullException {
+    public CheckItem(Product product, int quantity) {
         setProduct(product);
         setQuantity(quantity);
     }
 
-    public CheckItem(int id, Product product, int quantity) throws ArgumentNullException {
+    public CheckItem(int id, Product product, int quantity) {
         super(id);
         setProduct(product);
         setQuantity(quantity);
     }
 
-    public CheckItem(Product product, int quantity, Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
+    public CheckItem(Product product, int quantity, Collection<CheckItemDiscount> discounts) {
         setProduct(product);
         setQuantity(quantity);
         setDiscounts(discounts);
@@ -56,8 +53,7 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
     public CheckItem(@JsonProperty("id") int id,
                      @JsonProperty("product") Product product,
                      @JsonProperty("quantity") int quantity,
-                     @JsonProperty("discounts") Collection<CheckItemDiscount> discounts)
-            throws IllegalArgumentException {
+                     @JsonProperty("discounts") Collection<CheckItemDiscount> discounts) {
         super(id);
         setProduct(product);
         setQuantity(quantity);
@@ -68,8 +64,8 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
         return product;
     }
 
-    public void setProduct(Product product) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("product", product);
+    public void setProduct(Product product) {
+        ThrowUtils.Argument.nullValue("product", product);
         this.product = product;
     }
 
@@ -77,7 +73,7 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
         return quantity;
     }
 
-    public void setQuantity(int quantity) throws ArgumentOutOfRangeException {
+    public void setQuantity(int quantity) {
         ThrowUtils.Argument.lessThan("quantity", quantity, MIN_QUANTITY);
         this.quantity = quantity;
     }
@@ -105,7 +101,7 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
     }
 
     @Override
-    public void setDiscounts(Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
+    public void setDiscounts(Collection<CheckItemDiscount> discounts) {
 
         this.discounts.clear();
 
@@ -116,28 +112,28 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
     }
 
     @Override
-    public void putDiscounts(Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discounts", discounts);
+    public void putDiscounts(Collection<CheckItemDiscount> discounts) {
+        ThrowUtils.Argument.nullValue("discounts", discounts);
         discounts.forEach(this::putDiscount);
     }
 
     @Override
-    public void putDiscount(CheckItemDiscount discount) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discount", discount);
+    public void putDiscount(CheckItemDiscount discount) {
+        ThrowUtils.Argument.nullValue("discount", discount);
         discount.setCheckItem(this);
         CollectionUtils.put(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
     }
 
     @Override
-    public void removeDiscounts(Collection<CheckItemDiscount> discounts) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("discounts", discounts);
+    public void removeDiscounts(Collection<CheckItemDiscount> discounts) {
+        ThrowUtils.Argument.nullValue("discounts", discounts);
         discounts.forEach(this::removeDiscount);
     }
 
     @Override
-    public void removeDiscount(CheckItemDiscount discount) throws ArgumentNullException {
+    public void removeDiscount(CheckItemDiscount discount) {
 
-        ThrowUtils.Argument.theNull("discount", discount);
+        ThrowUtils.Argument.nullValue("discount", discount);
 
         var index = Collections.binarySearch(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
 
@@ -151,7 +147,7 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
     }
 
     @Override
-    public void setCheck(Check check) throws IllegalArgumentException {
+    public void setCheck(Check check) {
         this.check = check;
     }
 
@@ -166,30 +162,30 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
         }
 
         @Override
-        public ICheckItemBuilder setProduct(Product product) throws ArgumentNullException {
+        public ICheckItemBuilder setProduct(Product product) {
             checkItem.setProduct(product);
             return this;
         }
 
         @Override
-        public ICheckItemBuilder setQuantity(int quantity) throws ArgumentOutOfRangeException {
+        public ICheckItemBuilder setQuantity(int quantity) {
             checkItem.setQuantity(quantity);
             return this;
         }
 
         @Override
-        public ICheckItemBuilder setDiscounts(CheckItemDiscount... discounts) throws ArgumentNullException {
+        public ICheckItemBuilder setDiscounts(CheckItemDiscount... discounts) {
             checkItem.setDiscounts(Arrays.asList(discounts));
             return this;
         }
 
         @Override
-        public CheckItem build() throws IllegalArgumentException {
+        public CheckItem build() {
             throwIfInvalid();
             return checkItem;
         }
 
-        private void throwIfInvalid() throws IllegalArgumentException {
+        private void throwIfInvalid() {
             if (checkItem.getProduct() == null) {
                 throw new IllegalArgumentException("Product is required");
             }

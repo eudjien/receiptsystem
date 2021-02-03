@@ -43,23 +43,23 @@ public class MethodLogger implements IMethodLogger {
     }
 
     @Override
-    public void log(String level, String format, Method method) throws ArgumentUnsupportedException {
+    public void log(String level, String format, Method method) {
         log(level, format, method, null);
     }
 
     @Override
-    public void log(String level, String format, Method method, Object[] args) throws ArgumentUnsupportedException {
+    public void log(String level, String format, Method method, Object[] args) {
         log(level, format, method, args, null);
     }
 
     @Override
-    public void log(String level, String format, Method method, Object[] args, Object returnedData) throws ArgumentUnsupportedException {
+    public void log(String level, String format, Method method, Object[] args, Object returnedData) {
 
         if (level.equals(LogLevel.NONE)) {
             return;
         }
 
-        ThrowUtils.Argument.theNull("format", method);
+        ThrowUtils.Argument.nullValue("format", method);
 
         if (returnedData != null && !method.getReturnType().isAssignableFrom(returnedData.getClass())) {
             throw new IllegalArgumentException(String.format(DIFFERENT_TYPES_MESSAGE,
@@ -70,7 +70,7 @@ public class MethodLogger implements IMethodLogger {
         log(level, message);
     }
 
-    private void log(String level, String message) throws ArgumentUnsupportedException {
+    private void log(String level, String message) {
         switch (level) {
             case LogLevel.INFO -> logger.info(message);
             case LogLevel.DEBUG -> logger.debug(message);

@@ -8,11 +8,10 @@ public final class AnnotationUtils {
     private static final String REQUIRED_ANNOTATION_DOES_NOT_EXIST_MESSAGE
             = "Required annotation is not present in 'targetMethod' and its declaring class";
 
-    public static <E extends Annotation> E getPriorityAnnotation(Class<E> annotationClass, Method targetMethod)
-            throws IllegalArgumentException {
+    public static <E extends Annotation> E getPriorityAnnotation(Class<E> annotationClass, Method targetMethod) {
 
-        ThrowUtils.Argument.theNull("annotationClass", annotationClass);
-        ThrowUtils.Argument.theNull("targetMethod", targetMethod);
+        ThrowUtils.Argument.nullValue("annotationClass", annotationClass);
+        ThrowUtils.Argument.nullValue("targetMethod", targetMethod);
 
         var targetClass = targetMethod.getDeclaringClass();
 

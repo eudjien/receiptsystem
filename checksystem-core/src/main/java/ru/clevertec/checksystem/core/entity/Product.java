@@ -3,8 +3,6 @@ package ru.clevertec.checksystem.core.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IProductBuilder;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
@@ -14,7 +12,7 @@ public class Product extends BaseEntity {
     private String name;
     private BigDecimal price;
 
-    private Product() {
+    public Product() {
     }
 
     public Product(String name, BigDecimal price) {
@@ -36,7 +34,7 @@ public class Product extends BaseEntity {
         return name;
     }
 
-    public void setName(String name) throws IllegalArgumentException {
+    public void setName(String name) {
         ThrowUtils.Argument.nullOrBlank("name", name);
         this.name = name;
     }
@@ -45,10 +43,10 @@ public class Product extends BaseEntity {
         return price;
     }
 
-    public void setPrice(BigDecimal price) throws ArgumentNullException, ArgumentOutOfRangeException {
+    public void setPrice(BigDecimal price) {
 
         var parameterName = "price";
-        ThrowUtils.Argument.theNull(parameterName, price);
+        ThrowUtils.Argument.nullValue(parameterName, price);
         ThrowUtils.Argument.lessThan(parameterName, price, BigDecimal.ZERO);
 
         this.price = price;
@@ -65,24 +63,24 @@ public class Product extends BaseEntity {
         }
 
         @Override
-        public IProductBuilder setName(String name) throws IllegalArgumentException {
+        public IProductBuilder setName(String name) {
             product.setName(name);
             return this;
         }
 
         @Override
-        public IProductBuilder setPrice(BigDecimal price) throws ArgumentNullException, ArgumentOutOfRangeException {
+        public IProductBuilder setPrice(BigDecimal price) {
             product.setPrice(price);
             return this;
         }
 
         @Override
-        public Product build() throws IllegalArgumentException {
+        public Product build() {
             throwIfNotValid();
             return product;
         }
 
-        private void throwIfNotValid() throws IllegalArgumentException {
+        private void throwIfNotValid() {
             if (product.getName() == null) {
                 throw new IllegalArgumentException("Name required to build Product");
             }

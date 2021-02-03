@@ -1,6 +1,5 @@
 package ru.clevertec.checksystem.core.template.pdf;
 
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 public abstract class PdfTemplate implements IPdfTemplate {
@@ -19,7 +18,7 @@ public abstract class PdfTemplate implements IPdfTemplate {
     }
 
     @Override
-    public void setTopOffset(int topOffset) throws ArgumentOutOfRangeException {
+    public void setTopOffset(int topOffset) {
         ThrowUtils.Argument.lessThan("topOffset", topOffset, MIN_TOP_OFFSET);
         this.topOffset = topOffset;
     }

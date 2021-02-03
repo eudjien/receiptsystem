@@ -9,16 +9,14 @@ import java.math.BigDecimal;
 
 public final class SimpleConstantCheckItemDiscount extends ConstantCheckItemDiscount {
 
-    private SimpleConstantCheckItemDiscount() {
+    public SimpleConstantCheckItemDiscount() {
     }
 
-    public SimpleConstantCheckItemDiscount(String description, BigDecimal constant)
-            throws IllegalArgumentException {
+    public SimpleConstantCheckItemDiscount(String description, BigDecimal constant) {
         super(description, constant);
     }
 
-    public SimpleConstantCheckItemDiscount(int id, String description, BigDecimal constant)
-            throws IllegalArgumentException {
+    public SimpleConstantCheckItemDiscount(int id, String description, BigDecimal constant) {
         super(id, description, constant);
     }
 
@@ -27,8 +25,7 @@ public final class SimpleConstantCheckItemDiscount extends ConstantCheckItemDisc
             @JsonProperty("id") int id,
             @JsonProperty("description") String description,
             @JsonProperty("constant") BigDecimal constant,
-            @JsonProperty("dependentDiscount") CheckItemDiscount dependentDiscount)
-            throws IllegalArgumentException {
+            @JsonProperty("dependentDiscount") CheckItemDiscount dependentDiscount) {
         super(id, description, constant, dependentDiscount);
     }
 
@@ -37,22 +34,19 @@ public final class SimpleConstantCheckItemDiscount extends ConstantCheckItemDisc
         private final SimpleConstantCheckItemDiscount discount = new SimpleConstantCheckItemDiscount();
 
         @Override
-        public IConstantCheckItemDiscountBuilder setId(int id)
-                throws IllegalArgumentException {
+        public IConstantCheckItemDiscountBuilder setId(int id) {
             discount.setId(id);
             return this;
         }
 
         @Override
-        public IConstantCheckItemDiscountBuilder setDescription(String description)
-                throws IllegalArgumentException {
+        public IConstantCheckItemDiscountBuilder setDescription(String description) {
             discount.setDescription(description);
             return this;
         }
 
         @Override
-        public IConstantCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount)
-                throws IllegalArgumentException {
+        public IConstantCheckItemDiscountBuilder setDependentDiscount(CheckItemDiscount checkItemDiscount) {
             this.discount.setDependentDiscount(checkItemDiscount);
             return this;
         }
@@ -70,12 +64,12 @@ public final class SimpleConstantCheckItemDiscount extends ConstantCheckItemDisc
         }
 
         @Override
-        public SimpleConstantCheckItemDiscount build() throws IllegalArgumentException {
+        public SimpleConstantCheckItemDiscount build() {
             throwIfInvalid();
             return discount;
         }
 
-        private void throwIfInvalid() throws IllegalArgumentException {
+        private void throwIfInvalid() {
             if (discount.getDescription() == null) {
                 throw new IllegalArgumentException("Description required to build SimpleConstantCheckItemDiscount");
             }

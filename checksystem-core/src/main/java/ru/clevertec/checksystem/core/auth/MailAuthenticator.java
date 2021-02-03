@@ -1,7 +1,6 @@
 package ru.clevertec.checksystem.core.auth;
 
 import ru.clevertec.checksystem.core.Constants;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.mail.Authenticator;
@@ -12,8 +11,8 @@ public class MailAuthenticator extends Authenticator {
 
     private final Properties properties;
 
-    public MailAuthenticator(Properties properties) throws ArgumentNullException {
-        ThrowUtils.Argument.theNull("properties", properties);
+    public MailAuthenticator(Properties properties) {
+        ThrowUtils.Argument.nullValue("properties", properties);
         this.properties = properties;
     }
 

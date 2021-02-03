@@ -1,7 +1,6 @@
 package ru.clevertec.checksystem.core.io.print.strategy;
 
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.RoundingMode;
@@ -35,7 +34,7 @@ public class TextCheckPrintStrategy extends CheckPrintStrategy {
         return spacesNumber;
     }
 
-    public void setSpacesNumber(int spacesNumber) throws ArgumentOutOfRangeException {
+    public void setSpacesNumber(int spacesNumber) {
         ThrowUtils.Argument.lessThan("spacesNumber", spacesNumber, MIN_SPACE_COUNT);
         this.spacesNumber = spacesNumber;
     }

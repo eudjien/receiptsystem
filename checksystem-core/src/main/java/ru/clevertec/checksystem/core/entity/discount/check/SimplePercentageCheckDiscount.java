@@ -4,21 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.check.IPercentageCheckDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 
 public final class SimplePercentageCheckDiscount extends PercentageCheckDiscount {
 
-    private SimplePercentageCheckDiscount() throws IllegalArgumentException {
+    public SimplePercentageCheckDiscount() {
     }
 
-    public SimplePercentageCheckDiscount(String description, double percent)
-            throws IllegalArgumentException {
+    public SimplePercentageCheckDiscount(String description, double percent) {
         super(description, percent);
     }
 
-    public SimplePercentageCheckDiscount(int id, String description, double percent)
-            throws IllegalArgumentException {
+    public SimplePercentageCheckDiscount(int id, String description, double percent) {
         super(id, description, percent);
     }
 
@@ -27,8 +23,7 @@ public final class SimplePercentageCheckDiscount extends PercentageCheckDiscount
             @JsonProperty("id") int id,
             @JsonProperty("description") String description,
             @JsonProperty("percent") double percent,
-            @JsonProperty("dependentDiscount") CheckDiscount dependentDiscount)
-            throws IllegalArgumentException {
+            @JsonProperty("dependentDiscount") CheckDiscount dependentDiscount) {
         super(id, description, percent, dependentDiscount);
     }
 
@@ -37,14 +32,13 @@ public final class SimplePercentageCheckDiscount extends PercentageCheckDiscount
         private final SimplePercentageCheckDiscount discount = new SimplePercentageCheckDiscount();
 
         @Override
-        public IPercentageCheckDiscountBuilder setId(int id)
-                throws IllegalArgumentException {
+        public IPercentageCheckDiscountBuilder setId(int id) {
             discount.setId(id);
             return this;
         }
 
         @Override
-        public IPercentageCheckDiscountBuilder setDescription(String description) throws ArgumentNullException {
+        public IPercentageCheckDiscountBuilder setDescription(String description) {
             discount.setDescription(description);
             return this;
         }
@@ -56,24 +50,24 @@ public final class SimplePercentageCheckDiscount extends PercentageCheckDiscount
         }
 
         @Override
-        public IPercentageCheckDiscountBuilder setCheck(Check check) throws ArgumentNullException {
+        public IPercentageCheckDiscountBuilder setCheck(Check check) {
             discount.setCheck(check);
             return this;
         }
 
         @Override
-        public IPercentageCheckDiscountBuilder setPercent(double percent) throws ArgumentOutOfRangeException {
+        public IPercentageCheckDiscountBuilder setPercent(double percent) {
             discount.setPercent(percent);
             return this;
         }
 
         @Override
-        public SimplePercentageCheckDiscount build() throws IllegalArgumentException {
+        public SimplePercentageCheckDiscount build() {
             throwIfInvalid();
             return discount;
         }
 
-        private void throwIfInvalid() throws IllegalArgumentException {
+        private void throwIfInvalid() {
             if (discount.getDescription() == null) {
                 throw new IllegalArgumentException("Description is required");
             }

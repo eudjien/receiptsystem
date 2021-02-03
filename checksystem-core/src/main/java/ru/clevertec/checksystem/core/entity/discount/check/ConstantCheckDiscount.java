@@ -2,8 +2,6 @@ package ru.clevertec.checksystem.core.entity.discount.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import ru.clevertec.checksystem.core.common.IConstable;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
-import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.BigDecimal;
@@ -15,19 +13,19 @@ public abstract class ConstantCheckDiscount extends CheckDiscount implements ICo
     protected ConstantCheckDiscount() {
     }
 
-    public ConstantCheckDiscount(String description, BigDecimal constant) throws ArgumentNullException, ArgumentOutOfRangeException {
+    public ConstantCheckDiscount(String description, BigDecimal constant) {
         super(description);
         setConstant(constant);
     }
 
-    public ConstantCheckDiscount(int id, String description, BigDecimal constant) throws ArgumentOutOfRangeException {
+    public ConstantCheckDiscount(int id, String description, BigDecimal constant) {
         super(id, description);
         setConstant(constant);
     }
 
     @JsonCreator
     public ConstantCheckDiscount(
-            int id, String description, BigDecimal constant, CheckDiscount dependentDiscount) throws ArgumentNullException, ArgumentOutOfRangeException {
+            int id, String description, BigDecimal constant, CheckDiscount dependentDiscount) {
         super(id, description, dependentDiscount);
         setConstant(constant);
     }
@@ -36,7 +34,7 @@ public abstract class ConstantCheckDiscount extends CheckDiscount implements ICo
         return constant;
     }
 
-    public void setConstant(BigDecimal constant) throws ArgumentOutOfRangeException {
+    public void setConstant(BigDecimal constant) {
         ThrowUtils.Argument.lessThan("constant", constant, BigDecimal.ZERO);
         this.constant = constant;
     }
