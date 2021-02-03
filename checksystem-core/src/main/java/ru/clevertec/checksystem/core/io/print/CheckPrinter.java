@@ -3,7 +3,7 @@ package ru.clevertec.checksystem.core.io.print;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.io.print.strategy.CheckPrintStrategy;
 import ru.clevertec.checksystem.core.util.FileUtils;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.Collection;
 
 public class CheckPrinter extends Printer<Check> {
 
-    private final Collection<Check> checkCollection = new NormalinoList<>();
+    private final Collection<Check> checkCollection = new SinglyLinkedList<>();
 
     public CheckPrinter() {
     }
@@ -44,7 +44,7 @@ public class CheckPrinter extends Printer<Check> {
     @Override
     public Collection<PrintResult> print() throws IOException {
 
-        var printedCheckList = new NormalinoList<PrintResult>();
+        var printedCheckList = new SinglyLinkedList<PrintResult>();
 
         for (var check : getChecks()) {
             printedCheckList.add(new PrintResult(check.getId(), getStrategy().getData(check)));

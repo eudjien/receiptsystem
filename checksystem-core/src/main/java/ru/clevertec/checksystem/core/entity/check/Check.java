@@ -11,15 +11,15 @@ import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
 import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, ICheckItemAggregable {
 
-    private final List<CheckItem> checkItems = new NormalinoList<>();
-    private final List<CheckDiscount> discounts = new NormalinoList<>();
+    private final List<CheckItem> checkItems = new SinglyLinkedList<>();
+    private final List<CheckDiscount> discounts = new SinglyLinkedList<>();
     private String name;
     private String description;
     private String address;

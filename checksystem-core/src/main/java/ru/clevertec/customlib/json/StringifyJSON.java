@@ -1,4 +1,4 @@
-package ru.clevertec.normalino.json;
+package ru.clevertec.customlib.json;
 
 import java.lang.constant.Constable;
 import java.lang.reflect.InvocationTargetException;
@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public abstract class NormalinoJSON {
+public abstract class StringifyJSON {
 
     public static String stringify(Object obj) {
         return stringify(obj, false);
@@ -179,7 +179,7 @@ public abstract class NormalinoJSON {
             for (var method : c.getDeclaredMethods()) {
                 if (isGetter(method)) {
 
-                    var ignoreAnnotation = method.getAnnotation(NormalinoIgnore.class);
+                    var ignoreAnnotation = method.getAnnotation(StringifyIgnore.class);
                     if (ignoreAnnotation != null && ignoreAnnotation.value()) {
                         continue;
                     }

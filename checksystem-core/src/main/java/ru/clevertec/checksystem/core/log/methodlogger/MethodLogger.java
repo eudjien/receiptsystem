@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.normalino.json.NormalinoJSON;
+import ru.clevertec.customlib.json.StringifyJSON;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -109,7 +109,7 @@ public class MethodLogger implements IMethodLogger {
     private static String createResult(Method method, Object result) {
         return method.getReturnType().isAssignableFrom(Void.TYPE)
                 ? "VOID"
-                : NormalinoJSON.stringify(result, false);
+                : StringifyJSON.stringify(result, false);
     }
 
     private static String createArgsName(Parameter[] parameters) {
@@ -120,6 +120,6 @@ public class MethodLogger implements IMethodLogger {
     }
 
     private static String createArgsData(Object[] args) {
-        return NormalinoJSON.stringify(args, false);
+        return StringifyJSON.stringify(args, false);
     }
 }

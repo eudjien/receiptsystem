@@ -1,4 +1,4 @@
-package ru.clevertec.normalino.list;
+package ru.clevertec.customlib.list;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.IntFunction;
 
-public class NormalinoList<T> implements List<T> {
+public class SinglyLinkedList<T> implements List<T> {
 
     private final static int TAIL_I = 0;
     private final static int HEAD_I = 1;
@@ -16,10 +16,10 @@ public class NormalinoList<T> implements List<T> {
     public Node head;
     private int size;
 
-    public NormalinoList() {
+    public SinglyLinkedList() {
     }
 
-    public NormalinoList(Collection<? extends T> collection) {
+    public SinglyLinkedList(Collection<? extends T> collection) {
         addAll(collection);
     }
 
@@ -297,7 +297,7 @@ public class NormalinoList<T> implements List<T> {
         var nodesCount = toIndex - fromIndex;
         var fromNode = moveToIndex(fromIndex);
 
-        var list = new NormalinoList<T>();
+        var list = new SinglyLinkedList<T>();
 
         var currentNode = fromNode;
 
@@ -541,17 +541,17 @@ public class NormalinoList<T> implements List<T> {
         @Override
         public void remove() {
             index--;
-            NormalinoList.this.remove(index);
+            SinglyLinkedList.this.remove(index);
         }
 
         @Override
         public void set(T element) {
-            NormalinoList.this.set(index, element);
+            SinglyLinkedList.this.set(index, element);
         }
 
         @Override
         public void add(T element) {
-            NormalinoList.this.add(index, element);
+            SinglyLinkedList.this.add(index, element);
         }
 
         @Override

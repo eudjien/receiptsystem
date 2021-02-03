@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.core.event;
 
 import ru.clevertec.checksystem.core.common.event.IEventEmitter;
 import ru.clevertec.checksystem.core.common.event.IEventListener;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +51,7 @@ public abstract class EventEmitter<T> implements IEventEmitter<T> {
         if (listeners.containsKey(eventType)) {
             observerList = listeners.get(eventType);
         } else {
-            observerList = new NormalinoList<>();
+            observerList = new SinglyLinkedList<>();
             listeners.put(eventType, observerList);
         }
 

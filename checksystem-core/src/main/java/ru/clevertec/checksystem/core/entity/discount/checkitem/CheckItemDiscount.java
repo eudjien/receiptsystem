@@ -7,7 +7,7 @@ import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.normalino.json.NormalinoIgnore;
+import ru.clevertec.customlib.json.StringifyIgnore;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class CheckItemDiscount extends Discount<CheckItemDiscount> implements ICheckItemComposable {
@@ -31,7 +31,7 @@ public abstract class CheckItemDiscount extends Discount<CheckItemDiscount> impl
         super(id, description, dependentDiscount);
     }
 
-    @NormalinoIgnore
+    @StringifyIgnore
     public CheckItem getCheckItem() {
         return checkItem;
     }

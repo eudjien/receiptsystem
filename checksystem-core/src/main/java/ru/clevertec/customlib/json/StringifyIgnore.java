@@ -1,4 +1,4 @@
-package ru.clevertec.normalino.json;
+package ru.clevertec.customlib.json;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NormalinoIgnore {
+public @interface StringifyIgnore {
     boolean value() default true;
 }

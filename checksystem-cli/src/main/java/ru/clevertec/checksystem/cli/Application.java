@@ -12,7 +12,7 @@ import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.service.GenerateCheckService;
 import ru.clevertec.checksystem.core.service.IoCheckService;
 import ru.clevertec.checksystem.core.service.PrintingCheckService;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public final class Application {
 
         ProxyIdentifier.setProxied(finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
 
-        var checks = new NormalinoList<Check>();
+        var checks = new SinglyLinkedList<Check>();
 
         var mode = finder.findFirstStringOrThrow(Constants.Keys.MODE);
 
@@ -132,7 +132,7 @@ public final class Application {
         var value = finder.findFirstStringOrDefault(Constants.Keys.INPUT_FILTER_ID);
 
         if (value != null) {
-            var idList = new NormalinoList<Integer>();
+            var idList = new SinglyLinkedList<Integer>();
             var values = value.split(",");
             for (String s : values) {
                 try {
@@ -143,7 +143,7 @@ public final class Application {
             }
             return checkCollection.stream()
                     .filter(check -> idList.contains(check.getId()))
-                    .collect(Collectors.toCollection(NormalinoList<Check>::new));
+                    .collect(Collectors.toCollection(SinglyLinkedList<Check>::new));
         }
 
         return checkCollection;

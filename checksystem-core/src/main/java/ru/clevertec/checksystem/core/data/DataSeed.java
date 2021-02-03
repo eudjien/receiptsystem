@@ -10,7 +10,7 @@ import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount
 import ru.clevertec.checksystem.core.entity.discount.checkitem.SimpleConstantCheckItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.SimplePercentageCheckItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.ThresholdPercentageCheckItemDiscount;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -28,7 +28,7 @@ public abstract class DataSeed {
 
     public static Collection<Product> products() {
         if (products == null) {
-            products = new NormalinoList<>();
+            products = new SinglyLinkedList<>();
 
             products.add(new Product.Builder()
                     .setId(1)
@@ -160,7 +160,7 @@ public abstract class DataSeed {
         var checkItemDiscounts = checkItemDiscounts().toArray(CheckItemDiscount[]::new);
 
         if (checks == null) {
-            checks = new NormalinoList<>();
+            checks = new SinglyLinkedList<>();
 
             var products = products().toArray(Product[]::new);
 
@@ -175,7 +175,7 @@ public abstract class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            var checkItems = new NormalinoList<CheckItem>();
+            var checkItems = new SinglyLinkedList<CheckItem>();
 
             checkItems.add(new CheckItem.Builder()
                     .setId(221)
@@ -230,7 +230,7 @@ public abstract class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            checkItems = new NormalinoList<>();
+            checkItems = new SinglyLinkedList<>();
 
             checkItems.add(new CheckItem.Builder()
                     .setId(500)
@@ -298,7 +298,7 @@ public abstract class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            checkItems = new NormalinoList<>();
+            checkItems = new SinglyLinkedList<>();
 
             checkItems.add(new CheckItem.Builder()
                     .setId(125)
@@ -352,7 +352,7 @@ public abstract class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            checkItems = new NormalinoList<>();
+            checkItems = new SinglyLinkedList<>();
 
             checkItems.add(new CheckItem.Builder()
                     .setId(600)
@@ -422,7 +422,7 @@ public abstract class DataSeed {
     public static Collection<CheckDiscount> checkDiscounts() {
 
         if (checkDiscounts == null) {
-            checkDiscounts = new NormalinoList<>();
+            checkDiscounts = new SinglyLinkedList<>();
 
             checkDiscounts.add(new SimplePercentageCheckDiscount.Builder()
                     .setId(1)
@@ -497,7 +497,7 @@ public abstract class DataSeed {
     public static Collection<CheckItemDiscount> checkItemDiscounts() {
 
         if (checkItemDiscounts == null) {
-            checkItemDiscounts = new NormalinoList<>();
+            checkItemDiscounts = new SinglyLinkedList<>();
 
             checkItemDiscounts.add(new SimpleConstantCheckItemDiscount.Builder()
                     .setId(1)

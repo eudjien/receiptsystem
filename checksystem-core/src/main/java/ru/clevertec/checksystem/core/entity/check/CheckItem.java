@@ -12,7 +12,7 @@ import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -21,7 +21,7 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
 
     private final static int MIN_QUANTITY = 1;
 
-    private final List<CheckItemDiscount> discounts = new NormalinoList<>();
+    private final List<CheckItemDiscount> discounts = new SinglyLinkedList<>();
     private Product product;
     private int quantity;
 

@@ -11,7 +11,7 @@ import ru.clevertec.checksystem.core.dto.GeneratedCheckItem;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckReaderFactory;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckWriterFactory;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.customlib.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
     public Collection<Check> fromGenerated(Collection<GeneratedCheck> generatedChecks)
             throws NoSuchElementException, IllegalArgumentException {
 
-        var checkList = new NormalinoList<Check>();
+        var checkList = new SinglyLinkedList<Check>();
 
         for (var generatedCheck : generatedChecks) {
 
