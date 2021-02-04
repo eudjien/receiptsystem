@@ -1,6 +1,7 @@
 package ru.clevertec.checksystem.core.service;
 
 import ru.clevertec.checksystem.core.Constants;
+import ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog;
 import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.annotation.subscribe.Subscribe;
 import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
@@ -22,6 +23,7 @@ import java.util.Collection;
 
 //@MailingSubscribe(eventType = EventTypes.PrintEnd)
 @Subscribe(eventType = EventTypes.PrintEnd, listenerClass = MailSenderService.class)
+@AfterExecutionLog
 public class PrintingCheckService extends EventEmitter<Object> implements IPrintingCheckService {
 
     @Override

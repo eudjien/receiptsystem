@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.common.builder.discount.check.item;
+package ru.clevertec.checksystem.core.common.builder.discount.checkitem;
 
 public interface IPercentageCheckItemDiscountBuilder<T extends IPercentageCheckItemDiscountBuilder<T>>
         extends ICheckItemDiscountBuilder<T> {

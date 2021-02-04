@@ -168,6 +168,11 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
             this.discounts.remove(index);
     }
 
+    @Override
+    public void clearDiscounts() {
+        discounts.clear();
+    }
+
     public void putCheckItem(CheckItem checkItem) {
         ThrowUtils.Argument.nullValue("checkItem", checkItem);
         CollectionUtils.put(checkItems, checkItem, Comparator.comparingInt(BaseEntity::getId));
@@ -183,6 +188,11 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
         var index = Collections.binarySearch(checkItems, checkItem, Comparator.comparingInt(BaseEntity::getId));
         if (index > -1)
             this.checkItems.remove(index);
+    }
+
+    @Override
+    public void clearCheckItems() {
+        checkItems.clear();
     }
 
     public void deleteCheckItems(Collection<CheckItem> checkItems) {

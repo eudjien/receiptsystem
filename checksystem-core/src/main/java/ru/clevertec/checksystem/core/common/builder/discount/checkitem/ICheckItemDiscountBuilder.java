@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.common.builder.discount.check.item;
+package ru.clevertec.checksystem.core.common.builder.discount.checkitem;
 
 import ru.clevertec.checksystem.core.common.builder.discount.IDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;

@@ -142,6 +142,11 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
     }
 
     @Override
+    public void clearDiscounts() {
+        discounts.clear();
+    }
+
+    @Override
     public Check getCheck() {
         return check;
     }

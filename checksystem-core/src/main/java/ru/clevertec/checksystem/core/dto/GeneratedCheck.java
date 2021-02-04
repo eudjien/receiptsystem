@@ -21,8 +21,7 @@ public class GeneratedCheck {
     public GeneratedCheck() {
     }
 
-    public GeneratedCheck(int id, String name, String description, String address, String cashier,
-                          String phoneNumber, Date date) {
+    public GeneratedCheck(int id, String name, String description, String address, String cashier, String phoneNumber, Date date) {
         this.id = id;
         this.name = name;
         this.description = description;

@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.core.entity.discount.checkitem;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.common.builder.discount.check.item.IConstantCheckItemDiscountBuilder;
+import ru.clevertec.checksystem.core.common.builder.discount.checkitem.IConstantCheckItemDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
 
 import java.math.BigDecimal;

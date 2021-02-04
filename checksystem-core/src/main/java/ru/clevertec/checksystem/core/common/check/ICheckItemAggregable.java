@@ -17,4 +17,6 @@ public interface ICheckItemAggregable {
     void deleteCheckItems(Collection<CheckItem> checkItems);
 
     void deleteCheckItem(CheckItem checkItem);
+
+    void clearCheckItems();
 }

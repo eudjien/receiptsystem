@@ -17,4 +17,6 @@ public interface IDiscountAggregable<T extends Discount<T>> {
     void removeDiscounts(Collection<T> discounts);
 
     void removeDiscount(T discount);
+
+    void clearDiscounts();
 }
