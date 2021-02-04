@@ -11,7 +11,7 @@ import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckReaderFactory;
 import ru.clevertec.checksystem.core.factory.io.GeneratedCheckWriterFactory;
-import ru.clevertec.customlib.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;

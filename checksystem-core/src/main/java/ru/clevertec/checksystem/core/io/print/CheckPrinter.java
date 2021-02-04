@@ -3,7 +3,7 @@ package ru.clevertec.checksystem.core.io.print;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.io.print.strategy.CheckPrintStrategy;
 import ru.clevertec.checksystem.core.util.FileUtils;
-import ru.clevertec.customlib.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;

@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.core.event;
 
 import ru.clevertec.checksystem.core.common.event.IEventEmitter;
 import ru.clevertec.checksystem.core.common.event.IEventListener;
-import ru.clevertec.customlib.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.util.HashMap;
 import java.util.List;

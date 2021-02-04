@@ -12,7 +12,7 @@ import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.customlib.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.math.BigDecimal;
 import java.util.*;

@@ -1,4 +1,4 @@
-package ru.clevertec.customlib.json;
+package ru.clevertec.custom.json;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

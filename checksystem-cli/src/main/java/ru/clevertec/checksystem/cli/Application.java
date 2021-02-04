@@ -12,7 +12,7 @@ import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.service.GenerateCheckService;
 import ru.clevertec.checksystem.core.service.IoCheckService;
 import ru.clevertec.checksystem.core.service.PrintingCheckService;
-import ru.clevertec.customlib.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;

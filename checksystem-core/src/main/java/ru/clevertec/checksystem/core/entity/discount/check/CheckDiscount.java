@@ -6,7 +6,7 @@ import ru.clevertec.checksystem.core.common.check.ICheckComposable;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.customlib.json.StringifyIgnore;
+import ru.clevertec.custom.json.StringifyIgnore;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class CheckDiscount extends Discount<CheckDiscount> implements ICheckComposable {

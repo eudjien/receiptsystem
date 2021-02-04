@@ -10,7 +10,7 @@ import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount
 import ru.clevertec.checksystem.core.entity.discount.checkitem.SimpleConstantCheckItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.SimplePercentageCheckItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.ThresholdPercentageCheckItemDiscount;
-import ru.clevertec.customlib.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SinglyLinkedList;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;

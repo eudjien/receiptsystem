@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.customlib.json.StringifyJSON;
+import ru.clevertec.custom.json.StringifyJSON;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
