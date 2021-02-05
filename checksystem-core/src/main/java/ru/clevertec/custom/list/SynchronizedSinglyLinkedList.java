@@ -4,252 +4,276 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntFunction;
 
 public class SynchronizedSinglyLinkedList<T> implements List<T> {
 
-    private final ReentrantLock mutex = new ReentrantLock();
+    private final ReadWriteLock readWriteLock;
     private final SinglyLinkedList<T> singlyLinkedList = new SinglyLinkedList<>();
 
     public SynchronizedSinglyLinkedList() {
+        readWriteLock = new ReentrantReadWriteLock();
     }
 
+    public SynchronizedSinglyLinkedList(ReadWriteLock readWriteLock) {
+        throwIfNull(readWriteLock, "readWriteLock");
+        this.readWriteLock = readWriteLock;
+    }
+
+
     public SynchronizedSinglyLinkedList(Collection<? extends T> collection) {
+        readWriteLock = new ReentrantReadWriteLock();
+        addAll(collection);
+    }
+
+    public SynchronizedSinglyLinkedList(Collection<? extends T> collection, ReadWriteLock readWriteLock) {
+        throwIfNull(readWriteLock, "rwLock");
+        this.readWriteLock = readWriteLock;
         addAll(collection);
     }
 
     @Override
     public boolean add(T value) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.add(value);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public void add(int index, T value) {
-        mutex.lock();
-        singlyLinkedList.add(index, value);
-        mutex.unlock();
+        readWriteLock.writeLock().lock();
+        try {
+            singlyLinkedList.add(index, value);
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
     }
 
     @Override
     public boolean addAll(Collection<? extends T> collection) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.addAll(collection);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> collection) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.addAll(index, collection);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public T remove(int index) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.remove(index);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean remove(Object o) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.remove(o);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.removeAll(collection);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public T set(int index, T value) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.set(index, value);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean contains(Object o) {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.contains(o);
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.containsAll(collection);
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public T get(int index) {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.get(index);
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.retainAll(collection);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public void clear() {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         singlyLinkedList.clear();
-        mutex.unlock();
+        readWriteLock.writeLock().unlock();
     }
 
     @Override
     public int size() {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.size();
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public boolean isEmpty() {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.isEmpty();
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public int indexOf(Object o) {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.indexOf(o);
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        mutex.lock();
+        readWriteLock.readLock().lock();
         try {
             return singlyLinkedList.lastIndexOf(o);
         } finally {
-            mutex.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.subList(fromIndex, toIndex);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public Object[] toArray() {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.toArray();
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public <T1> T1[] toArray(T1[] array) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.toArray(array);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public <T1> T1[] toArray(IntFunction<T1[]> generator) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.toArray(generator);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public Iterator<T> iterator() {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.iterator();
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.listIterator();
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
         }
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        mutex.lock();
+        readWriteLock.writeLock().lock();
         try {
             return singlyLinkedList.listIterator(index);
         } finally {
-            mutex.unlock();
+            readWriteLock.writeLock().unlock();
+        }
+    }
+
+    private void throwIfNull(Object o, String parameterName) {
+        if (o == null) {
+            throw new NullPointerException(parameterName);
         }
     }
 }
