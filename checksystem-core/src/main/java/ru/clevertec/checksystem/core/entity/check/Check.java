@@ -2,50 +2,84 @@ package ru.clevertec.checksystem.core.entity.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
 import ru.clevertec.checksystem.core.common.check.ICheckItemAggregable;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
-import ru.clevertec.checksystem.core.entity.discount.Discount;
 import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
-import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.custom.list.SinglyLinkedList;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
+@Table(
+        name = Constants.Entities.Mapping.Table.CHECKS,
+        indexes = @Index(columnList = Constants.Entities.Mapping.Column.NAME, unique = true)
+)
 public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, ICheckItemAggregable {
 
-    private final List<CheckItem> checkItems = new SinglyLinkedList<>();
-    private final List<CheckDiscount> discounts = new SinglyLinkedList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "check", fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<CheckItem> checkItems = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = Constants.Entities.Mapping.Table.CHECK__CHECK_DISCOUNT,
+            joinColumns = @JoinColumn(
+                    name = Constants.Entities.Mapping.JoinColumn.CHECK_ID,
+                    referencedColumnName = Constants.Entities.Mapping.Column.ID),
+            inverseJoinColumns = @JoinColumn(
+                    name = Constants.Entities.Mapping.JoinColumn.CHECK_DISCOUNT_ID,
+                    referencedColumnName = Constants.Entities.Mapping.Column.ID)
+    )
+    private final Set<CheckDiscount> discounts = new HashSet<>();
+
+    @Column(name = Constants.Entities.Mapping.Column.NAME, nullable = false)
     private String name;
+
+    @Column(name = Constants.Entities.Mapping.Column.DESCRIPTION, nullable = false)
     private String description;
+
+    @Column(name = Constants.Entities.Mapping.Column.ADDRESS, nullable = false)
     private String address;
+
+    @Column(name = Constants.Entities.Mapping.Column.PHONE_NUMBER)
     private String phoneNumber;
+
+    @Column(name = Constants.Entities.Mapping.Column.CASHIER, nullable = false)
     private String cashier;
+
+    @Column(name = Constants.Entities.Mapping.Column.DATE, nullable = false)
     private Date date;
 
+    //@JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public Check() {
     }
 
-    public Check(int id) {
-        super(id);
-    }
-
-    public Check(int id, String name, String description, String address, String phoneNumber, String cashier, Date date) {
-        super(id);
-        this.name = name;
-        this.description = description;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.cashier = cashier;
-        this.date = date;
+    //@JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    public Check(
+            String name,
+            String description,
+            String address,
+            String phoneNumber,
+            String cashier,
+            Date date) {
+        setName(name);
+        setDescription(description);
+        setAddress(address);
+        setPhoneNumber(phoneNumber);
+        setCashier(cashier);
+        setDate(date);
     }
 
     @JsonCreator
     public Check(
-            @JsonProperty("id") int id,
+            @JsonProperty("id") Long id,
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,
             @JsonProperty("address") String address,
@@ -54,15 +88,10 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
             @JsonProperty("date") Date date,
             @JsonProperty("checkItems") Collection<CheckItem> checkItems,
             @JsonProperty("discounts") Collection<CheckDiscount> discounts) {
-        super(id);
-        setName(name);
-        setDescription(description);
-        setAddress(address);
-        setPhoneNumber(phoneNumber);
-        setCashier(cashier);
-        setDate(date);
+        this(name, description, address, phoneNumber, cashier, date);
+        setId(id);
         setCheckItems(checkItems);
-        putDiscounts(discounts);
+        setDiscounts(discounts);
     }
 
     public String getCashier() {
@@ -113,91 +142,91 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
         this.phoneNumber = phoneNumber;
     }
 
+    @Override
     public Collection<CheckItem> getCheckItems() {
-        return Collections.unmodifiableList(checkItems);
+        return checkItems;
     }
 
+    @Override
     public void setCheckItems(Collection<CheckItem> checkItems) {
-        ThrowUtils.Argument.nullValue("checkItems", checkItems);
-        checkItems.forEach(checkItem -> checkItem.setCheck(this));
-        this.checkItems.clear();
-        putCheckItems(checkItems);
+        clearCheckItems();
+        if (checkItems != null)
+            addCheckItems(checkItems);
+    }
+
+    @Override
+    public void addCheckItem(CheckItem checkItem) {
+        ThrowUtils.Argument.nullValue("checkItem", checkItem);
+        checkItem.setCheck(this);
+        getCheckItems().add(checkItem);
+    }
+
+    @Override
+    public void addCheckItems(Collection<CheckItem> checkItems) {
+        checkItems.forEach(this::addCheckItem);
+    }
+
+    @Override
+    public void removeCheckItem(CheckItem checkItem) {
+        ThrowUtils.Argument.nullValue("checkItem", checkItem);
+        checkItem.setCheck(null);
+        getCheckItems().remove(checkItem);
+    }
+
+    @Override
+    public void removeCheckItems(Collection<CheckItem> checkItems) {
+        ThrowUtils.Argument.nullValue("checkItem", checkItems);
+        checkItems.forEach(this::removeCheckItem);
+    }
+
+    @Override
+    public void clearCheckItems() {
+        getCheckItems().forEach(checkItem -> checkItem.setCheck(null));
+        getCheckItems().clear();
     }
 
     @Override
     public Collection<CheckDiscount> getDiscounts() {
-        return Collections.unmodifiableList(discounts);
+        return discounts;
     }
 
     @Override
     public void setDiscounts(Collection<CheckDiscount> discounts) {
-        ThrowUtils.Argument.nullValue("discounts", discounts);
-        discounts.forEach(discount -> discount.setCheck(this));
-        this.discounts.clear();
-        this.discounts.addAll(discounts);
+        clearDiscounts();
+        if (discounts != null)
+            addDiscounts(discounts);
     }
 
     @Override
-    public void putDiscounts(Collection<CheckDiscount> discounts) {
-        ThrowUtils.Argument.nullValue("discounts", discounts);
-        discounts.forEach(this::putDiscount);
-    }
-
-    @Override
-    public void putDiscount(CheckDiscount discount) {
+    public void addDiscount(CheckDiscount discount) {
         ThrowUtils.Argument.nullValue("discount", discount);
-        discount.setCheck(this);
-        CollectionUtils.put(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
+        discount.getChecks().add(this);
+        getDiscounts().add(discount);
     }
 
     @Override
-    public void removeDiscounts(Collection<CheckDiscount> discounts) {
-
+    public void addDiscounts(Collection<CheckDiscount> discounts) {
         ThrowUtils.Argument.nullValue("discounts", discounts);
-
-        for (var discount : discounts) {
-            removeDiscount(discount);
-        }
+        discounts.forEach(this::addDiscount);
     }
 
     @Override
     public void removeDiscount(CheckDiscount discount) {
         ThrowUtils.Argument.nullValue("discount", discount);
-        var index = Collections.binarySearch(discounts, discount, Comparator.comparingInt(BaseEntity::getId));
-        if (index > -1)
-            this.discounts.remove(index);
+        discount.getChecks().remove(this);
+        getDiscounts().remove(discount);
+    }
+
+    @Override
+    public void removeDiscounts(Collection<CheckDiscount> discounts) {
+        ThrowUtils.Argument.nullValue("discounts", discounts);
+        discounts.forEach(this::removeDiscount);
     }
 
     @Override
     public void clearDiscounts() {
-        discounts.clear();
-    }
-
-    public void putCheckItem(CheckItem checkItem) {
-        ThrowUtils.Argument.nullValue("checkItem", checkItem);
-        CollectionUtils.put(checkItems, checkItem, Comparator.comparingInt(BaseEntity::getId));
-    }
-
-    public void putCheckItems(Collection<CheckItem> checkItems) {
-        ThrowUtils.Argument.nullValue("checkItems", checkItems);
-        checkItems.forEach(this::putCheckItem);
-    }
-
-    public void deleteCheckItem(CheckItem checkItem) {
-        ThrowUtils.Argument.nullValue("checkItem", checkItem);
-        var index = Collections.binarySearch(checkItems, checkItem, Comparator.comparingInt(BaseEntity::getId));
-        if (index > -1)
-            this.checkItems.remove(index);
-    }
-
-    @Override
-    public void clearCheckItems() {
-        checkItems.clear();
-    }
-
-    public void deleteCheckItems(Collection<CheckItem> checkItems) {
-        ThrowUtils.Argument.nullValue("checkItems", checkItems);
-        checkItems.forEach(this::deleteCheckItem);
+        getDiscounts().forEach(discount -> discount.getChecks().remove(this));
+        getDiscounts().clear();
     }
 
     public BigDecimal subTotalAmount() {
@@ -213,16 +242,17 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
 
     @Override
     public BigDecimal discountsAmount() {
-        return discountWithoutItemsAmount().add(itemsDiscountAmount());
+        return discountWithoutItemsAmount().add(itemsDiscountSum());
     }
 
     public BigDecimal discountWithoutItemsAmount() {
-        return getDiscounts().stream().map(Discount::discountAmount)
+        return getDiscounts().stream()
+                .map(discount -> discount.discountAmount(this))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
     }
 
-    public BigDecimal itemsDiscountAmount() {
+    public BigDecimal itemsDiscountSum() {
         return getCheckItems().stream()
                 .map(CheckItem::discountsAmount)
                 .reduce(BigDecimal::add)
@@ -234,7 +264,7 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
         private final Check check = new Check();
 
         @Override
-        public ICheckBuilder setId(int id) {
+        public ICheckBuilder setId(Long id) {
             check.setId(id);
             return this;
         }
@@ -276,14 +306,38 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
         }
 
         @Override
-        public ICheckBuilder setItems(CheckItem... checkItems) {
-            check.setCheckItems(Arrays.asList(checkItems.clone()));
+        public ICheckBuilder setItems(Collection<CheckItem> checkItems) {
+            check.setCheckItems(checkItems);
             return this;
         }
 
         @Override
-        public ICheckBuilder setDiscounts(CheckDiscount... checkDiscounts) {
-            check.setDiscounts(Arrays.asList(checkDiscounts.clone()));
+        public ICheckBuilder addItem(CheckItem checkItem) {
+            check.addCheckItem(checkItem);
+            return this;
+        }
+
+        @Override
+        public ICheckBuilder addItems(Collection<CheckItem> checkItems) {
+            check.addCheckItems(checkItems);
+            return this;
+        }
+
+        @Override
+        public ICheckBuilder setDiscounts(Collection<CheckDiscount> checkDiscounts) {
+            check.addDiscounts(checkDiscounts);
+            return this;
+        }
+
+        @Override
+        public ICheckBuilder addDiscount(CheckDiscount checkDiscount) {
+            check.addDiscount(checkDiscount);
+            return this;
+        }
+
+        @Override
+        public ICheckBuilder addDiscounts(Collection<CheckDiscount> checkDiscounts) {
+            check.addDiscounts(checkDiscounts);
             return this;
         }
 

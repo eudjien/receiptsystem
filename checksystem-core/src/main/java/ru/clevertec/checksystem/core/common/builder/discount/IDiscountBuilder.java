@@ -4,7 +4,7 @@ import ru.clevertec.checksystem.core.common.IBuildable;
 
 public interface IDiscountBuilder<T, R extends IDiscountBuilder<T, R>> extends IBuildable<T> {
 
-    R setId(int id);
+    R setId(Long id);
 
     R setDescription(String description);
 

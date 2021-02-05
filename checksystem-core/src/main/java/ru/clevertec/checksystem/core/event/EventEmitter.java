@@ -16,9 +16,8 @@ public abstract class EventEmitter<T> implements IEventEmitter<T> {
     public void emit(String eventType, T value) {
         if (listeners.containsKey(eventType)) {
             var eventListeners = listeners.get(eventType);
-            for (var listener : eventListeners) {
+            for (var listener : eventListeners)
                 listener.next(value);
-            }
         }
     }
 
@@ -37,23 +36,20 @@ public abstract class EventEmitter<T> implements IEventEmitter<T> {
 
         var index = eventListenerList.indexOf(eventListener);
 
-        if (index > -1) {
+        if (index > -1)
             eventListenerList.set(index, eventListener);
-        } else {
+        else
             eventListenerList.add(eventListener);
-        }
     }
 
     private List<IEventListener<T>> getOrCreateEventListenerList(String eventType) {
 
         List<IEventListener<T>> observerList;
 
-        if (listeners.containsKey(eventType)) {
+        if (listeners.containsKey(eventType))
             observerList = listeners.get(eventType);
-        } else {
-            observerList = new SinglyLinkedList<>();
-            listeners.put(eventType, observerList);
-        }
+        else
+            listeners.put(eventType, (observerList = new SinglyLinkedList<>()));
 
         return observerList;
     }

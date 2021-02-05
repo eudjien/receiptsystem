@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class FilePdfTemplate extends PdfTemplate {
+public class FilePdfTemplate extends AbstractPdfTemplate {
 
     private File file;
 

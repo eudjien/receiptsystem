@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.core.template.pdf;
 
 import java.io.InputStream;
 
-public class StreamPdfTemplate extends PdfTemplate {
+public class StreamPdfTemplate extends AbstractPdfTemplate {
 
     private InputStream templateInputStream;
 

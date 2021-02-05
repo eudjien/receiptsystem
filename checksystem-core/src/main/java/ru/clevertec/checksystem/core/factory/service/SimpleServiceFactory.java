@@ -1,29 +1,22 @@
 package ru.clevertec.checksystem.core.factory.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.common.service.IService;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+@Component
+public final class SimpleServiceFactory {
 
-public abstract class SimpleServiceFactory {
+    private final ApplicationContext applicationContext;
 
-    private static final Map<Class<?>, Object> services = new HashMap<>();
-
-    @SuppressWarnings("unchecked")
-    public static <E extends IService> E instance(Class<? extends IService> serviceClass) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        return (E) getOrCreate(serviceClass);
+    @Autowired
+    private SimpleServiceFactory(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
-    private static Object getOrCreate(Class<? extends IService> serviceClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-
-        if (services.containsKey(serviceClass)) {
-            return services.get(serviceClass);
-        }
-
-        var newService = serviceClass.getDeclaredConstructor().newInstance();
-        services.put(serviceClass, newService);
-
-        return newService;
+    @SuppressWarnings("unchecked")
+    public <E extends IService> E instance(Class<? extends IService> serviceClass) {
+        return (E) this.applicationContext.getBean(serviceClass);
     }
 }

@@ -5,11 +5,12 @@ import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
 
+import java.util.Collection;
 import java.util.Date;
 
 public interface ICheckBuilder extends IBuildable<Check> {
 
-    ICheckBuilder setId(int id);
+    ICheckBuilder setId(Long id);
 
     ICheckBuilder setName(String name);
 
@@ -23,9 +24,17 @@ public interface ICheckBuilder extends IBuildable<Check> {
 
     ICheckBuilder setDate(Date date);
 
-    ICheckBuilder setItems(CheckItem... checkItems);
+    ICheckBuilder setItems(Collection<CheckItem> checkItems);
 
-    ICheckBuilder setDiscounts(CheckDiscount... checkDiscounts);
+    ICheckBuilder addItem(CheckItem checkItem);
+
+    ICheckBuilder addItems(Collection<CheckItem> checkItems);
+
+    ICheckBuilder setDiscounts(Collection<CheckDiscount> checkDiscounts);
+
+    ICheckBuilder addDiscount(CheckDiscount checkDiscount);
+
+    ICheckBuilder addDiscounts(Collection<CheckDiscount> checkDiscounts);
 
     Check build();
 }

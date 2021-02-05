@@ -10,13 +10,13 @@ public interface ICheckItemAggregable {
 
     void setCheckItems(Collection<CheckItem> checkItems);
 
-    void putCheckItems(Collection<CheckItem> checkItems);
+    void addCheckItem(CheckItem checkItem);
 
-    void putCheckItem(CheckItem checkItem);
+    void addCheckItems(Collection<CheckItem> checkItems);
 
-    void deleteCheckItems(Collection<CheckItem> checkItems);
+    void removeCheckItem(CheckItem checkItem);
 
-    void deleteCheckItem(CheckItem checkItem);
+    void removeCheckItems(Collection<CheckItem> checkItems);
 
     void clearCheckItems();
 }

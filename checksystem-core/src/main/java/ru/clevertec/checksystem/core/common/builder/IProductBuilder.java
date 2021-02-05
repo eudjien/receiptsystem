@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public interface IProductBuilder extends IBuildable<Product> {
 
-    IProductBuilder setId(int id);
+    IProductBuilder setId(Long id);
 
     IProductBuilder setName(String name);
 

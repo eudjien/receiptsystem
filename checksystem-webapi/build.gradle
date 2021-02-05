@@ -1,0 +1,35 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'ru.clevertec.checksystem'
+version = '1.0'
+sourceCompatibility = '14'
+
+def coreProject = project(":checksystem-core")
+def coreMainResourcesDir = "$coreProject.projectDir/src/main/resources"
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDir coreMainResourcesDir
+		}
+	}
+}
+
+dependencies {
+	implementation coreProject
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}
