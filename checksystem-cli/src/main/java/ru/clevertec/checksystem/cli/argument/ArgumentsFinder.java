@@ -1,5 +1,8 @@
 package ru.clevertec.checksystem.cli.argument;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.util.HashMap;
@@ -7,13 +10,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+@Component
 public class ArgumentsFinder {
 
     private static final Pattern pattern = Pattern.compile("^-(?<key>.+)=(?<value>.+)$");
     private final HashMap<String, Argument> arguments = new HashMap<>();
 
-    public ArgumentsFinder(String[] arguments) {
-        addArguments(arguments);
+    @Autowired
+    public ArgumentsFinder(ApplicationArguments applicationArguments) {
+        addArguments(applicationArguments.getSourceArgs());
     }
 
     public Set<Argument> getArguments() {
@@ -100,5 +105,9 @@ public class ArgumentsFinder {
             return true;
         }
         return Boolean.parseBoolean(value);
+    }
+
+    public boolean hasArgumentKey(String key) {
+        return arguments.containsKey(key);
     }
 }

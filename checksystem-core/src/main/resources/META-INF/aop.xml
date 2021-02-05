@@ -5,8 +5,7 @@
         <include within="ru.clevertec.checksystem..*"/>
     </weaver>
     <aspects>
-        <aspect name="ru.clevertec.checksystem.core.aspects.ExecutionLoggingAspect"/>
-        <aspect name="ru.clevertec.checksystem.core.aspects.MailSubscribingAspect"/>
+<!--        <aspect name="ru.clevertec.checksystem.core.aspects.ExecutionLoggingAspect"/>-->
         <aspect name="ru.clevertec.checksystem.core.aspects.SubscribingAspect"/>
     </aspects>
 </aspectj>

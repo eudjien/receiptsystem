@@ -1,42 +1,37 @@
 package ru.clevertec.checksystem.core.factory.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import ru.clevertec.checksystem.core.common.log.IMethodLogger;
 import ru.clevertec.checksystem.core.common.service.IService;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.methodlogger.IMethodLogger;
 import ru.clevertec.checksystem.core.log.methodlogger.MethodLogger;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.Map;
 
-public abstract class ProxiedServiceFactory {
+@Component
+public final class ProxiedServiceFactory {
 
-    private static final Map<Class<?>, Object> services = new HashMap<>();
+    private final ApplicationContext applicationContext;
 
-    @SuppressWarnings("unchecked")
-    public static <E extends IService> E instance(Class<? extends IService> serviceClass)
-            throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
-
-        if (services.containsKey(serviceClass)) {
-            return (E) services.get(serviceClass);
-        }
-
-        var newService = (E) createProxiedService(serviceClass);
-        services.put(serviceClass, newService);
-
-        return newService;
+    @Autowired
+    public ProxiedServiceFactory(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
-    private static Object createProxiedService(Class<? extends IService> serviceClass)
-            throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException {
+    @SuppressWarnings("unchecked")
+    public <E extends IService> E instance(Class<? extends IService> serviceClass) {
+        return (E) createProxiedService(serviceClass);
+    }
+
+    private Object createProxiedService(Class<? extends IService> serviceClass) {
         return Proxy.newProxyInstance(serviceClass.getClassLoader(),
                 serviceClass.getInterfaces(),
-                new ServiceInvocationHandler(serviceClass.getDeclaredConstructor().newInstance()));
+                new ServiceInvocationHandler(applicationContext.getBean(serviceClass)));
     }
 
     private static class ServiceInvocationHandler implements InvocationHandler {

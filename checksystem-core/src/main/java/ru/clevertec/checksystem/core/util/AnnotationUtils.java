@@ -16,9 +16,8 @@ public final class AnnotationUtils {
         var targetClass = targetMethod.getDeclaringClass();
 
         if (!targetClass.isAnnotationPresent(annotationClass)
-                && !targetMethod.isAnnotationPresent(annotationClass)) {
+                && !targetMethod.isAnnotationPresent(annotationClass))
             throw new IllegalArgumentException(REQUIRED_ANNOTATION_DOES_NOT_EXIST_MESSAGE);
-        }
 
         return targetMethod.isAnnotationPresent(annotationClass)
                 ? targetMethod.getDeclaredAnnotation(annotationClass)

@@ -1,5 +1,9 @@
 package ru.clevertec.checksystem.core.data;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.clevertec.checksystem.core.entity.Email;
+import ru.clevertec.checksystem.core.entity.EventEmail;
 import ru.clevertec.checksystem.core.entity.Product;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
@@ -10,142 +14,156 @@ import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount
 import ru.clevertec.checksystem.core.entity.discount.checkitem.SimpleConstantCheckItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.SimplePercentageCheckItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.checkitem.ThresholdPercentageCheckItemDiscount;
+import ru.clevertec.checksystem.core.event.EventType;
+import ru.clevertec.checksystem.core.repository.*;
 import ru.clevertec.custom.list.SinglyLinkedList;
 
 import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
-public abstract class DataSeed {
+@Component
+public final class DataSeed {
 
     private static Collection<Product> products;
     private static Collection<Check> checks;
     private static Collection<CheckDiscount> checkDiscounts;
     private static Collection<CheckItemDiscount> checkItemDiscounts;
+    private static Collection<Email> emails;
+    private static Collection<EventEmail> eventEmails;
+
+    private final CheckRepository checkRepository;
+    private final ProductRepository productRepository;
+    private final CheckDiscountRepository checkDiscountRepository;
+    private final CheckItemDiscountRepository checkItemDiscountRepository;
+    private final EmailRepository emailRepository;
+    private final EventEmailRepository eventEmailRepository;
+
+    @Autowired
+    public DataSeed(CheckRepository checkRepository,
+                    ProductRepository productRepository,
+                    CheckDiscountRepository checkDiscountRepository,
+                    CheckItemDiscountRepository checkItemDiscountRepository,
+                    EmailRepository emailRepository,
+                    EventEmailRepository eventEmailRepository) {
+        this.checkRepository = checkRepository;
+        this.productRepository = productRepository;
+        this.checkDiscountRepository = checkDiscountRepository;
+        this.checkItemDiscountRepository = checkItemDiscountRepository;
+        this.emailRepository = emailRepository;
+        this.eventEmailRepository = eventEmailRepository;
+    }
+
+    public void dbSeed() {
+        checkRepository.saveAll(checks());
+        productRepository.saveAll(products());
+        checkDiscountRepository.saveAll(checkDiscounts());
+        checkItemDiscountRepository.saveAll(checkItemDiscounts());
+        emailRepository.saveAll(emails());
+        eventEmailRepository.saveAll(eventEmails());
+    }
 
     public static Collection<Product> products() {
         if (products == null) {
             products = new SinglyLinkedList<>();
 
             products.add(new Product.Builder()
-                    .setId(1)
                     .setName("Пельмени")
                     .setPrice(BigDecimal.valueOf(12.48))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(2)
                     .setName("Картошка")
                     .setPrice(BigDecimal.valueOf(7.5))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(3)
                     .setName("Помидоры")
                     .setPrice(BigDecimal.valueOf(3.91))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(4)
                     .setName("Сало")
                     .setPrice(BigDecimal.valueOf(10))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(5)
                     .setName("Кукуруза")
                     .setPrice(BigDecimal.valueOf(20))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(6)
                     .setName("Макароны")
                     .setPrice(BigDecimal.valueOf(8.5))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(7)
                     .setName("Колбаса")
                     .setPrice(BigDecimal.valueOf(20))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(8)
                     .setName("Рис")
                     .setPrice(BigDecimal.valueOf(19.999))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(9)
                     .setName("Рыба")
                     .setPrice(BigDecimal.valueOf(50.2))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(10)
                     .setName("Апельсины")
                     .setPrice(BigDecimal.valueOf(30.5))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(11)
                     .setName("Яблоки")
                     .setPrice(BigDecimal.valueOf(8.7))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(12)
                     .setName("Чай")
                     .setPrice(BigDecimal.valueOf(3.51))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(13)
                     .setName("Кофе")
                     .setPrice(BigDecimal.valueOf(3.5))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(14)
                     .setName("Печенье")
                     .setPrice(BigDecimal.valueOf(2.1))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(15)
                     .setName("Конфеты")
                     .setPrice(BigDecimal.valueOf(5.6))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(16)
                     .setName("Монитор")
                     .setPrice(BigDecimal.valueOf(155.5))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(17)
                     .setName("Клавиатура")
                     .setPrice(BigDecimal.valueOf(30))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(18)
                     .setName("Мышка")
                     .setPrice(BigDecimal.valueOf(30))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(19)
                     .setName("SSD")
                     .setPrice(BigDecimal.valueOf(50))
                     .build());
 
             products.add(new Product.Builder()
-                    .setId(20)
                     .setName("HDD")
                     .setPrice(BigDecimal.valueOf(25.5))
                     .build());
@@ -166,7 +184,7 @@ public abstract class DataSeed {
 
             // Check 1
             var check = new Check.Builder()
-                    .setId(1)
+
                     .setName("999 проблем")
                     .setDescription("Компьютерный магазин")
                     .setAddress("ул. Пушкина, д. Калатушкина")
@@ -178,50 +196,43 @@ public abstract class DataSeed {
             var checkItems = new SinglyLinkedList<CheckItem>();
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(221)
                     .setProduct(products[0])
                     .setQuantity(3)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(222)
                     .setProduct(products[1])
                     .setQuantity(1)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(1)
                     .setProduct(products[2])
                     .setQuantity(8)
-                    .setDiscounts(checkItemDiscounts[4])
+                    .addDiscount(checkItemDiscounts[4])
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(2)
                     .setProduct(products[3])
                     .setQuantity(9)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(3)
                     .setProduct(products[4])
                     .setQuantity(1)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(4)
                     .setProduct(products[5])
                     .setQuantity(2)
                     .build());
 
-            addItemsToCheck(check, checkItems);
+            check.addCheckItems(checkItems);
 
-            check.putDiscount(checkDiscounts[2]);
+            check.addDiscount(checkDiscounts[2]);
             checks.add(check);
 
             // Check 2
             check = new Check.Builder()
-                    .setId(2)
                     .setName("342 элемент")
                     .setDescription("Гипермаркет")
                     .setAddress("ул. Элементова, д. 1")
@@ -233,63 +244,55 @@ public abstract class DataSeed {
             checkItems = new SinglyLinkedList<>();
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(500)
+
                     .setProduct(products[2])
                     .setQuantity(8)
-                    .setDiscounts(checkItemDiscounts[5])
+                    .addDiscount(checkItemDiscounts[5])
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(501)
                     .setProduct(products[1])
                     .setQuantity(10)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(502)
                     .setProduct(products[3])
                     .setQuantity(9)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(503)
-                    .setProduct(products[2])
+                    .setProduct(products[10])
                     .setQuantity(8)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(503)
-                    .setProduct(products[2])
+                    .setProduct(products[11])
                     .setQuantity(8)
-                    .setDiscounts(checkItemDiscounts[1])
+                    .addDiscount(checkItemDiscounts[1])
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(44)
                     .setProduct(products[5])
                     .setQuantity(7)
-                    .setDiscounts(checkItemDiscounts[2])
+                    .addDiscount(checkItemDiscounts[2])
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(45)
                     .setProduct(products[7])
                     .setQuantity(6)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(46)
                     .setProduct(products[9])
                     .setQuantity(5)
                     .build());
 
-            addItemsToCheck(check, checkItems);
-
-            check.putDiscount(checkDiscounts[0]);
+            check.addCheckItems(checkItems);
+            check.addDiscount(checkDiscounts[0]);
             checks.add(check);
 
             // Check 3
-            check = new Check.Builder().setId(3)
+            check = new Check.Builder()
                     .setName("Магазин №1")
                     .setDescription("Продуктовый магазин")
                     .setAddress("ул. Советская, д. 1001")
@@ -301,49 +304,41 @@ public abstract class DataSeed {
             checkItems = new SinglyLinkedList<>();
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(125)
                     .setProduct(products[2])
                     .setQuantity(15)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(126)
                     .setProduct(products[4])
                     .setQuantity(1)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(127)
                     .setProduct(products[6])
                     .setQuantity(1)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(128)
                     .setProduct(products[8])
                     .setQuantity(3)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(129)
                     .setProduct(products[10])
                     .setQuantity(11)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(130)
                     .setProduct(products[12])
                     .setQuantity(6)
                     .build());
 
-            addItemsToCheck(check, checkItems);
-
-            check.putDiscount(checkDiscounts[1]);
+            check.addCheckItems(checkItems);
+            check.addDiscount(checkDiscounts[1]);
             checks.add(check);
 
             // Check 4
             check = new Check.Builder()
-                    .setId(4)
                     .setName("Магазин №2")
                     .setDescription("Продуктовый магазин")
                     .setAddress("ул. Свиридова, д. 1234")
@@ -355,64 +350,54 @@ public abstract class DataSeed {
             checkItems = new SinglyLinkedList<>();
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(600)
                     .setProduct(products[3])
                     .setQuantity(15)
-                    .setDiscounts(checkItemDiscounts[6])
+                    .addDiscount(checkItemDiscounts[6])
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(131)
                     .setProduct(products[5])
                     .setQuantity(1)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(132)
                     .setProduct(products[7])
                     .setQuantity(1)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(133)
                     .setProduct(products[9])
                     .setQuantity(3)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(134)
                     .setProduct(products[11])
                     .setQuantity(15)
-                    .setDiscounts(checkItemDiscounts[0])
+                    .addDiscount(checkItemDiscounts[0])
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(134)
                     .setProduct(products[13])
                     .setQuantity(6)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(135)
                     .setProduct(products[15])
                     .setQuantity(3)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(136)
                     .setProduct(products[17])
                     .setQuantity(11)
                     .build());
 
             checkItems.add(new CheckItem.Builder()
-                    .setId(138)
                     .setProduct(products[19])
                     .setQuantity(6)
                     .build());
 
-            addItemsToCheck(check, checkItems);
-
-            check.putDiscount(checkDiscounts[3]);
+            check.addCheckItems(checkItems);
+            check.addDiscount(checkDiscounts[3]);
             checks.add(check);
         }
 
@@ -425,70 +410,61 @@ public abstract class DataSeed {
             checkDiscounts = new SinglyLinkedList<>();
 
             checkDiscounts.add(new SimplePercentageCheckDiscount.Builder()
-                    .setId(1)
-                    .setPercent(30)
+                    .setPercent(30D)
                     .setDescription("-30% на сумму чека")
                     .build());
 
             checkDiscounts.add(new SimplePercentageCheckDiscount.Builder()
-                    .setId(2)
-                    .setPercent(20)
+                    .setPercent(20D)
                     .setDescription("-20% на сумму чека")
                     .build());
 
             checkDiscounts.add(new SimplePercentageCheckDiscount.Builder()
-                    .setId(3)
-                    .setPercent(35)
+                    .setPercent(35D)
                     .setDescription("-35% на сумму чека")
                     .build());
 
             checkDiscounts.add(new SimpleConstantCheckDiscount.Builder()
-                    .setId(4)
                     .setConstant(BigDecimal.valueOf(5))
                     .setDescription("-5$ на сумму чека").build());
 
             checkDiscounts.add(new SimpleConstantCheckDiscount.Builder()
-                    .setId(5)
                     .setConstant(BigDecimal.valueOf(10))
                     .setDescription("-10$ на сумму чека").build());
 
             // (сумма - 35%) - 10
             checkDiscounts.add(new SimpleConstantCheckDiscount.Builder()
-                    .setId(6)
                     .setConstant(BigDecimal.valueOf(10))
                     .setDependentDiscount(new SimplePercentageCheckDiscount.Builder()
-                            .setId(7)
-                            .setPercent(35)
+                            .setPercent(35D)
                             .setDescription("-35%")
                             .build())
-                    .setDescription("-10$").build());
+                    .setDescription("-10$")
+                    .build());
 
             // (сумма - 10) - 35%
             checkDiscounts.add(new SimplePercentageCheckDiscount.Builder()
-                    .setId(8)
-                    .setPercent(35)
+                    .setPercent(35D)
                     .setDependentDiscount(new SimpleConstantCheckDiscount.Builder()
-                            .setId(9)
                             .setConstant(BigDecimal.valueOf(10))
                             .setDescription("-10$")
                             .build())
-                    .setDescription("-35%").build());
+                    .setDescription("-35%")
+                    .build());
 
             // (сумма - 15%) - 10) - 35%
             checkDiscounts.add(new SimplePercentageCheckDiscount.Builder()
-                    .setId(10)
-                    .setPercent(35)
+                    .setPercent(35D)
                     .setDependentDiscount(new SimpleConstantCheckDiscount.Builder()
-                            .setId(11)
                             .setConstant(BigDecimal.valueOf(10))
                             .setDependentDiscount(new SimplePercentageCheckDiscount.Builder()
-                                    .setId(12)
-                                    .setPercent(15)
+                                    .setPercent(15D)
                                     .setDescription("-15%")
                                     .build())
                             .setDescription("-10$")
                             .build())
-                    .setDescription("-35%").build());
+                    .setDescription("-35%")
+                    .build());
         }
 
         return checkDiscounts;
@@ -500,43 +476,36 @@ public abstract class DataSeed {
             checkItemDiscounts = new SinglyLinkedList<>();
 
             checkItemDiscounts.add(new SimpleConstantCheckItemDiscount.Builder()
-                    .setId(1)
                     .setConstant(BigDecimal.valueOf(5))
-                    .setDescription("-5%")
+                    .setDescription("-5$")
                     .build());
 
             checkItemDiscounts.add(new SimplePercentageCheckItemDiscount.BuilderSimple()
-                    .setId(2)
-                    .setPercent(30)
+                    .setPercent(30D)
                     .setDescription("-30%")
                     .build());
 
             checkItemDiscounts.add(new SimplePercentageCheckItemDiscount.BuilderSimple()
-                    .setId(3)
-                    .setPercent(40)
+                    .setPercent(40D)
                     .setDescription("-40%")
                     .build());
 
             checkItemDiscounts.add(new SimplePercentageCheckItemDiscount.BuilderSimple()
-                    .setId(4)
-                    .setPercent(50)
+                    .setPercent(50D)
                     .setDescription("-50%")
                     .build());
 
             checkItemDiscounts.add(
                     new ThresholdPercentageCheckItemDiscount.Builder()
-                            .setId(5)
-                            .setPercent(10)
-                            .setThreshold(5)
+                            .setPercent(10D)
+                            .setThreshold(5L)
                             .setDescription("-10% если количество продукта больше чем 5")
                             .build());
 
             checkItemDiscounts.add(new ThresholdPercentageCheckItemDiscount.Builder()
-                    .setId(6)
-                    .setPercent(1)
-                    .setThreshold(6)
+                    .setPercent(1D)
+                    .setThreshold(6L)
                     .setDependentDiscount(new SimpleConstantCheckItemDiscount.Builder()
-                            .setId(7)
                             .setConstant(BigDecimal.valueOf(10))
                             .setDescription("Скидка 10 на продукт")
                             .build())
@@ -544,9 +513,8 @@ public abstract class DataSeed {
                     .build());
 
             checkItemDiscounts.add(new ThresholdPercentageCheckItemDiscount.Builder()
-                    .setId(8)
-                    .setPercent(10)
-                    .setThreshold(2)
+                    .setPercent(10D)
+                    .setThreshold(2L)
                     .setDescription("Скидка 10% если количество продуктов больше 2")
                     .build());
         }
@@ -554,24 +522,25 @@ public abstract class DataSeed {
         return checkItemDiscounts;
     }
 
-    public static InternetAddress[] emailAddresses() {
+    public static Collection<Email> emails() {
+        if (emails == null) {
+            try {
+                emails = new SinglyLinkedList<>();
+                emails.add(new Email("lakadmakatag@gmail.com"));
+                emails.add(new Email("chcksstm1@gmail.com"));
 
-        var addresses = new InternetAddress[0];
-        try {
-            addresses = new InternetAddress[]{
-                    new InternetAddress("lakadmakatag@gmail.com")
-            };
-        } catch (AddressException e) {
-            e.printStackTrace();
+            } catch (AddressException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        return addresses;
+        return emails;
     }
 
-    private static void addItemsToCheck(Check check, List<CheckItem> items) {
-        for (int i = 0; i < items.size(); i++) {
-            items.get(i).setId(i + 1);
-            check.putCheckItem(items.get(i));
+    public static Collection<EventEmail> eventEmails() {
+        if (eventEmails == null) {
+            eventEmails = new SinglyLinkedList<>();
+            emails().forEach(email -> eventEmails.add(new EventEmail(email, EventType.PrintEnd)));
         }
+        return eventEmails;
     }
 }

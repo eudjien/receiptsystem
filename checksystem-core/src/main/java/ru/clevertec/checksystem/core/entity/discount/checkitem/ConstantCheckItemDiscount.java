@@ -1,32 +1,30 @@
 package ru.clevertec.checksystem.core.entity.discount.checkitem;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IConstable;
+import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 
+@MappedSuperclass
 public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implements IConstable<BigDecimal> {
 
-    private BigDecimal constant;
+    @Column(name = Constants.Entities.Mapping.Column.CONSTANT, nullable = false)
+    private BigDecimal constant = BigDecimal.valueOf(0);
 
     protected ConstantCheckItemDiscount() {
     }
 
-    public ConstantCheckItemDiscount(String description, BigDecimal constant) {
+    protected ConstantCheckItemDiscount(String description, BigDecimal constant) {
         super(description);
         setConstant(constant);
     }
 
-    public ConstantCheckItemDiscount(int id, String description, BigDecimal constant) {
-        super(id, description);
-        setConstant(constant);
-    }
-
-    @JsonCreator
-    public ConstantCheckItemDiscount(
-            int id, String description, BigDecimal constant, CheckItemDiscount dependentDiscount) {
-        super(id, description, dependentDiscount);
+    protected ConstantCheckItemDiscount(String description, BigDecimal constant, CheckItemDiscount dependentDiscount) {
+        super(description, dependentDiscount);
         setConstant(constant);
     }
 
@@ -35,14 +33,15 @@ public abstract class ConstantCheckItemDiscount extends CheckItemDiscount implem
     }
 
     public void setConstant(BigDecimal constant) {
+        ThrowUtils.Argument.nullValue("constant", constant);
         ThrowUtils.Argument.lessThan("constant", constant, BigDecimal.ZERO);
         this.constant = constant;
     }
 
     @Override
-    public BigDecimal discountAmount() {
+    public BigDecimal discountAmount(CheckItem checkItem) {
         var dependentDiscountAmount = getDependentDiscount() != null
-                ? getDependentDiscount().discountAmount()
+                ? getDependentDiscount().discountAmount(checkItem)
                 : BigDecimal.ZERO;
         return dependentDiscountAmount.add(constant);
     }

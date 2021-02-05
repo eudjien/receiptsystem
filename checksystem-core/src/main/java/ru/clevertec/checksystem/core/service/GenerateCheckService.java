@@ -1,16 +1,23 @@
 package ru.clevertec.checksystem.core.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
 import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
-import ru.clevertec.checksystem.core.data.DataSeed;
-import ru.clevertec.checksystem.core.dto.GeneratedCheck;
-import ru.clevertec.checksystem.core.dto.GeneratedCheckItem;
+import ru.clevertec.checksystem.core.dto.CheckGenerate;
+import ru.clevertec.checksystem.core.dto.CheckItemGenerate;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
+import ru.clevertec.checksystem.core.entity.discount.check.CheckDiscount;
+import ru.clevertec.checksystem.core.entity.discount.checkitem.CheckItemDiscount;
 import ru.clevertec.checksystem.core.event.EventEmitter;
-import ru.clevertec.checksystem.core.factory.io.GeneratedCheckReaderFactory;
-import ru.clevertec.checksystem.core.factory.io.GeneratedCheckWriterFactory;
+import ru.clevertec.checksystem.core.factory.io.CheckGenerateReaderFactory;
+import ru.clevertec.checksystem.core.factory.io.CheckGenerateWriterFactory;
+import ru.clevertec.checksystem.core.repository.CheckDiscountRepository;
+import ru.clevertec.checksystem.core.repository.CheckItemDiscountRepository;
+import ru.clevertec.checksystem.core.repository.ProductRepository;
+import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.io.File;
@@ -20,15 +27,36 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+@Service
 public class GenerateCheckService extends EventEmitter<Object> implements IGenerateCheckService {
 
-    public Collection<GeneratedCheck> toGenerated(Collection<Check> checkCollection) {
+    private final CheckGenerateWriterFactory checkGenerateWriterFactory;
+    private final CheckGenerateReaderFactory checkGenerateReaderFactory;
 
-        var checkGenerateArray = new ArrayList<GeneratedCheck>();
+    private final ProductRepository productRepository;
+    private final CheckDiscountRepository checkDiscountRepository;
+    private final CheckItemDiscountRepository checkItemDiscountRepository;
 
-        for (var check : checkCollection) {
+    @Autowired
+    public GenerateCheckService(CheckGenerateWriterFactory checkGenerateWriterFactory,
+                                CheckGenerateReaderFactory checkGenerateReaderFactory,
+                                ProductRepository productRepository,
+                                CheckDiscountRepository checkDiscountRepository,
+                                CheckItemDiscountRepository checkItemDiscountRepository) {
+        this.checkGenerateWriterFactory = checkGenerateWriterFactory;
+        this.checkGenerateReaderFactory = checkGenerateReaderFactory;
+        this.productRepository = productRepository;
+        this.checkDiscountRepository = checkDiscountRepository;
+        this.checkItemDiscountRepository = checkItemDiscountRepository;
+    }
 
-            var newCheckGenerate = new GeneratedCheck(
+    public Collection<CheckGenerate> toGenerate(Collection<Check> checks) {
+
+        var checkGenerateArray = new ArrayList<CheckGenerate>();
+
+        for (var check : checks) {
+
+            var newCheckGenerate = new CheckGenerate(
                     check.getId(),
                     check.getName(),
                     check.getDescription(),
@@ -37,25 +65,8 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
                     check.getCashier(),
                     check.getDate());
 
-
-            if (check.getDiscounts() != null) {
-                var discountIds = check.getDiscounts().stream()
-                        .map(BaseEntity::getId).collect(Collectors.toList());
-
-                newCheckGenerate.setDiscountIds(discountIds);
-            }
-
-            if (check.getCheckItems() != null) {
-
-                var checkItems = check.getCheckItems().stream().map(ci ->
-                        new GeneratedCheckItem(
-                                ci.getProduct().getId(),
-                                ci.getQuantity(),
-                                ci.getDiscounts().stream().map(BaseEntity::getId).collect(Collectors.toList())))
-                        .collect(Collectors.toList());
-
-                newCheckGenerate.setItems(checkItems);
-            }
+            newCheckGenerate.setDiscountIds(getCheckDiscountIds(check.getDiscounts()));
+            newCheckGenerate.setCheckItems(getCheckItemGenerates(check.getCheckItems()));
 
             checkGenerateArray.add(newCheckGenerate);
         }
@@ -63,102 +74,88 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
         return checkGenerateArray;
     }
 
-    public void toGenerated(Collection<Check> checkCollection, File destinationFile, String format) throws IOException {
-        var generatedChecks = toGenerated(checkCollection);
-        var generateCheckReader = GeneratedCheckWriterFactory.create(format);
-        generateCheckReader.write(generatedChecks, destinationFile);
+    public void toGenerate(Collection<Check> checks, File destinationFile, String format) throws IOException {
+        var generatedChecks = toGenerate(checks);
+        var checkGenerateWriter = checkGenerateWriterFactory.create(format);
+        checkGenerateWriter.write(generatedChecks, destinationFile);
     }
 
-    public Collection<Check> fromGenerated(File sourceFile, String format) throws IOException {
-        var generateCheckReader = GeneratedCheckReaderFactory.create(format);
-        return fromGenerated(generateCheckReader.read(sourceFile));
+    public Collection<Check> fromGenerate(File sourceFile, String format) throws IOException {
+        var checkGenerateReader = checkGenerateReaderFactory.create(format);
+        return fromGenerate(checkGenerateReader.read(sourceFile));
     }
 
-    public Collection<Check> fromGenerated(byte[] bytes, String format) throws NoSuchElementException, IllegalArgumentException, IOException {
-        var generateCheckReader = GeneratedCheckReaderFactory.create(format);
-        return fromGenerated(generateCheckReader.read(bytes));
+    public Collection<Check> fromGenerate(byte[] bytes, String format) throws IOException {
+        var checkGenerateReader = checkGenerateReaderFactory.create(format);
+        return fromGenerate(checkGenerateReader.read(bytes));
     }
 
-    public Collection<Check> fromGenerated(Collection<GeneratedCheck> generatedChecks) {
+    public Collection<Check> fromGenerate(Collection<CheckGenerate> checkGenerates) {
 
-        var checkList = new SinglyLinkedList<Check>();
+        var checks = new SinglyLinkedList<Check>();
 
-        for (var generatedCheck : generatedChecks) {
+        for (var checkGenerate : checkGenerates) {
 
-            var builder = new Check.Builder()
-                    .setId(generatedCheck.getId())
-                    .setName(generatedCheck.getName())
-                    .setDescription(generatedCheck.getDescription())
-                    .setAddress(generatedCheck.getAddress())
-                    .setPhoneNumber(generatedCheck.getPhoneNumber())
-                    .setCashier(generatedCheck.getCashier())
-                    .setDate(generatedCheck.getDate());
+            var checkBuilder = new Check.Builder()
+                    .setId(checkGenerate.getId())
+                    .setName(checkGenerate.getName())
+                    .setDescription(checkGenerate.getDescription())
+                    .setAddress(checkGenerate.getAddress())
+                    .setPhoneNumber(checkGenerate.getPhoneNumber())
+                    .setCashier(checkGenerate.getCashier())
+                    .setDate(checkGenerate.getDate());
 
-            if (generatedCheck.getItems() != null) {
-                addCheckItemsInMemory(builder, generatedCheck.getItems());
-            }
+            if (!checkGenerate.getCheckItemGenerates().isEmpty())
+                addCheckItemsToCheck(checkBuilder, checkGenerate.getCheckItemGenerates());
 
-            if (generatedCheck.getDiscountIds() != null) {
-                addCheckDiscountsInMemory(builder, generatedCheck.getDiscountIds());
-            }
+            if (!checkGenerate.getDiscountIds().isEmpty())
+                checkBuilder.addDiscounts(CollectionUtils.asCollection(
+                        checkDiscountRepository.findAllById(checkGenerate.getDiscountIds())));
 
-            checkList.add(builder.build());
+            checks.add(checkBuilder.build());
         }
 
-        return checkList;
+        return checks;
     }
 
-    private void addCheckItemsInMemory(ICheckBuilder checkBuilder, Collection<GeneratedCheckItem> generatedCheckItems) {
+    private void addCheckItemsToCheck(ICheckBuilder checkBuilder, Collection<CheckItemGenerate> checkItemGenerates) {
 
-        var products = DataSeed.products();
+        for (var checkItemGenerate : checkItemGenerates) {
 
-        for (var generatedCheckItem : generatedCheckItems) {
+            var product = productRepository.findById(checkItemGenerate.getProductId()).orElseThrow(()
+                    -> new NoSuchElementException(
+                    "Product with id: " + checkItemGenerate.getProductId() + " not found"));
 
-            var product = products.stream()
-                    .filter(a -> a.getId() == generatedCheckItem.getProductId())
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new NoSuchElementException(
-                                    "Product with id: " + generatedCheckItem.getProductId() + " not found"));
-
-            var checkItem = new CheckItem.Builder()
+            var checkItemBuilder = new CheckItem.Builder()
                     .setProduct(product)
-                    .setQuantity(generatedCheckItem.getQuantity())
-                    .build();
+                    .setQuantity(checkItemGenerate.getQuantity());
 
-            if (generatedCheckItem.getDiscountIds() != null) {
-                addCheckItemDiscountsInMemory(checkItem, generatedCheckItem.getDiscountIds());
-            }
+            if (!CollectionUtils.isNullOrEmpty(checkItemGenerate.getDiscountIds()))
+                checkItemBuilder.addDiscounts(CollectionUtils.asCollection(
+                        checkItemDiscountRepository.findAllById(checkItemGenerate.getDiscountIds())));
 
-            checkBuilder.setItems(checkItem);
+            checkBuilder.addItem(checkItemBuilder.build());
         }
     }
 
-    private void addCheckItemDiscountsInMemory(CheckItem checkItem, Collection<Integer> checkItemDiscountIds) {
-
-        var checkItemDiscounts = DataSeed.checkItemDiscounts();
-
-        for (var checkItemDiscountId : checkItemDiscountIds) {
-            var checkItemDiscount = checkItemDiscounts.stream()
-                    .filter(a -> a.getId() == checkItemDiscountId)
-                    .findFirst()
-                    .orElseThrow(() -> new NoSuchElementException(
-                            "Check item discount with id: " + checkItemDiscountId + " not found"));
-            checkItem.putDiscount(checkItemDiscount);
-        }
+    private Collection<Long> getCheckDiscountIds(Collection<CheckDiscount> checkDiscounts) {
+        return checkDiscounts.stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toList());
     }
 
-    private void addCheckDiscountsInMemory(ICheckBuilder checkBuilder, Collection<Integer> checkDiscountIds) {
+    private Collection<Long> getCheckItemDiscountIds(Collection<CheckItemDiscount> checkItemDiscounts) {
+        return checkItemDiscounts.stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toList());
+    }
 
-        var checkDiscounts = DataSeed.checkDiscounts();
-
-        for (var checkDiscountId : checkDiscountIds) {
-            var checkItemDiscount = checkDiscounts.stream()
-                    .filter(a -> a.getId() == checkDiscountId)
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new NoSuchElementException("Check discount with id: " + checkDiscountId + " not found"));
-            checkBuilder.setDiscounts(checkItemDiscount);
-        }
+    private Collection<CheckItemGenerate> getCheckItemGenerates(Collection<CheckItem> checkItems) {
+        return checkItems.stream().map(checkItem ->
+                new CheckItemGenerate(
+                        checkItem.getProduct().getId(),
+                        checkItem.getQuantity(),
+                        getCheckItemDiscountIds(checkItem.getDiscounts())))
+                .collect(Collectors.toList());
     }
 }

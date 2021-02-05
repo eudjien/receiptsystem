@@ -6,5 +6,7 @@ pluginManagement {
 }
 
 rootProject.name = 'checksystem'
-include('checksystem-core', 'checksystem-cli', /* 'checksystem-web' */)
 
+include 'checksystem-core'
+include 'checksystem-cli'
+include 'checksystem-webapi'

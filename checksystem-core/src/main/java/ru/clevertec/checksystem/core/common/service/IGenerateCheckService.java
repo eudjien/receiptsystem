@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.common.service;
 
-import ru.clevertec.checksystem.core.dto.GeneratedCheck;
+import ru.clevertec.checksystem.core.dto.CheckGenerate;
 import ru.clevertec.checksystem.core.entity.check.Check;
 
 import java.io.File;
@@ -9,13 +9,13 @@ import java.util.Collection;
 
 public interface IGenerateCheckService extends IService {
 
-    Collection<GeneratedCheck> toGenerated(Collection<Check> checkCollection);
+    Collection<CheckGenerate> toGenerate(Collection<Check> checks);
 
-    void toGenerated(Collection<Check> checkCollection, File destinationFile, String format) throws IOException;
+    void toGenerate(Collection<Check> checks, File destinationFile, String format) throws IOException;
 
-    Collection<Check> fromGenerated(File sourceFile, String format) throws IOException;
+    Collection<Check> fromGenerate(File sourceFile, String format) throws IOException;
 
-    Collection<Check> fromGenerated(byte[] bytes, String format) throws IOException;
+    Collection<Check> fromGenerate(byte[] bytes, String format) throws IOException;
 
-    Collection<Check> fromGenerated(Collection<GeneratedCheck> generatedChecks);
+    Collection<Check> fromGenerate(Collection<CheckGenerate> checkGenerates);
 }

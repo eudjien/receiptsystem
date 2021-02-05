@@ -1,6 +1,9 @@
 package ru.clevertec.checksystem.core.io.write;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.clevertec.checksystem.core.common.io.write.ICheckWriter;
+import ru.clevertec.checksystem.core.configuration.ApplicationXmlMapper;
 import ru.clevertec.checksystem.core.entity.check.Check;
 
 import java.io.File;
@@ -9,23 +12,29 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Collection;
 
+@Component
 public class XmlCheckWriter implements ICheckWriter {
 
-    private final XmlMapper mapper = new XmlMapper();
+    private final ApplicationXmlMapper xmlMapper;
 
-    @Override
-    public byte[] write(Collection<Check> checkCollection) throws IOException {
-        return mapper.writeValueAsBytes(checkCollection);
+    @Autowired
+    public XmlCheckWriter(ApplicationXmlMapper xmlMapper) {
+        this.xmlMapper = xmlMapper;
     }
 
     @Override
-    public void write(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
-        mapper.writeValue(outputStream, checkCollection);
+    public byte[] write(Collection<Check> checks) throws IOException {
+        return xmlMapper.writeValueAsBytes(checks);
     }
 
     @Override
-    public void write(Collection<Check> checkCollection, File destinationFile) throws IOException {
+    public void write(Collection<Check> checks, OutputStream outputStream) throws IOException {
+        xmlMapper.writeValue(outputStream, checks);
+    }
+
+    @Override
+    public void write(Collection<Check> checks, File destinationFile) throws IOException {
         Files.createDirectories(destinationFile.toPath().getParent());
-        mapper.writeValue(destinationFile, checkCollection);
+        xmlMapper.writeValue(destinationFile, checks);
     }
 }
