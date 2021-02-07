@@ -29,11 +29,11 @@ public final class Application {
 
         finder = new ArgumentsFinder(args);
 
-        ProxyIdentifier.setProxied(finder.findFirstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
+        ProxyIdentifier.setProxied(finder.firstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
 
         var checks = new SinglyLinkedList<Check>();
 
-        var mode = finder.findFirstStringOrThrow(Constants.Keys.MODE);
+        var mode = finder.firstStringOrThrow(Constants.Keys.MODE);
 
         switch (mode) {
             case Constants.Mode.GENERATE -> deserializeGenerateFile(checks);
@@ -43,13 +43,13 @@ public final class Application {
 
         var threads = new SinglyLinkedList<Thread>();
 
-        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_SERIALIZE))
+        if (finder.firstBoolOrDefault(Constants.Keys.FILE_SERIALIZE))
             threads.add(createThread(() -> serializeToFile(checks), Constants.Task.Names.SERIALIZE));
 
-        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT))
+        if (finder.firstBoolOrDefault(Constants.Keys.FILE_PRINT))
             threads.add(createThread(() -> printToFile(checks), Constants.Task.Names.PRINT));
 
-        if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_GENERATE_SERIALIZE))
+        if (finder.firstBoolOrDefault(Constants.Keys.FILE_GENERATE_SERIALIZE))
             threads.add(createThread(() ->
                     serializeToGenerateFile(checks), Constants.Task.Names.SERIALIZE_GENERATE));
 
@@ -58,9 +58,9 @@ public final class Application {
     }
 
     private void deserializeGenerateFile(Collection<Check> checkCollection) {
-        var format = finder.findFirstStringOrDefault(
+        var format = finder.firstStringOrDefault(
                 Constants.Keys.FILE_DESERIALIZE_GENERATE_FORMAT, Constants.Format.IO.JSON);
-        var path = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_GENERATE_PATH);
+        var path = finder.firstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_GENERATE_PATH);
         try {
             IGenerateCheckService generateCheckService = ServiceFactory.instance(GenerateCheckService.class);
             var checkList = generateCheckService.fromGenerated(new File(path), format);
@@ -75,8 +75,8 @@ public final class Application {
     }
 
     private void serializeToGenerateFile(Collection<Check> checkCollection) {
-        var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_GENERATE_SERIALIZE_FORMAT);
-        var path = finder.findFirstStringOrThrow(Constants.Keys.FILE_GENERATE_SERIALIZE_PATH);
+        var format = finder.firstStringOrThrow(Constants.Keys.FILE_GENERATE_SERIALIZE_FORMAT);
+        var path = finder.firstStringOrThrow(Constants.Keys.FILE_GENERATE_SERIALIZE_PATH);
         try {
             IGenerateCheckService generateCheckService = ServiceFactory.instance(GenerateCheckService.class);
             generateCheckService.toGenerated(checkCollection, new File(path), format);
@@ -90,8 +90,8 @@ public final class Application {
     }
 
     private void deserializeFile(Collection<Check> checkCollection) {
-        var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
-        var path = finder.findFirstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
+        var format = finder.firstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
+        var path = finder.firstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
         try {
             IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class);
             var deserializedChecks = ioService.deserialize(new File(path), format);
@@ -106,8 +106,8 @@ public final class Application {
     }
 
     private void serializeToFile(Collection<Check> checkCollection) {
-        var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
-        var path = finder.findFirstStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
+        var format = finder.firstStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
+        var path = finder.firstStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
         try {
             IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class);
             ioService.serialize(checkCollection, new File(path), format);
@@ -121,21 +121,20 @@ public final class Application {
     }
 
     private void printToFile(Collection<Check> checkCollection) {
-        var format = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
-        var path = finder.findFirstStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
+        var format = finder.firstStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
+        var path = finder.firstStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
         try {
-            IPrintingCheckService printingService =
-                    ServiceFactory.instance(PrintingCheckService.class);
+            IPrintingCheckService printingService = ServiceFactory.instance(PrintingCheckService.class);
             switch (format.toLowerCase()) {
                 case Constants.Format.Print.TEXT -> printingService.printToText(checkCollection, new File(path));
                 case Constants.Format.Print.HTML -> printingService.printToHtml(checkCollection, new File(path));
                 case Constants.Format.Print.PDF -> {
-                    if (finder.findFirstBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
+                    if (finder.firstBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
                         var pdfTemplatePath =
-                                finder.findFirstStringOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH);
+                                finder.firstStringOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH);
                         printingService.printWithTemplateToPdf(checkCollection, new File(path),
                                 new File(pdfTemplatePath),
-                                finder.findFirstIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
+                                finder.firstIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
                     } else {
                         printingService.printToPdf(checkCollection, new File(path));
                     }
@@ -153,7 +152,7 @@ public final class Application {
     }
 
     private Collection<Check> applyFilterIfExist(Collection<Check> checkCollection) {
-        var value = finder.findFirstStringOrDefault(Constants.Keys.INPUT_FILTER_ID);
+        var value = finder.firstStringOrDefault(Constants.Keys.INPUT_FILTER_ID);
         if (value != null) {
             var idList = new SinglyLinkedList<Integer>();
             var values = value.split(",");

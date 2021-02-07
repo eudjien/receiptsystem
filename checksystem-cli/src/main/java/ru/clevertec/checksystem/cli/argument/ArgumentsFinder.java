@@ -56,43 +56,43 @@ public class ArgumentsFinder {
         return pattern;
     }
 
-    public String findFirstStringOrDefault(String key) {
-        return findFirstStringOrDefault(key, null);
+    public String firstStringOrDefault(String key) {
+        return firstStringOrDefault(key, null);
     }
 
-    public String findFirstStringOrDefault(String key, String defaultValue) {
+    public String firstStringOrDefault(String key, String defaultValue) {
         if (arguments.containsKey(key)) {
             return arguments.get(key).firstValue();
         }
         return defaultValue;
     }
 
-    public String findFirstStringOrThrow(String key) {
-        var value = findFirstStringOrDefault(key);
+    public String firstStringOrThrow(String key) {
+        var value = firstStringOrDefault(key);
         if (value == null) {
             throw new IllegalArgumentException("Parameter '" + key + "' is not defined");
         }
         return value;
     }
 
-    public int findFirstIntOrDefault(String key) {
-        return findFirstIntOrDefault(key, 0);
+    public int firstIntOrDefault(String key) {
+        return firstIntOrDefault(key, 0);
     }
 
-    public int findFirstIntOrDefault(String key, int defaultValue) {
-        var value = findFirstStringOrDefault(key);
+    public int firstIntOrDefault(String key, int defaultValue) {
+        var value = firstStringOrDefault(key);
         if (value == null) {
             return defaultValue;
         }
         return Integer.parseInt(value);
     }
 
-    public boolean findFirstBoolOrDefault(String key) {
-        return findFirstBoolOrDefault(key, false);
+    public boolean firstBoolOrDefault(String key) {
+        return firstBoolOrDefault(key, false);
     }
 
-    public boolean findFirstBoolOrDefault(String key, boolean defaultValue) {
-        var value = findFirstStringOrDefault(key);
+    public boolean firstBoolOrDefault(String key, boolean defaultValue) {
+        var value = firstStringOrDefault(key);
         if (value == null) {
             return defaultValue;
         }
