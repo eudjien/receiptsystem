@@ -1,12 +1,12 @@
 package ru.clevertec.checksystem.core.event;
 
-import ru.clevertec.checksystem.core.common.IUnsubscribable;
 import ru.clevertec.checksystem.core.common.event.IEventListener;
+import ru.clevertec.checksystem.core.common.event.ISubscription;
 
 import java.util.List;
 import java.util.Map;
 
-public class Subscription<T> implements IUnsubscribable, AutoCloseable {
+public class Subscription<T> implements ISubscription {
 
     private final Map<String, List<IEventListener<T>>> listeners;
     private final String eventType;
