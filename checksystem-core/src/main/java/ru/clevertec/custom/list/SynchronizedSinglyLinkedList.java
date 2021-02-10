@@ -254,7 +254,7 @@ public final class SynchronizedSinglyLinkedList<T> implements List<T> {
     public ListIterator<T> listIterator() {
         readWriteLock.writeLock().lock();
         try {
-            return new SynchronizedSinglyLinkedList<T>(singlyLinkedList).listIterator();
+            return new SinglyLinkedList<T>(singlyLinkedList).listIterator();
         } finally {
             readWriteLock.writeLock().unlock();
         }
@@ -264,7 +264,7 @@ public final class SynchronizedSinglyLinkedList<T> implements List<T> {
     public ListIterator<T> listIterator(int index) {
         readWriteLock.writeLock().lock();
         try {
-            var cList = new SynchronizedSinglyLinkedList<T>();
+            var cList = new SinglyLinkedList<T>();
             var it = singlyLinkedList.listIterator(index);
             while (it.hasNext())
                 cList.add(it.next());
