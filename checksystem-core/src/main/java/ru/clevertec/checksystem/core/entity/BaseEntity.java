@@ -1,21 +1,29 @@
 package ru.clevertec.checksystem.core.entity;
 
-public class BaseEntity {
+import ru.clevertec.checksystem.core.Constants;
 
-    private int id;
+import javax.persistence.*;
+
+@MappedSuperclass
+public abstract class BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = Constants.Entities.Mapping.Column.ID)
+    private Long id;
 
     public BaseEntity() {
     }
 
-    public BaseEntity(int id) {
+    public BaseEntity(Long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

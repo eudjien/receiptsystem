@@ -1,191 +1,105 @@
 package ru.clevertec.checksystem.cli;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
+import ru.clevertec.checksystem.cli.argument.CheckIdArgumentFilter;
+import ru.clevertec.checksystem.cli.call.*;
 import ru.clevertec.checksystem.core.ProxyIdentifier;
-import ru.clevertec.checksystem.core.common.functional.Action;
-import ru.clevertec.checksystem.core.common.service.IGenerateCheckService;
-import ru.clevertec.checksystem.core.common.service.IIoCheckService;
-import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
-import ru.clevertec.checksystem.core.data.DataSeed;
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.checksystem.core.service.GenerateCheckService;
-import ru.clevertec.checksystem.core.service.IoCheckService;
-import ru.clevertec.checksystem.core.service.PrintingCheckService;
 import ru.clevertec.custom.list.SinglyLinkedList;
+import ru.clevertec.custom.list.SynchronizedSinglyLinkedList;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import static ru.clevertec.checksystem.cli.Constants.Inputs;
+import static ru.clevertec.checksystem.cli.Constants.Keys;
+
+@Component
 public final class Application {
 
-    private static ArgumentsFinder finder;
+    private final ServiceFactory serviceFactory;
+    private final CheckIdArgumentFilter checkIdArgumentFilter;
 
-    public void start(String[] args) throws InterruptedException {
+    private final List<Check> checks = new SynchronizedSinglyLinkedList<>();
 
-        finder = new ArgumentsFinder(args);
+    private ArgumentsFinder argumentsFinder;
 
-        ProxyIdentifier.setProxied(finder.firstBoolOrDefault(Constants.Keys.PROXIED_SERVICES));
-
-        var checks = new SinglyLinkedList<Check>();
-
-        var mode = finder.firstStringOrThrow(Constants.Keys.MODE);
-
-        switch (mode) {
-            case Constants.Mode.GENERATE -> deserializeGenerateFile(checks);
-            case Constants.Mode.FILE_DESERIALIZE -> deserializeFile(checks);
-            case Constants.Mode.PRE_DEFINED -> checks.addAll(applyFilterIfExist(DataSeed.checks()));
-        }
-
-        var threads = new SinglyLinkedList<Thread>();
-
-        if (finder.firstBoolOrDefault(Constants.Keys.FILE_SERIALIZE))
-            threads.add(createThread(() -> serializeToFile(checks), Constants.Task.Names.SERIALIZE));
-
-        if (finder.firstBoolOrDefault(Constants.Keys.FILE_PRINT))
-            threads.add(createThread(() -> printToFile(checks), Constants.Task.Names.PRINT));
-
-        if (finder.firstBoolOrDefault(Constants.Keys.FILE_GENERATE_SERIALIZE))
-            threads.add(createThread(() ->
-                    serializeToGenerateFile(checks), Constants.Task.Names.SERIALIZE_GENERATE));
-
-        if (!threads.isEmpty())
-            startAndJoinThreads(threads);
+    @Autowired
+    public Application(ServiceFactory serviceFactory, CheckIdArgumentFilter checkIdArgumentFilter) {
+        this.serviceFactory = serviceFactory;
+        this.checkIdArgumentFilter = checkIdArgumentFilter;
     }
 
-    private void deserializeGenerateFile(Collection<Check> checkCollection) {
-        var format = finder.firstStringOrDefault(
-                Constants.Keys.FILE_DESERIALIZE_GENERATE_FORMAT, Constants.Format.IO.JSON);
-        var path = finder.firstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_GENERATE_PATH);
-        try {
-            IGenerateCheckService generateCheckService = ServiceFactory.instance(GenerateCheckService.class);
-            var checkList = generateCheckService.fromGenerated(new File(path), format);
-            checkCollection.addAll(applyFilterIfExist(checkList));
-        } catch (IOException
-                | InstantiationException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    public void start(ArgumentsFinder argumentsFinder) throws Exception {
+        this.argumentsFinder = argumentsFinder;
+        start();
     }
 
-    private void serializeToGenerateFile(Collection<Check> checkCollection) {
-        var format = finder.firstStringOrThrow(Constants.Keys.FILE_GENERATE_SERIALIZE_FORMAT);
-        var path = finder.firstStringOrThrow(Constants.Keys.FILE_GENERATE_SERIALIZE_PATH);
-        try {
-            IGenerateCheckService generateCheckService = ServiceFactory.instance(GenerateCheckService.class);
-            generateCheckService.toGenerated(checkCollection, new File(path), format);
-        } catch (IOException
-                | InstantiationException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private void start() throws Exception {
+
+        ProxyIdentifier.setProxied(argumentsFinder.firstBoolOrDefault(Keys.PROXIED_SERVICES));
+
+        doInput();
+        doOutput();
     }
 
-    private void deserializeFile(Collection<Check> checkCollection) {
-        var format = finder.firstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_FORMAT);
-        var path = finder.firstStringOrThrow(Constants.Keys.FILE_DESERIALIZE_PATH);
-        try {
-            IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class);
-            var deserializedChecks = ioService.deserialize(new File(path), format);
-            checkCollection.addAll(applyFilterIfExist(deserializedChecks));
-        } catch (IOException
-                | InstantiationException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private void doInput() throws Exception {
+
+        var input = argumentsFinder.firstStringOrThrow(Keys.INPUT);
+
+        var loadChecksCallable = getChecksInputSource(input);
+        var loadChecksResult = Executors.newSingleThreadExecutor().submit(loadChecksCallable).get();
+
+        if (!loadChecksResult.isSuccess())
+            throw loadChecksResult.getException();
     }
 
-    private void serializeToFile(Collection<Check> checkCollection) {
-        var format = finder.firstStringOrThrow(Constants.Keys.FILE_SERIALIZE_FORMAT);
-        var path = finder.firstStringOrThrow(Constants.Keys.FILE_SERIALIZE_PATH);
-        try {
-            IIoCheckService ioService = ServiceFactory.instance(IoCheckService.class);
-            ioService.serialize(checkCollection, new File(path), format);
-        } catch (IOException
-                | InstantiationException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private void doOutput() throws InterruptedException, ExecutionException {
 
-    private void printToFile(Collection<Check> checkCollection) {
-        var format = finder.firstStringOrThrow(Constants.Keys.FILE_PRINT_FORMAT);
-        var path = finder.firstStringOrThrow(Constants.Keys.FILE_PRINT_PATH);
-        try {
-            IPrintingCheckService printingService = ServiceFactory.instance(PrintingCheckService.class);
-            switch (format.toLowerCase()) {
-                case Constants.Format.Print.TEXT -> printingService.printToText(checkCollection, new File(path));
-                case Constants.Format.Print.HTML -> printingService.printToHtml(checkCollection, new File(path));
-                case Constants.Format.Print.PDF -> {
-                    if (finder.firstBoolOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE)) {
-                        var pdfTemplatePath =
-                                finder.firstStringOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_PATH);
-                        printingService.printWithTemplateToPdf(checkCollection, new File(path),
-                                new File(pdfTemplatePath),
-                                finder.firstIntOrDefault(Constants.Keys.FILE_PRINT_PDF_TEMPLATE_OFFSET));
-                    } else {
-                        printingService.printToPdf(checkCollection, new File(path));
-                    }
-                }
-                default -> throw new ArgumentUnsupportedException(Constants.Keys.FILE_PRINT_FORMAT, format);
+        var executor = Executors.newCachedThreadPool();
+        var futures = new SinglyLinkedList<Future<CallResult>>();
+
+        if (argumentsFinder.firstBoolOrDefault(Keys.SERIALIZE)) {
+            futures.add(executor.submit(new SerializeToFile(argumentsFinder, serviceFactory, checks)));
+            System.out.println("Serializing to a file...");
+        }
+
+        if (argumentsFinder.firstBoolOrDefault(Keys.PRINT)) {
+            futures.add(executor.submit(new PrintToFile(argumentsFinder, serviceFactory, checks)));
+            System.out.println("Printing to a file...");
+        }
+
+        if (argumentsFinder.firstBoolOrDefault(Keys.GENERATE_SERIALIZE)) {
+            futures.add(executor.submit(new SerializeToGenerateFile(argumentsFinder, serviceFactory, checks)));
+            System.out.println("Serializing to a generate file...");
+        }
+
+        if (!futures.isEmpty()) {
+            for (var future : futures) {
+                var callResult = future.get();
+                if (callResult.isSuccess())
+                    System.out.println(callResult.getMessage());
+                else
+                    System.err.println(callResult.getMessage());
             }
-
-        } catch (IOException
-                | InstantiationException
-                | InvocationTargetException
-                | NoSuchMethodException
-                | IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    private Collection<Check> applyFilterIfExist(Collection<Check> checkCollection) {
-        var value = finder.firstStringOrDefault(Constants.Keys.INPUT_FILTER_ID);
-        if (value != null) {
-            var idList = new SinglyLinkedList<Integer>();
-            var values = value.split(",");
-            for (String s : values) {
-                try {
-                    var intValue = Integer.parseInt(s);
-                    idList.add(intValue);
-                } catch (Exception ignored) {
-                }
-            }
-            return checkCollection.stream()
-                    .filter(check -> idList.contains(check.getId()))
-                    .collect(Collectors.toCollection(SinglyLinkedList<Check>::new));
-        }
-        return checkCollection;
-    }
-
-    private void startAndJoinThreads(Collection<Thread> threadCollection) throws InterruptedException {
-        for (var thread : threadCollection)
-            thread.start();
-        for (var thread : threadCollection)
-            thread.join();
-    }
-
-    private Thread createThread(Action action, String taskName) {
-        return new Thread(() -> {
-            try {
-                action.action();
-                System.out.printf("[%s] completed.%n", taskName);
-            } catch (Exception e) {
-                System.out.printf("[%s] %s%n", taskName, e.getMessage());
-                throw e;
-            }
-        });
+    private Callable<CallResult> getChecksInputSource(String input) {
+        return switch (input) {
+            case Inputs.DESERIALIZE_GENERATE -> new DeserializeFromGenerateFile(
+                    argumentsFinder, checkIdArgumentFilter, serviceFactory, checks);
+            case Inputs.DESERIALIZE -> new DeserializeFromFile(
+                    argumentsFinder, checkIdArgumentFilter, serviceFactory, checks);
+            case Inputs.DATABASE -> new LoadFromDatabase(
+                    argumentsFinder, checkIdArgumentFilter, serviceFactory, checks);
+            default -> throw new IllegalArgumentException("Unsupported mode");
+        };
     }
 }

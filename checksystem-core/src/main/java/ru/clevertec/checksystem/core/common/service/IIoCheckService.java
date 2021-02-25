@@ -8,19 +8,19 @@ import java.util.Collection;
 
 public interface IIoCheckService extends IService {
 
-    void serialize(Collection<Check> checkCollection, File destinationFile, String format)
+    void serialize(Collection<Check> checks, File destinationFile, String format)
             throws IOException;
 
-    void serializeToJson(Collection<Check> checkCollection, File destinationFile)
+    void serializeToJson(Collection<Check> checks, File destinationFile)
             throws IOException;
 
-    String serializeToJson(Collection<Check> checkCollection)
+    String serializeToJson(Collection<Check> checks)
             throws IOException;
 
-    void serializeToXml(Collection<Check> checkCollection, File destinationFile)
+    void serializeToXml(Collection<Check> checks, File destinationFile)
             throws IOException;
 
-    String serializeToXml(Collection<Check> checkCollection)
+    String serializeToXml(Collection<Check> checks)
             throws IOException;
 
     Collection<Check> deserialize(File sourceFile, String format)

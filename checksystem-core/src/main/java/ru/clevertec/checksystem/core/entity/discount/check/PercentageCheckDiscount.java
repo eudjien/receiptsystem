@@ -1,34 +1,31 @@
 package ru.clevertec.checksystem.core.entity.discount.check;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import ru.clevertec.checksystem.core.Constants;
-import ru.clevertec.checksystem.core.common.IPercentageable;
+import ru.clevertec.checksystem.core.common.IPercentable;
+import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public abstract class PercentageCheckDiscount extends CheckDiscount implements IPercentageable {
+@MappedSuperclass
+public abstract class PercentageCheckDiscount extends CheckDiscount implements IPercentable {
 
-    private double percent;
+    @Column(name = Constants.Entities.Mapping.Column.PERCENT, nullable = false)
+    private Double percent = 0D;
 
     protected PercentageCheckDiscount() {
     }
 
-    public PercentageCheckDiscount(String description, double percent) {
+    protected PercentageCheckDiscount(String description, Double percent) {
         super(description);
         setPercent(percent);
     }
 
-    public PercentageCheckDiscount(int id, String description, double percent) {
-        super(id, description);
-        setPercent(percent);
-    }
-
-    @JsonCreator
-    public PercentageCheckDiscount(
-            int id, String description, double percent, CheckDiscount dependentDiscount) {
-        super(id, description, dependentDiscount);
+    protected PercentageCheckDiscount(String description, Double percent, CheckDiscount dependentDiscount) {
+        super(description, dependentDiscount);
         setPercent(percent);
     }
 
@@ -38,27 +35,29 @@ public abstract class PercentageCheckDiscount extends CheckDiscount implements I
     }
 
     @Override
-    public void setPercent(double percent) {
+    public void setPercent(Double percent) {
+        ThrowUtils.Argument.nullValue("percent", percent);
         ThrowUtils.Argument.outOfRange("percent", percent, Constants.Percent.MIN, Constants.Percent.MAX);
         this.percent = percent;
     }
 
     @Override
-    public BigDecimal discountAmount() {
+    public BigDecimal discountAmount(Check check) {
 
-        var subTotal = getCheck().subTotalAmount();
+        var subTotalAmount = check.subTotalAmount();
         var dependentDiscountAmount = BigDecimal.ZERO;
-        var itemsDiscountAmount = getCheck().itemsDiscountAmount();
+        var itemsDiscountAmount = check.itemsDiscountSum();
 
         if (getDependentDiscount() != null) {
-            subTotal = subTotal.subtract(getDependentDiscount().discountAmount());
-            dependentDiscountAmount = getDependentDiscount().discountAmount();
+            subTotalAmount = subTotalAmount.subtract(getDependentDiscount().discountAmount(check));
+            dependentDiscountAmount = getDependentDiscount().discountAmount(check);
         }
 
-        subTotal = subTotal.subtract(itemsDiscountAmount);
+        subTotalAmount = subTotalAmount.subtract(itemsDiscountAmount);
 
-        var discount = subTotal.divide(BigDecimal.valueOf(Constants.Percent.MAX), RoundingMode.HALF_EVEN)
-                .multiply(BigDecimal.valueOf(percent));
+        var discount = subTotalAmount
+                .divide(BigDecimal.valueOf(Constants.Percent.MAX), RoundingMode.HALF_EVEN)
+                .multiply(BigDecimal.valueOf(getPercent()));
 
         return discount.add(dependentDiscountAmount).add(itemsDiscountAmount);
     }

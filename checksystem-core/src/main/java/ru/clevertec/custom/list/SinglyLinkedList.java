@@ -1,7 +1,6 @@
 package ru.clevertec.custom.list;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -10,8 +9,7 @@ import java.util.function.IntFunction;
 
 public final class SinglyLinkedList<T> implements List<T> {
 
-    private final static int TAIL_I = 0, HEAD_I = 1;
-    private Node tail, head;
+    private Node<T> tail, head;
     private int size;
 
     public SinglyLinkedList() {
@@ -71,7 +69,7 @@ public final class SinglyLinkedList<T> implements List<T> {
     @Override
     public T remove(int index) {
         throwIfIndexOutOfBounds(index);
-        var it = new SinglyLinkedListIterator(0);
+        var it = new SinglyLinkedListIterator<>(this, 0);
         while (it.hasNext()) {
             var value = it.next();
             if (it.index == index) {
@@ -204,7 +202,7 @@ public final class SinglyLinkedList<T> implements List<T> {
             return lastIndex;
         if (head.value.equals(o))
             return size - 1;
-        var it = new SinglyLinkedListIterator(0);
+        var it = new SinglyLinkedListIterator<>(this, 0);
         for (int i = 0; i < size - 1; i++)
             if (it.next().equals(o))
                 lastIndex = it.index;
@@ -219,7 +217,7 @@ public final class SinglyLinkedList<T> implements List<T> {
             throw new IndexOutOfBoundsException();
         }
 
-        var fromNode = moveToIndex(fromIndex);
+        var fromNode = moveToIndex(tail, fromIndex);
 
         var list = new SinglyLinkedList<T>();
 
@@ -250,7 +248,7 @@ public final class SinglyLinkedList<T> implements List<T> {
             throw new NullPointerException();
         if (array.length != size())
             throw new ArrayStoreException();
-        var it = new SinglyLinkedListIterator(0);
+        var it = new SinglyLinkedListIterator<>(this, 0);
         while (it.hasNext()) {
             var value = it.next();
             array[it.index] = (T1) value;
@@ -274,37 +272,15 @@ public final class SinglyLinkedList<T> implements List<T> {
     }
 
     @Override
-    public ListIterator<T> listIterator(int index) {
-        return new SinglyLinkedListIterator(index);
+    public ListIterator<T> listIterator(int fromIndex) {
+        return new SinglyLinkedListIterator<>(this, fromIndex);
     }
 
-    private Node moveToIndex(int index) {
+    private static <T> Node<T> moveToIndex(Node<T> tail, int index) {
         var currentNode = tail;
         for (int i = 0; i < index; i++)
             currentNode = currentNode.next;
         return currentNode;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Node[] createNodes(Collection<? extends T> collection) {
-
-        var it = collection.iterator();
-
-        var newNode = new Node(it.next());
-        var tail = newNode;
-        var head = newNode;
-
-        while (it.hasNext()) {
-            newNode = new Node(it.next());
-            head.next = newNode;
-            head = newNode;
-        }
-
-        var arr = (Node[]) Array.newInstance(Node.class, 2);
-        arr[TAIL_I] = tail;
-        arr[HEAD_I] = head;
-
-        return arr;
     }
 
     private void throwIfIndexOutOfBounds(int index) {
@@ -313,7 +289,7 @@ public final class SinglyLinkedList<T> implements List<T> {
     }
 
     private boolean addToEmpty(T value) {
-        tail = head = new Node(value);
+        tail = head = new Node<>(value);
         size++;
         return true;
     }
@@ -327,7 +303,7 @@ public final class SinglyLinkedList<T> implements List<T> {
     }
 
     private boolean addAfterLast(T value) {
-        var newNode = new Node(value);
+        var newNode = new Node<>(value);
         head.next = newNode;
         head = newNode;
         size++;
@@ -340,59 +316,73 @@ public final class SinglyLinkedList<T> implements List<T> {
     }
 
     private void addBetween(int index, T value) {
-        var newNode = new Node(value);
-        var beforeNode = moveToIndex(index - 1);
+        var newNode = new Node<>(value);
+        var beforeNode = moveToIndex(tail, index - 1);
         newNode.next = beforeNode.next;
         beforeNode.next = newNode;
         size++;
     }
 
     private void addBetween(int index, Collection<? extends T> collection) {
-        var pair = createNodes(collection);
-        var beforeNode = moveToIndex(index - 1);
-        pair[HEAD_I].next = beforeNode.next;
-        beforeNode.next = pair[TAIL_I];
-        size += collection.size();
+        var beforeNode = moveToIndex(tail, index - 1);
+        for (var value : collection) {
+            var newNode = new Node<T>(value);
+            newNode.next = beforeNode.next;
+            beforeNode.next = newNode;
+            beforeNode = newNode;
+            size++;
+        }
     }
 
     private void addBeforeFirst(T value) {
-        var newNode = new Node(value);
+        var newNode = new Node<>(value);
         newNode.next = tail;
         tail = newNode;
         size++;
     }
 
     private void addBeforeFirst(Collection<? extends T> collection) {
-        var pair = createNodes(collection);
-        pair[HEAD_I].next = tail;
-        tail = pair[TAIL_I];
-        size += collection.size();
+        var it = collection.iterator();
+        var beforeNode = new Node<T>(it.next());
+        beforeNode.next = tail;
+        tail = beforeNode;
+        size++;
+
+        while (it.hasNext()) {
+            var newNode = new Node<T>(it.next());
+            newNode.next = beforeNode.next;
+            beforeNode.next = newNode;
+            beforeNode = newNode;
+            size++;
+        }
     }
 
-    protected class Node implements Serializable {
+    private static class Node<T> implements Serializable {
 
         private T value;
-        private Node next;
+        private Node<T> next;
 
         public Node(T value) {
             this.value = value;
         }
     }
 
-    private class SinglyLinkedListIterator implements ListIterator<T> {
+    private static class SinglyLinkedListIterator<T> implements ListIterator<T> {
 
+        public SinglyLinkedList<T> singlyLinkedList;
         public int index;
-        private Node previousNode;
-        private Node currentNode;
+        private Node<T> previousNode;
+        private Node<T> currentNode;
 
-        public SinglyLinkedListIterator(int index) {
-            this.currentNode = moveToIndex(index);
-            this.index = index - 1;
+        public SinglyLinkedListIterator(SinglyLinkedList<T> singlyLinkedList, int fromIndex) {
+            this.singlyLinkedList = singlyLinkedList;
+            this.currentNode = moveToIndex(singlyLinkedList.tail, fromIndex);
+            this.index = fromIndex - 1;
         }
 
         @Override
         public boolean hasNext() {
-            return nextIndex() < size();
+            return nextIndex() < singlyLinkedList.size();
         }
 
         @Override
@@ -430,16 +420,16 @@ public final class SinglyLinkedList<T> implements List<T> {
         @Override
         public void remove() {
             if (index == 0) {
-                tail = currentNode.next;
-                if (tail == null)
-                    head = null;
+                singlyLinkedList.tail = currentNode.next;
+                if (singlyLinkedList.tail == null)
+                    singlyLinkedList.head = null;
             } else {
                 previousNode.next = currentNode != null ? currentNode.next : null;
                 if (previousNode.next == null)
-                    head = previousNode;
+                    singlyLinkedList.head = previousNode;
                 index--;
             }
-            size--;
+            singlyLinkedList.size--;
         }
 
         @Override

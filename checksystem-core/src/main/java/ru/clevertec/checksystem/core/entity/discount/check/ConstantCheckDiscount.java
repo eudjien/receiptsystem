@@ -1,32 +1,35 @@
 package ru.clevertec.checksystem.core.entity.discount.check;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IConstable;
+import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 
+@MappedSuperclass
 public abstract class ConstantCheckDiscount extends CheckDiscount implements IConstable<BigDecimal> {
 
-    private BigDecimal constant;
+    @Column(name = Constants.Entities.Mapping.Column.CONSTANT, nullable = false)
+    private BigDecimal constant = BigDecimal.ZERO;
 
     protected ConstantCheckDiscount() {
     }
 
-    public ConstantCheckDiscount(String description, BigDecimal constant) {
+    protected ConstantCheckDiscount(String description, BigDecimal constant) {
         super(description);
         setConstant(constant);
     }
 
-    public ConstantCheckDiscount(int id, String description, BigDecimal constant) {
-        super(id, description);
+    protected ConstantCheckDiscount(int id, String description, BigDecimal constant) {
+        super(description);
         setConstant(constant);
     }
 
-    @JsonCreator
-    public ConstantCheckDiscount(
-            int id, String description, BigDecimal constant, CheckDiscount dependentDiscount) {
-        super(id, description, dependentDiscount);
+    protected ConstantCheckDiscount(String description, BigDecimal constant, CheckDiscount dependentDiscount) {
+        super(description, dependentDiscount);
         setConstant(constant);
     }
 
@@ -40,13 +43,13 @@ public abstract class ConstantCheckDiscount extends CheckDiscount implements ICo
     }
 
     @Override
-    public BigDecimal discountAmount() {
+    public BigDecimal discountAmount(Check check) {
 
         var dependentDiscountAmount = getDependentDiscount() != null
-                ? getDependentDiscount().discountAmount()
+                ? getDependentDiscount().discountAmount(check)
                 : BigDecimal.ZERO;
 
-        var itemsDiscountSum = getCheck().itemsDiscountAmount();
+        var itemsDiscountSum = check.itemsDiscountSum();
 
         return constant.add(dependentDiscountAmount).add(itemsDiscountSum);
     }

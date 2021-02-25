@@ -1,18 +1,27 @@
 package ru.clevertec.checksystem.core.factory.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.ProxyIdentifier;
 import ru.clevertec.checksystem.core.common.service.IService;
 
-import java.lang.reflect.InvocationTargetException;
+@Component
+public final class ServiceFactory {
 
-public class ServiceFactory {
+    private final SimpleServiceFactory simpleServiceFactory;
+    private final ProxiedServiceFactory proxiedServiceFactory;
 
-    public static <E extends IService> E instance(Class<? extends IService> serviceClass)
-            throws InvocationTargetException, NoSuchMethodException,
-            InstantiationException, IllegalAccessException {
+    @Autowired
+    public ServiceFactory(
+            SimpleServiceFactory simpleServiceFactory,
+            ProxiedServiceFactory proxiedServiceFactory) {
+        this.simpleServiceFactory = simpleServiceFactory;
+        this.proxiedServiceFactory = proxiedServiceFactory;
+    }
 
+    public <E extends IService> E instance(Class<? extends IService> serviceClass) {
         return ProxyIdentifier.isProxied()
-                ? ProxiedServiceFactory.instance(serviceClass)
-                : SimpleServiceFactory.instance(serviceClass);
+                ? simpleServiceFactory.instance(serviceClass)
+                : proxiedServiceFactory.instance(serviceClass);
     }
 }

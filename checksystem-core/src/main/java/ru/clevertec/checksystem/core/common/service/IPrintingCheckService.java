@@ -9,33 +9,33 @@ import java.util.Collection;
 
 public interface IPrintingCheckService extends IService {
 
-    void printToHtml(Collection<Check> checkCollection, File destinationFile) throws IOException;
+    void printToHtml(Collection<Check> checks, File destinationFile) throws IOException;
 
-    void printToHtml(Collection<Check> checkCollection, OutputStream outputStream) throws IOException;
+    void printToHtml(Collection<Check> checks, OutputStream outputStream) throws IOException;
 
-    String printToHtml(Collection<Check> checkCollection) throws IOException;
+    String printToHtml(Collection<Check> checks) throws IOException;
 
-    void printToPdf(Collection<Check> checkCollection, File destinationFile) throws IOException;
+    void printToPdf(Collection<Check> checks, File destinationFile) throws IOException;
 
-    void printToPdf(Collection<Check> checkCollection, OutputStream outputStream) throws IOException;
+    void printToPdf(Collection<Check> checks, OutputStream outputStream) throws IOException;
 
-    byte[] printToPdf(Collection<Check> checkCollection) throws IOException;
+    byte[] printToPdf(Collection<Check> checks) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile) throws IOException;
+    void printWithTemplateToPdf(Collection<Check> checks, File destinationFile, File templateFile) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream stream, File templateFile) throws IOException;
+    void printWithTemplateToPdf(Collection<Check> checks, OutputStream stream, File templateFile) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile, int templateTopOffset) throws IOException;
+    void printWithTemplateToPdf(Collection<Check> checks, File destinationFile, File templateFile, int templateTopOffset) throws IOException;
 
-    void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile, int templateTopOffset) throws IOException;
+    void printWithTemplateToPdf(Collection<Check> checks, OutputStream outputStream, File templateFile, int templateTopOffset) throws IOException;
 
-    byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile) throws IOException;
+    byte[] printWithTemplateToPdf(Collection<Check> checks, File templateFile) throws IOException;
 
-    byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile, int templateOffset) throws IOException;
+    byte[] printWithTemplateToPdf(Collection<Check> checks, File templateFile, int templateOffset) throws IOException;
 
-    void printToText(Collection<Check> checkCollection, File destinationFile) throws IOException;
+    void printToText(Collection<Check> checks, File destinationFile) throws IOException;
 
-    void printToText(Collection<Check> checkCollection, OutputStream outputStream) throws IOException;
+    void printToText(Collection<Check> checks, OutputStream outputStream) throws IOException;
 
-    String printToText(Collection<Check> checkCollection) throws IOException;
+    String printToText(Collection<Check> checks) throws IOException;
 }

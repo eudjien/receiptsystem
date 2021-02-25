@@ -3,50 +3,51 @@ plugins {
     id 'ru.clevertec.plugin.aspectj.ltw' version '1.1.1'
 }
 
-java {
-    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
-}
+group = 'ru.clevertec.checksystem'
+version = '1.0'
+sourceCompatibility = '14'
+
+ext.jacksonVersion = '2.12.1'
+ext.aspectSourceDir = "src/aspects/java"
 
 repositories {
     mavenCentral()
 }
 
-def jacksonVersion = '2.12.1',
-    slf4jVersion = '1.7.30',
-    log4jVersion = '2.14.0'
-
-group = 'ru.clevertec.checksystem'
-version = '1.0'
-description = 'checksystem-core'
+sourceSets {
+    main {
+        java {
+            srcDir aspectSourceDir
+        }
+    }
+    aspects {
+        java {
+            srcDir aspectSourceDir
+        }
+    }
+}
 
 dependencies {
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:$jacksonVersion"
 
-    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
-    api 'com.itextpdf:itext7-core:7.1.13'
-
-    api "org.slf4j:slf4j-api:$slf4jVersion"
-    api "org.slf4j:slf4j-simple:$slf4jVersion"
-
-    api "org.apache.logging.log4j:log4j-core:$log4jVersion"
-    api "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    implementation 'com.itextpdf:itext7-core:7.1.13'
 
     implementation "com.sun.mail:javax.mail:1.6.2"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.0"
+    api 'org.springframework.boot:spring-boot-starter-data-jpa:2.4.2'
+
+    api 'org.modelmapper:modelmapper:2.3.9'
+
+    runtimeOnly 'mysql:mysql-connector-java:8.0.23'
+    runtimeOnly 'com.h2database:h2:1.4.200'
 }
 
 test {
     useJUnitPlatform()
-}
-
-def aspectjSourceRoot = "src/aspects/java"
-
-sourceSets {
-    aspects.java.srcDir aspectjSourceRoot
-    main.java.srcDir aspectjSourceRoot
 }
 
 aspectjltw {

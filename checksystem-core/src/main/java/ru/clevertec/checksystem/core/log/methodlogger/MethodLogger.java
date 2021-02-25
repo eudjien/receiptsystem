@@ -2,6 +2,7 @@ package ru.clevertec.checksystem.core.log.methodlogger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.clevertec.checksystem.core.common.log.IMethodLogger;
 import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -9,7 +10,6 @@ import ru.clevertec.custom.json.StringifyJSON;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -29,9 +29,7 @@ public class MethodLogger implements IMethodLogger {
 
     public static MethodLogger instance(Class<?> c) {
 
-        if (c == null) {
-            throw new IllegalArgumentException("Parameter 'c' cannot be null");
-        }
+        ThrowUtils.Argument.nullValue("class", c);
 
         if (instances.containsKey(c)) {
             return instances.get(c);
@@ -55,16 +53,14 @@ public class MethodLogger implements IMethodLogger {
     @Override
     public void log(String level, String format, Method method, Object[] args, Object returnedData) {
 
-        if (level.equals(LogLevel.NONE)) {
+        if (level.equals(LogLevel.NONE))
             return;
-        }
 
         ThrowUtils.Argument.nullValue("format", method);
 
-        if (returnedData != null && !method.getReturnType().isAssignableFrom(returnedData.getClass())) {
+        if (returnedData != null && !method.getReturnType().isAssignableFrom(returnedData.getClass()))
             throw new IllegalArgumentException(String.format(DIFFERENT_TYPES_MESSAGE,
                     "returnedData", method.getReturnType().getName(), returnedData.getClass().getName()));
-        }
 
         var message = createMessage(format, method, args, returnedData);
         log(level, message);
@@ -113,10 +109,10 @@ public class MethodLogger implements IMethodLogger {
     }
 
     private static String createArgsName(Parameter[] parameters) {
-        return Arrays.stream(parameters).
-                map(Parameter::getParameterizedType)
-                .map(Type::getTypeName)
-                .reduce((a, b) -> a + ", " + b).orElse("");
+        return Arrays.stream(parameters)
+                .map(parameter -> parameter.getParameterizedType().getTypeName())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
     }
 
     private static String createArgsData(Object[] args) {
