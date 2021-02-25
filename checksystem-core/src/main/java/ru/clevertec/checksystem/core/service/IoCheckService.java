@@ -2,7 +2,6 @@ package ru.clevertec.checksystem.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
 import ru.clevertec.checksystem.core.common.service.IIoCheckService;
 import ru.clevertec.checksystem.core.entity.check.Check;
@@ -14,6 +13,8 @@ import ru.clevertec.checksystem.core.log.LogLevel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
+import static ru.clevertec.checksystem.core.Constants.Format;
 
 @Service
 public class IoCheckService extends EventEmitter<Object> implements IIoCheckService {
@@ -29,44 +30,44 @@ public class IoCheckService extends EventEmitter<Object> implements IIoCheckServ
 
     @Override
     public void serialize(Collection<Check> checks, File destinationFile, String format) throws IOException {
-        checkWriterFactory.create(format).write(checks, destinationFile);
+        checkWriterFactory.instance(format).write(checks, destinationFile);
     }
 
     @Override
     public void serializeToJson(Collection<Check> checks, File destinationFile) throws IOException {
-        checkWriterFactory.create(Constants.Format.IO.JSON).write(checks, destinationFile);
+        checkWriterFactory.instance(Format.IO.JSON).write(checks, destinationFile);
     }
 
     @Override
     public String serializeToJson(Collection<Check> checks) throws IOException {
-        var checkWriter = checkWriterFactory.create(Constants.Format.IO.JSON);
-        return new String(checkWriter.write(checks));
+        var writer = checkWriterFactory.instance(Format.IO.JSON);
+        return new String(writer.write(checks));
     }
 
     @Override
     public void serializeToXml(Collection<Check> checks, File destinationFile) throws IOException {
-        checkWriterFactory.create(Constants.Format.IO.XML).write(checks, destinationFile);
+        checkWriterFactory.instance(Format.IO.XML).write(checks, destinationFile);
     }
 
     @Override
     public String serializeToXml(Collection<Check> checks) throws IOException {
-        var checkWriter = checkWriterFactory.create(Constants.Format.IO.XML);
-        return new String(checkWriter.write(checks));
+        var writer = checkWriterFactory.instance(Format.IO.XML);
+        return new String(writer.write(checks));
     }
 
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
     public Collection<Check> deserialize(File sourceFile, String format) throws IOException {
-        return checkReaderFactory.create(format).read(sourceFile);
+        return checkReaderFactory.instance(format).read(sourceFile);
     }
 
     @Override
     public Collection<Check> deserializeFromJson(File sourceFile) throws IOException {
-        return checkReaderFactory.create(Constants.Format.IO.JSON).read(sourceFile);
+        return checkReaderFactory.instance(Format.IO.JSON).read(sourceFile);
     }
 
     @Override
     public Collection<Check> deserializeFromXml(File sourceFile) throws IOException {
-        return checkReaderFactory.create(Constants.Format.IO.XML).read(sourceFile);
+        return checkReaderFactory.instance(Format.IO.XML).read(sourceFile);
     }
 }

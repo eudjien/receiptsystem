@@ -1,8 +1,9 @@
-package ru.clevertec.checksystem.cli.call;
+package ru.clevertec.checksystem.cli.task;
 
 import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
-import ru.clevertec.checksystem.cli.argument.CheckIdArgumentFilter;
+import ru.clevertec.checksystem.cli.argument.CheckIdFilter;
+import ru.clevertec.checksystem.cli.exception.ArgumentNotExistException;
 import ru.clevertec.checksystem.core.common.service.IIoCheckService;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
@@ -13,45 +14,42 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-public class DeserializeFromFile implements Callable<CallResult> {
+public class DeserializeFromFile implements Callable<Void> {
 
     private final ArgumentsFinder argumentsFinder;
-    private final CheckIdArgumentFilter checkIdArgumentFilter;
+    private final CheckIdFilter checkIdFilter;
     private final ServiceFactory serviceFactory;
     private final Collection<Check> destinationChecks;
 
     public DeserializeFromFile(
             ArgumentsFinder argumentsFinder,
-            CheckIdArgumentFilter checkIdArgumentFilter,
+            CheckIdFilter checkIdFilter,
             ServiceFactory serviceFactory,
             Collection<Check> destinationChecks) {
         this.argumentsFinder = argumentsFinder;
-        this.checkIdArgumentFilter = checkIdArgumentFilter;
+        this.checkIdFilter = checkIdFilter;
         this.serviceFactory = serviceFactory;
         this.destinationChecks = destinationChecks;
     }
 
     @Override
-    public CallResult call() {
-        try {
-            deserializeFromFile(argumentsFinder, checkIdArgumentFilter, serviceFactory, destinationChecks);
-        } catch (Exception e) {
-            return CallResult.fail(e, "Something went wrong with deserializing from a file.");
-        }
-        return CallResult.success("Deserializing from a file is complete.");
+    public Void call() throws Exception {
+        deserializeFromFile(argumentsFinder, checkIdFilter, serviceFactory, destinationChecks);
+        return null;
     }
 
     private static void deserializeFromFile(
             ArgumentsFinder finder,
-            CheckIdArgumentFilter checkIdArgumentFilter,
+            CheckIdFilter checkIdFilter,
             ServiceFactory serviceFactory,
-            Collection<Check> destinationChecks) throws IOException {
+            Collection<Check> destinationChecks) throws IOException, ArgumentNotExistException {
 
         var format = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_FORMAT);
         var path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_PATH);
 
         IIoCheckService ioService = serviceFactory.instance(IoCheckService.class);
+
         var checks = ioService.deserialize(new File(path), format);
-        destinationChecks.addAll(checkIdArgumentFilter.applyFilterIfExist(checks));
+        destinationChecks.addAll(checkIdFilter.applyFilterIfExist(checks));
     }
 }

@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CheckIdArgumentFilter {
+public class CheckIdFilter {
 
     private final ArgumentsFinder finder;
 
     @Autowired
-    public CheckIdArgumentFilter(ArgumentsFinder finder) {
+    public CheckIdFilter(ArgumentsFinder finder) {
         this.finder = finder;
     }
 

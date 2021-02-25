@@ -7,8 +7,9 @@ group = 'ru.clevertec.checksystem'
 version = '1.0'
 sourceCompatibility = '14'
 
-ext.jacksonVersion = '2.12.1'
-ext.aspectSourceDir = "src/aspects/java"
+def jacksonVersion = '2.12.1'
+def springVersion = '2.4.3'
+def aspectSourceDir = "src/aspects/java"
 
 repositories {
     mavenCentral()
@@ -27,6 +28,10 @@ sourceSets {
     }
 }
 
+configurations.all {
+    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+}
+
 dependencies {
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
@@ -38,7 +43,8 @@ dependencies {
 
     implementation "com.sun.mail:javax.mail:1.6.2"
 
-    api 'org.springframework.boot:spring-boot-starter-data-jpa:2.4.2'
+    api "org.springframework.boot:spring-boot-starter-log4j2:$springVersion"
+    api "org.springframework.boot:spring-boot-starter-data-jpa:$springVersion"
 
     api 'org.modelmapper:modelmapper:2.3.9'
 

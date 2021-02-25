@@ -1,17 +1,21 @@
 package ru.clevertec.checksystem.core.template.pdf;
 
+import ru.clevertec.checksystem.core.util.ThrowUtils;
+
 import java.io.InputStream;
 
 public class StreamPdfTemplate extends AbstractPdfTemplate {
 
-    private InputStream templateInputStream;
+    private final InputStream templateInputStream;
 
     public StreamPdfTemplate(InputStream templateInputStream) {
-        super(0);
+        this(templateInputStream, 0);
     }
 
     public StreamPdfTemplate(InputStream templateInputStream, int topOffset) {
         super(topOffset);
+        ThrowUtils.Argument.nullValue("templateInputStream", templateInputStream);
+        this.templateInputStream = templateInputStream;
     }
 
     @Override

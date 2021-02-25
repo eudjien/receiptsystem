@@ -3,7 +3,7 @@ package ru.clevertec.checksystem.core.log.methodlogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.clevertec.checksystem.core.common.log.IMethodLogger;
-import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
+import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.custom.json.StringifyJSON;
@@ -72,7 +72,7 @@ public class MethodLogger implements IMethodLogger {
             case LogLevel.DEBUG -> logger.debug(message);
             case LogLevel.TRACE -> logger.trace(message);
             case LogLevel.ERROR -> logger.error(message);
-            default -> throw new ArgumentUnsupportedException("level");
+            default -> throw new ArgumentNotSupportedException("level");
         }
     }
 

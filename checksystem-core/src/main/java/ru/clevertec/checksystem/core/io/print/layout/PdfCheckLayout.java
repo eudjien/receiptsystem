@@ -15,8 +15,9 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
+import ru.clevertec.checksystem.core.common.ITemplatable;
+import ru.clevertec.checksystem.core.common.template.IPdfTemplate;
 import ru.clevertec.checksystem.core.entity.check.Check;
-import ru.clevertec.checksystem.core.template.pdf.AbstractPdfTemplate;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Objects;
 
-public class PdfCheckLayout extends AbstractCheckLayout {
+public class PdfCheckLayout extends AbstractCheckLayout implements ITemplatable<IPdfTemplate> {
 
     public static final String FONT_PATH = "font/JetBrainsMono-VariableFont_wght.ttf";
 
@@ -44,21 +45,28 @@ public class PdfCheckLayout extends AbstractCheckLayout {
 
     private static final Color SEPARATOR_COLOR = new DeviceRgb(48, 48, 48);
 
-    private AbstractPdfTemplate template;
+    private IPdfTemplate template;
 
     public PdfCheckLayout() {
     }
 
-    public PdfCheckLayout(AbstractPdfTemplate pdfTemplate) {
+    public PdfCheckLayout(IPdfTemplate pdfTemplate) {
         setTemplate(pdfTemplate);
     }
 
+    @Override
     public boolean hasTemplate() {
         return template != null;
     }
 
-    public void setTemplate(AbstractPdfTemplate pdfTemplate) {
-        this.template = pdfTemplate;
+    @Override
+    public void setTemplate(IPdfTemplate template) {
+        this.template = template;
+    }
+
+    @Override
+    public IPdfTemplate getTemplate() {
+        return template;
     }
 
     @Override
@@ -78,11 +86,8 @@ public class PdfCheckLayout extends AbstractCheckLayout {
         var merger = new PdfMerger(containerPdf);
 
         for (var check : checks) {
-            var checkPdf = new PdfDocument(
-                    new PdfReader(new ByteArrayInputStream(creteCheckPdfBytes(check))));
-
+            var checkPdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(creteCheckPdfBytes(check))));
             merger.merge(checkPdf, 1, checkPdf.getNumberOfPages());
-
             checkPdf.close();
         }
 
@@ -91,8 +96,7 @@ public class PdfCheckLayout extends AbstractCheckLayout {
         return os.toByteArray();
     }
 
-    private byte[] creteCheckPdfBytes(Check check)
-            throws IOException {
+    private byte[] creteCheckPdfBytes(Check check) throws IOException {
 
         var os = new ByteArrayOutputStream();
         var writer = new PdfWriter(os);

@@ -1,7 +1,8 @@
-package ru.clevertec.checksystem.cli.call;
+package ru.clevertec.checksystem.cli.task;
 
 import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
+import ru.clevertec.checksystem.cli.exception.ArgumentNotExistException;
 import ru.clevertec.checksystem.core.common.service.IIoCheckService;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-public class SerializeToFile implements Callable<CallResult> {
+public class SerializeToFile implements Callable<Void> {
 
     private final ArgumentsFinder argumentsFinder;
     private final ServiceFactory serviceFactory;
@@ -27,20 +28,17 @@ public class SerializeToFile implements Callable<CallResult> {
     }
 
     @Override
-    public CallResult call() {
-        try {
-            serializeToFile(argumentsFinder, serviceFactory, checks);
-        } catch (Exception e) {
-            return CallResult.fail(e, "Something went wrong while serializing to a file.");
-        }
-        return CallResult.success("Serializing to a file is complete.");
+    public Void call() throws Exception {
+        serializeToFile(argumentsFinder, serviceFactory, checks);
+        return null;
     }
 
     private static void serializeToFile(
-            ArgumentsFinder finder, ServiceFactory serviceFactory, Collection<Check> checks) throws IOException {
+            ArgumentsFinder finder, ServiceFactory serviceFactory, Collection<Check> checks) throws IOException, ArgumentNotExistException {
 
         var format = finder.firstStringOrThrow(Constants.Keys.SERIALIZE_FORMAT);
         var path = finder.firstStringOrThrow(Constants.Keys.SERIALIZE_PATH);
+
         IIoCheckService ioService = serviceFactory.instance(IoCheckService.class);
         ioService.serialize(checks, new File(path), format);
     }

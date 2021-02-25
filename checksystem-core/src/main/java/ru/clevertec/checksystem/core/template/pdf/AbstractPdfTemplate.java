@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.template.pdf;
 
-import ru.clevertec.checksystem.core.common.IPdfTemplate;
+import ru.clevertec.checksystem.core.common.template.IPdfTemplate;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 public abstract class AbstractPdfTemplate implements IPdfTemplate {

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public interface IPrintable {
-
     byte[] print() throws IOException;
 
     void print(OutputStream outputStream) throws IOException;

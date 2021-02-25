@@ -3,6 +3,7 @@ package ru.clevertec.checksystem.cli.argument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Component;
+import ru.clevertec.checksystem.cli.exception.ArgumentNotExistException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.util.HashMap;
@@ -23,6 +24,12 @@ public class ArgumentsFinder {
 
     public Set<Argument> getArguments() {
         return new HashSet<>(arguments.values());
+    }
+
+    public void setArguments(String[] arguments) {
+        this.arguments.clear();
+        if (arguments != null)
+            addArguments(arguments);
     }
 
     public void addArguments(String[] arguments) {
@@ -66,17 +73,15 @@ public class ArgumentsFinder {
     }
 
     public String firstStringOrDefault(String key, String defaultValue) {
-        if (arguments.containsKey(key)) {
+        if (arguments.containsKey(key))
             return arguments.get(key).firstValue();
-        }
         return defaultValue;
     }
 
-    public String firstStringOrThrow(String key) {
-        var value = firstStringOrDefault(key);
-        if (value == null) {
-            throw new IllegalArgumentException("Parameter '" + key + "' is not defined");
-        }
+    public String firstStringOrThrow(String argumentName) throws ArgumentNotExistException {
+        var value = firstStringOrDefault(argumentName);
+        if (value == null)
+            throw new ArgumentNotExistException(argumentName);
         return value;
     }
 
@@ -86,9 +91,8 @@ public class ArgumentsFinder {
 
     public int firstIntOrDefault(String key, int defaultValue) {
         var value = firstStringOrDefault(key);
-        if (value == null) {
+        if (value == null)
             return defaultValue;
-        }
         return Integer.parseInt(value);
     }
 
@@ -98,12 +102,10 @@ public class ArgumentsFinder {
 
     public boolean firstBoolOrDefault(String key, boolean defaultValue) {
         var value = firstStringOrDefault(key);
-        if (value == null) {
+        if (value == null)
             return defaultValue;
-        }
-        if (value.trim().equals("1")) {
+        if (value.trim().equals("1"))
             return true;
-        }
         return Boolean.parseBoolean(value);
     }
 

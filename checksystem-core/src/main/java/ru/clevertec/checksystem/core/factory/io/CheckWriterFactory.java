@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.io.write.ICheckWriter;
-import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
+import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.write.JsonCheckWriter;
 import ru.clevertec.checksystem.core.io.write.XmlCheckWriter;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -20,14 +20,14 @@ public final class CheckWriterFactory {
         this.applicationContext = applicationContext;
     }
 
-    public ICheckWriter create(String format) {
+    public ICheckWriter instance(String format) {
 
         ThrowUtils.Argument.nullOrBlank("format", format);
 
         return switch (format) {
             case Constants.Format.IO.JSON -> applicationContext.getBean(JsonCheckWriter.class);
             case Constants.Format.IO.XML -> applicationContext.getBean(XmlCheckWriter.class);
-            default -> throw new ArgumentUnsupportedException("format");
+            default -> throw new ArgumentNotSupportedException("format");
         };
     }
 }

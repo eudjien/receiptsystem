@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.io.read.ICheckReader;
-import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
+import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.read.JsonCheckReader;
 import ru.clevertec.checksystem.core.io.read.XmlCheckReader;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -20,12 +20,14 @@ public final class CheckReaderFactory {
         this.applicationContext = applicationContext;
     }
 
-    public ICheckReader create(String format) {
+    public ICheckReader instance(String format) {
+
         ThrowUtils.Argument.nullOrBlank("format", format);
+
         return switch (format) {
             case Constants.Format.IO.JSON -> applicationContext.getBean(JsonCheckReader.class);
             case Constants.Format.IO.XML -> applicationContext.getBean(XmlCheckReader.class);
-            default -> throw new ArgumentUnsupportedException("format");
+            default -> throw new ArgumentNotSupportedException("format");
         };
     }
 }

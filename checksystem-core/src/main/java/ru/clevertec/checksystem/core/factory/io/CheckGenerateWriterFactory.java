@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.io.write.ICheckGenerateWriter;
-import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
+import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.write.JsonCheckGenerateWriter;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
@@ -19,14 +19,14 @@ public final class CheckGenerateWriterFactory {
         this.applicationContext = applicationContext;
     }
 
-    public ICheckGenerateWriter create(String format) {
+    public ICheckGenerateWriter instance(String format) {
 
         ThrowUtils.Argument.nullOrBlank("format", format);
 
         //noinspection SwitchStatementWithTooFewBranches
         return switch (format) {
             case Constants.Format.IO.JSON -> applicationContext.getBean(JsonCheckGenerateWriter.class);
-            default -> throw new ArgumentUnsupportedException("format");
+            default -> throw new ArgumentNotSupportedException("format");
         };
     }
 }

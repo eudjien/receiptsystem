@@ -75,19 +75,18 @@ public class GenerateCheckService extends EventEmitter<Object> implements IGener
     }
 
     public void toGenerate(Collection<Check> checks, File destinationFile, String format) throws IOException {
-        var generatedChecks = toGenerate(checks);
-        var checkGenerateWriter = checkGenerateWriterFactory.create(format);
-        checkGenerateWriter.write(generatedChecks, destinationFile);
+        var checkGenerates = toGenerate(checks);
+        checkGenerateWriterFactory.instance(format).write(checkGenerates, destinationFile);
     }
 
     public Collection<Check> fromGenerate(File sourceFile, String format) throws IOException {
-        var checkGenerateReader = checkGenerateReaderFactory.create(format);
-        return fromGenerate(checkGenerateReader.read(sourceFile));
+        var checkGenerates = checkGenerateReaderFactory.instance(format).read(sourceFile);
+        return fromGenerate(checkGenerates);
     }
 
     public Collection<Check> fromGenerate(byte[] bytes, String format) throws IOException {
-        var checkGenerateReader = checkGenerateReaderFactory.create(format);
-        return fromGenerate(checkGenerateReader.read(bytes));
+        var checkGenerates = checkGenerateReaderFactory.instance(format).read(bytes);
+        return fromGenerate(checkGenerates);
     }
 
     public Collection<Check> fromGenerate(Collection<CheckGenerate> checkGenerates) {

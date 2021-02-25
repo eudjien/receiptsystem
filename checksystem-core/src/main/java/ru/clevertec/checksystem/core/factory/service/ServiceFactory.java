@@ -21,7 +21,7 @@ public final class ServiceFactory {
 
     public <E extends IService> E instance(Class<? extends IService> serviceClass) {
         return ProxyIdentifier.isProxied()
-                ? simpleServiceFactory.instance(serviceClass)
-                : proxiedServiceFactory.instance(serviceClass);
+                ? proxiedServiceFactory.instance(serviceClass)
+                : simpleServiceFactory.instance(serviceClass);
     }
 }

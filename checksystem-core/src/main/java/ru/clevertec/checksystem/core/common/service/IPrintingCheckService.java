@@ -9,6 +9,10 @@ import java.util.Collection;
 
 public interface IPrintingCheckService extends IService {
 
+    void print(Collection<Check> checks, File destinationFile, String format) throws IOException;
+
+    void print(Collection<Check> checks, OutputStream outputStream, String format) throws IOException;
+
     void printToHtml(Collection<Check> checks, File destinationFile) throws IOException;
 
     void printToHtml(Collection<Check> checks, OutputStream outputStream) throws IOException;
