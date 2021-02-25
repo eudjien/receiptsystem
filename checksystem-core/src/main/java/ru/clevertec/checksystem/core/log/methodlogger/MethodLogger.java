@@ -2,10 +2,11 @@ package ru.clevertec.checksystem.core.log.methodlogger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.clevertec.checksystem.core.exception.ArgumentUnsupportedException;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.normalino.json.NormalinoJSON;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
+import ru.clevertec.custom.json.StringifyJSON;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -15,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MethodLogger implements IMethodLogger {
+
+    private final static String DIFFERENT_TYPES_MESSAGE =
+            "Argument '%s' can only be of the same type as the return type of the method (Method type: %s, Return type: %s)";
 
     private final Logger logger;
     private static final HashMap<Class<?>, MethodLogger> instances = new HashMap<>();
@@ -55,16 +59,11 @@ public class MethodLogger implements IMethodLogger {
             return;
         }
 
-        if (method == null) {
-            throw new IllegalArgumentException("Argument 'format' cannot be null");
-        }
+        ThrowUtils.Argument.nullValue("format", method);
 
         if (returnedData != null && !method.getReturnType().isAssignableFrom(returnedData.getClass())) {
-            throw new IllegalArgumentException(
-                    "Argument 'returnedData' can only be of the same type " +
-                            "as the return type of the method (" +
-                            "Method type: " + method.getReturnType().getName() + ", " +
-                            "Return type: " + returnedData.getClass().getName() + ")");
+            throw new IllegalArgumentException(String.format(DIFFERENT_TYPES_MESSAGE,
+                    "returnedData", method.getReturnType().getName(), returnedData.getClass().getName()));
         }
 
         var message = createMessage(format, method, args, returnedData);
@@ -77,7 +76,7 @@ public class MethodLogger implements IMethodLogger {
             case LogLevel.DEBUG -> logger.debug(message);
             case LogLevel.TRACE -> logger.trace(message);
             case LogLevel.ERROR -> logger.error(message);
-            default -> throw new IllegalArgumentException("Argument 'level' contains not supported value");
+            default -> throw new ArgumentUnsupportedException("level");
         }
     }
 
@@ -96,18 +95,10 @@ public class MethodLogger implements IMethodLogger {
                     return Matcher.quoteReplacement(createArgsName(method.getParameters()));
                 }
                 case MethodLoggerFormats.ArgumentsData -> {
-                    try {
-                        return Matcher.quoteReplacement(createArgsData(args));
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    return Matcher.quoteReplacement(createArgsData(args));
                 }
                 case MethodLoggerFormats.ReturnData -> {
-                    try {
-                        return Matcher.quoteReplacement(createResult(method, returnedData));
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    return Matcher.quoteReplacement(createResult(method, returnedData));
                 }
             }
 
@@ -115,11 +106,10 @@ public class MethodLogger implements IMethodLogger {
         });
     }
 
-    private static String createResult(Method method, Object result)
-            throws InvocationTargetException, IllegalAccessException {
+    private static String createResult(Method method, Object result) {
         return method.getReturnType().isAssignableFrom(Void.TYPE)
                 ? "VOID"
-                : NormalinoJSON.stringify(result, false);
+                : StringifyJSON.stringify(result, false);
     }
 
     private static String createArgsName(Parameter[] parameters) {
@@ -129,7 +119,7 @@ public class MethodLogger implements IMethodLogger {
                 .reduce((a, b) -> a + ", " + b).orElse("");
     }
 
-    private static String createArgsData(Object[] args) throws InvocationTargetException, IllegalAccessException {
-        return NormalinoJSON.stringify(args, false);
+    private static String createArgsData(Object[] args) {
+        return StringifyJSON.stringify(args, false);
     }
 }

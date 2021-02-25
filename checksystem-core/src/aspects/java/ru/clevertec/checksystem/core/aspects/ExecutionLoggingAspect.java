@@ -4,14 +4,15 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog;
+import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
+import ru.clevertec.checksystem.core.annotation.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.AfterExecutionLog;
-import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
-import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.log.methodlogger.MethodLogger;
 import ru.clevertec.checksystem.core.log.methodlogger.MethodLoggerFormats;
-import ru.clevertec.checksystem.core.utils.AnnotationUtils;
+import ru.clevertec.checksystem.core.util.AnnotationUtils;
 
+@SuppressWarnings("EmptyMethod")
 @Aspect
 public class ExecutionLoggingAspect {
 
@@ -23,7 +24,7 @@ public class ExecutionLoggingAspect {
         var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
-        var ann = AnnotationUtils.getPriorityAnnotation(AroundExecutionLog.class, targetClass, method);
+        var ann = AnnotationUtils.getPriorityAnnotation(AroundExecutionLog.class, method);
         var methodLogger = MethodLogger.instance(targetClass);
 
         methodLogger.log(ann.level(), ann.beforeFormat(), method, pjp.getArgs());
@@ -43,7 +44,7 @@ public class ExecutionLoggingAspect {
         var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
-        var ann = AnnotationUtils.getPriorityAnnotation(BeforeExecutionLog.class, targetClass, method);
+        var ann = AnnotationUtils.getPriorityAnnotation(BeforeExecutionLog.class, method);
         var methodLogger = MethodLogger.instance(targetClass);
 
         methodLogger.log(ann.level(), ann.format(), methodSignature.getMethod(), jp.getArgs());
@@ -59,7 +60,7 @@ public class ExecutionLoggingAspect {
         var targetClass = methodSignature.getDeclaringType();
         var method = methodSignature.getMethod();
 
-        var ann = AnnotationUtils.getPriorityAnnotation(AfterExecutionLog.class, targetClass, method);
+        var ann = AnnotationUtils.getPriorityAnnotation(AfterExecutionLog.class, method);
         var methodLogger = MethodLogger.instance(targetClass);
 
         methodLogger.log(ann.level(), ann.format(), method, jp.getArgs(), result);
@@ -90,18 +91,18 @@ public class ExecutionLoggingAspect {
     private void inProject() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.log.execution.AfterExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.log.execution.AfterExecutionLog))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog)" +
+            "|| @annotation(ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog))")
     private void withAfterReturningLogAnnotation() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.execution.BeforeExecutionLog)" +
+            "|| @annotation(ru.clevertec.checksystem.core.annotation.execution.BeforeExecutionLog))")
     private void withBeforeExecutionLogAnnotation() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.log.execution.AroundExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.log.execution.AroundExecutionLog))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog)" +
+            "|| @annotation(ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog))")
     private void withAroundExecutionLogAnnotation() {
     }
 

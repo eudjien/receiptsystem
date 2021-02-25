@@ -1,73 +1,61 @@
 package ru.clevertec.checksystem.core.service;
 
-import ru.clevertec.checksystem.core.check.Check;
-import ru.clevertec.checksystem.core.factory.CheckReaderFactory;
-import ru.clevertec.checksystem.core.factory.CheckWriterFactory;
-import ru.clevertec.checksystem.core.io.reader.XmlCheckReader;
-import ru.clevertec.checksystem.core.io.writer.JsonCheckWriter;
-import ru.clevertec.checksystem.core.io.writer.XmlCheckWriter;
+import ru.clevertec.checksystem.core.Constants;
+import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
+import ru.clevertec.checksystem.core.common.service.IIoCheckService;
+import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.event.EventEmitter;
+import ru.clevertec.checksystem.core.factory.io.CheckReaderFactory;
+import ru.clevertec.checksystem.core.factory.io.CheckWriterFactory;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
-import ru.clevertec.normalino.list.NormalinoList;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Collection;
 
-@CheckService
-@AroundExecutionLog(level = LogLevel.INFO)
-public class IoCheckService implements IIoCheckService {
+public class IoCheckService extends EventEmitter<Object> implements IIoCheckService {
 
     @Override
-    public void serializeToFile(Collection<Check> checks, File file, String format) throws Exception {
-        var checkWriter = CheckWriterFactory.create(format);
-        checkWriter.write(new NormalinoList<>(checks), file);
+    public void serialize(Collection<Check> checkCollection, File destinationFile, String format)
+            throws IOException {
+        CheckWriterFactory.create(format).write(checkCollection, destinationFile);
     }
 
     @Override
-    public void serializeToJsonFile(Collection<Check> checks, File file) throws Exception {
-        var checkWriter = new JsonCheckWriter();
-        checkWriter.write(new NormalinoList<>(checks), file);
+    public void serializeToJson(Collection<Check> checkCollection, File destinationFile) throws IOException {
+        CheckWriterFactory.create(Constants.Format.IO.JSON).write(checkCollection, destinationFile);
     }
 
     @Override
-    public String serializeToJsonString(Collection<Check> checks) throws Exception {
-        var checkWriter = new JsonCheckWriter();
-        return new String(checkWriter.write(new NormalinoList<>(checks)));
+    public String serializeToJson(Collection<Check> checkCollection) throws IOException {
+        var checkWriter = CheckWriterFactory.create(Constants.Format.IO.JSON);
+        return new String(checkWriter.write(checkCollection));
     }
 
     @Override
-    public void serializeToXmlFile(Collection<Check> checks, File file) throws Exception {
-        var checkWriter = new XmlCheckWriter();
-        checkWriter.write(new NormalinoList<>(checks), file);
+    public void serializeToXml(Collection<Check> checkCollection, File destinationFile) throws IOException {
+        CheckWriterFactory.create(Constants.Format.IO.XML).write(checkCollection, destinationFile);
     }
 
     @Override
-    public String serializeToXmlString(Collection<Check> checks) throws Exception {
-        var checkWriter = new XmlCheckWriter();
-        return new String(checkWriter.write(new NormalinoList<>(checks)));
+    public String serializeToXml(Collection<Check> checkCollection) throws IOException {
+        var checkWriter = CheckWriterFactory.create(Constants.Format.IO.XML);
+        return new String(checkWriter.write(checkCollection));
     }
 
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
-    public Collection<Check> deserializeFromFile(String srcPath, String format) throws Exception {
-        var checkReader = CheckReaderFactory.create(format);
-        var bytes = Files.readAllBytes(Path.of(srcPath));
-        return checkReader.read(bytes);
+    public Collection<Check> deserialize(File sourceFile, String format) throws IOException {
+        return CheckReaderFactory.create(format).read(sourceFile);
     }
 
     @Override
-    public Collection<Check> deserializeFromJsonFile(String srcPath) throws Exception {
-        var checkReader = new XmlCheckReader();
-        var bytes = Files.readAllBytes(Path.of(srcPath));
-        return checkReader.read(bytes);
+    public Collection<Check> deserializeFromJson(File sourceFile) throws IOException {
+        return CheckReaderFactory.create(Constants.Format.IO.JSON).read(sourceFile);
     }
 
     @Override
-    public Collection<Check> deserializeFromXmlFile(String srcPath) throws Exception {
-        var checkReader = new XmlCheckReader();
-        var bytes = Files.readAllBytes(Path.of(srcPath));
-        return checkReader.read(bytes);
+    public Collection<Check> deserializeFromXml(File sourceFile) throws IOException {
+        return CheckReaderFactory.create(Constants.Format.IO.XML).read(sourceFile);
     }
 }

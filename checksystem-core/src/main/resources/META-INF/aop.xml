@@ -1,14 +1,12 @@
-<!DOCTYPE aspectj PUBLIC
-        "-//AspectJ//DTD//EN"
-        "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
 <aspectj>
-    <weaver options="-Xset:weaveJavaxPackages=true"> <!-- -verbose -showWeaveInfo  -->
+    <weaver options="-Xset:weaveJavaxPackages=true">
         <exclude within="ru.clevertec.checksystem.core.aspects..*"/>
         <include within="ru.clevertec.checksystem..*"/>
     </weaver>
     <aspects>
         <aspect name="ru.clevertec.checksystem.core.aspects.ExecutionLoggingAspect"/>
+        <aspect name="ru.clevertec.checksystem.core.aspects.MailSubscribingAspect"/>
+        <aspect name="ru.clevertec.checksystem.core.aspects.SubscribingAspect"/>
     </aspects>
 </aspectj>
-
-<!--https://www.eclipse.org/aspectj/doc/next/devguide/ltw-configuration.html-->

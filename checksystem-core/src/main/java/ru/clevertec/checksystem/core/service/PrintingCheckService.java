@@ -1,96 +1,156 @@
 package ru.clevertec.checksystem.core.service;
 
-import ru.clevertec.checksystem.core.check.Check;
+import ru.clevertec.checksystem.core.Constants;
+import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
+import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
+import ru.clevertec.checksystem.core.data.DataSeed;
+import ru.clevertec.checksystem.core.dto.Mail;
+import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.event.EventEmitter;
+import ru.clevertec.checksystem.core.event.EventTypes;
+import ru.clevertec.checksystem.core.factory.io.CheckPrinterFactory;
+import ru.clevertec.checksystem.core.io.print.strategy.PdfCheckPrintStrategy;
 import ru.clevertec.checksystem.core.log.LogLevel;
-import ru.clevertec.checksystem.core.log.execution.AfterExecutionLog;
-import ru.clevertec.checksystem.core.log.execution.AroundExecutionLog;
-import ru.clevertec.checksystem.core.log.execution.BeforeExecutionLog;
-import ru.clevertec.checksystem.core.print.CheckPrinter;
-import ru.clevertec.checksystem.core.print.strategy.HtmlCheckPrintStrategy;
-import ru.clevertec.checksystem.core.print.strategy.PdfCheckPrintStrategy;
-import ru.clevertec.checksystem.core.print.strategy.TextCheckPrintStrategy;
-import ru.clevertec.checksystem.core.print.template.pdf.FilePrintPdfTemplate;
-import ru.clevertec.checksystem.core.utils.FileUtils;
-import ru.clevertec.normalino.list.NormalinoList;
+import ru.clevertec.checksystem.core.template.pdf.FilePdfTemplate;
+import ru.clevertec.checksystem.core.util.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 
-@CheckService
-@AroundExecutionLog
-public class PrintingCheckService implements IPrintingCheckService {
+//@MailingSubscribe(eventType = EventTypes.PrintEnd)
+//@Subscribe(eventType = EventTypes.PrintEnd, listenerClass = MailSenderService.class)
+//@AfterExecutionLog
+public class PrintingCheckService extends EventEmitter<Object> implements IPrintingCheckService {
 
     @Override
-    public void printToHtmlFile(Collection<Check> checks, String destPath) throws Exception {
-        var checkPrinter = new CheckPrinter(new NormalinoList<>(checks), new HtmlCheckPrintStrategy());
-        FileUtils.writeBytesToFile(checkPrinter.printRaw(), destPath);
+    public void printToHtml(Collection<Check> checkCollection, File destinationFile) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
+        FileUtils.writeBytesToFile(checkPrinter.printRaw(), destinationFile);
+        emitPrintOver(checkCollection, destinationFile);
     }
 
     @Override
-    public String printToHtmlString(Collection<Check> checks) throws Exception {
-        var checkPrinter = new CheckPrinter(new NormalinoList<>(checks), new HtmlCheckPrintStrategy());
-        return new String(checkPrinter.printRaw());
+    public void printToHtml(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
+        outputStream.write(checkPrinter.printRaw());
+        emitPrintOver(checkCollection);
     }
 
     @Override
-    public void printToPdfFile(Collection<Check> checks, String destPath) throws Exception {
-        printToPdfFile(checks, destPath, null, 0);
+    public String printToHtml(Collection<Check> checkCollection) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
+        var html = new String(checkPrinter.printRaw());
+        emitPrintOver(checkCollection);
+        return html;
     }
 
     @Override
-    public void printToPdfFile(Collection<Check> checks, String destPath, String templatePath, int templateOffset)
-            throws Exception {
-        var checkPrinter = createPdfPrinter(checks, templatePath, templateOffset);
-        FileUtils.writeBytesToFile(checkPrinter.printRaw(), destPath);
+    public void printToPdf(Collection<Check> checkCollection, File destinationFile) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
+        FileUtils.writeBytesToFile(checkPrinter.printRaw(), destinationFile);
+        emitPrintOver(checkCollection, destinationFile);
     }
 
-    @BeforeExecutionLog(level = LogLevel.NONE)
-    @AfterExecutionLog(level = LogLevel.NONE)
+    @Override
+    public void printToPdf(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
+        outputStream.write(checkPrinter.printRaw());
+        emitPrintOver(checkCollection);
+    }
+
+    @Override
+    public byte[] printToPdf(Collection<Check> checkCollection) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
+        var pdfBytes = checkPrinter.printRaw();
+        emitPrintOver(checkCollection);
+        return pdfBytes;
+    }
+
+    @Override
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile) throws IOException {
+        printWithTemplateToPdf(checkCollection, destinationFile, templateFile, 0);
+    }
+
+    @Override
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile) throws IOException {
+        printWithTemplateToPdf(checkCollection, outputStream, templateFile, 0);
+    }
+
+    @Override
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, File destinationFile, File templateFile, int templateTopOffset) throws IOException {
+
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
+
+        ((PdfCheckPrintStrategy) checkPrinter.getStrategy())
+                .setTemplate(new FilePdfTemplate(templateFile, templateTopOffset));
+
+        checkPrinter.printRaw(destinationFile);
+
+        emitPrintOver(checkCollection, destinationFile);
+    }
+
+    @Override
+    public void printWithTemplateToPdf(Collection<Check> checkCollection, OutputStream outputStream, File templateFile, int templateTopOffset) throws IOException {
+
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
+
+        ((PdfCheckPrintStrategy) checkPrinter.getStrategy())
+                .setTemplate(new FilePdfTemplate(templateFile, templateTopOffset));
+
+        checkPrinter.printRaw(outputStream);
+
+        emitPrintOver(checkCollection);
+    }
+
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
-    public byte[] printToPdfBytes(Collection<Check> checks) throws Exception {
-        return printToPdfBytes(checks, null, 0);
+    public byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile) throws IOException {
+        return printWithTemplateToPdf(checkCollection, templateFile, 0);
     }
 
-    @BeforeExecutionLog(level = LogLevel.NONE)
-    @AfterExecutionLog(level = LogLevel.NONE)
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
-    public byte[] printToPdfBytes(Collection<Check> checks, String templatePath, int templateOffset)
-            throws Exception {
-        var checkPrinter = createPdfPrinter(checks, templatePath, templateOffset);
-        return checkPrinter.printRaw();
+    public byte[] printWithTemplateToPdf(Collection<Check> checkCollection, File templateFile, int templateTopOffset) throws IOException {
+
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.PDF, checkCollection);
+
+        ((PdfCheckPrintStrategy) checkPrinter.getStrategy())
+                .setTemplate(new FilePdfTemplate(templateFile, templateTopOffset));
+
+        var pdfData = checkPrinter.printRaw();
+
+        emitPrintOver(checkCollection);
+
+        return pdfData;
     }
 
     @Override
-    public void printToTextFile(Collection<Check> checks, String destPath) throws Exception {
-        var checkPrinter = new CheckPrinter(new NormalinoList<>(checks), new TextCheckPrintStrategy());
-        FileUtils.writeBytesToFile(checkPrinter.printRaw(), destPath);
-    }
-
-    @BeforeExecutionLog(level = LogLevel.NONE)
-    @AfterExecutionLog(level = LogLevel.NONE)
-    @AroundExecutionLog(level = LogLevel.NONE)
-    @Override
-    public byte[] printToTextBytes(Collection<Check> checks) throws Exception {
-        var checkPrinter = new CheckPrinter(new NormalinoList<>(checks), new TextCheckPrintStrategy());
-        return checkPrinter.printRaw();
+    public void printToText(Collection<Check> checkCollection, File destinationFile) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.TEXT, checkCollection);
+        FileUtils.writeBytesToFile(checkPrinter.printRaw(), destinationFile);
+        emitPrintOver(checkCollection, destinationFile);
     }
 
     @Override
-    public String printToTextString(Collection<Check> checks) throws Exception {
-        var checkPrinter = new CheckPrinter(new NormalinoList<>(checks), new TextCheckPrintStrategy());
-        return new String(checkPrinter.printRaw());
+    public void printToText(Collection<Check> checkCollection, OutputStream outputStream) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.TEXT, checkCollection);
+        outputStream.write(checkPrinter.printRaw());
+        emitPrintOver(checkCollection);
     }
 
-    private CheckPrinter createPdfPrinter(Collection<Check> checks, String templatePath, int templateOffset)
-            throws Exception {
+    @Override
+    public String printToText(Collection<Check> checkCollection) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.TEXT, checkCollection);
+        var text = new String(checkPrinter.printRaw());
+        emitPrintOver(checkCollection);
+        return text;
+    }
 
-        var checkPrinter = new CheckPrinter(new NormalinoList<>(checks));
-        var strategy = new PdfCheckPrintStrategy();
-        if (templatePath != null) {
-            strategy.setTemplate(new FilePrintPdfTemplate(templatePath, templateOffset));
-        }
-        checkPrinter.setStrategy(strategy);
-        return checkPrinter;
+    private void emitPrintOver(Collection<Check> checkCollection, File... files) throws IOException {
+        var checkPrinter = CheckPrinterFactory.create(Constants.Format.Print.HTML, checkCollection);
+        var html = new String(checkPrinter.printRaw());
+        emit(EventTypes.PrintEnd, new Mail("Printing is over!", html, DataSeed.emailAddresses(), files));
     }
 }
