@@ -48,7 +48,7 @@ public class DeserializeFromGenerateFile implements Callable<Void> {
             ServiceFactory serviceFactory,
             Collection<Check> checks) throws IOException, ArgumentNotExistException {
 
-        var format = finder.firstStringOrDefault(Keys.DESERIALIZE_GENERATE_FORMAT, Format.IO.JSON);
+        var format = finder.firstStringOrDefault(Keys.DESERIALIZE_GENERATE_FORMAT, Format.JSON);
         var path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_GENERATE_PATH);
 
         IGenerateCheckService generateCheckService = serviceFactory.instance(GenerateCheckService.class);

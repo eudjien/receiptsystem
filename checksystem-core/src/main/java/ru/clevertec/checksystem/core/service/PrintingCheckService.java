@@ -53,39 +53,39 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
 
     @Override
     public void printToHtml(Collection<Check> checks, File destinationFile) throws IOException {
-        checkPrinterFactory.instance(Format.Print.HTML, checks).print(destinationFile);
+        checkPrinterFactory.instance(Format.HTML, checks).print(destinationFile);
         emitPrintOver(checks, destinationFile);
     }
 
     @Override
     public void printToHtml(Collection<Check> checks, OutputStream os) throws IOException {
-        checkPrinterFactory.instance(Format.Print.HTML, checks).print(os);
-        emitPrintOver(checks, Format.Print.HTML);
+        checkPrinterFactory.instance(Format.HTML, checks).print(os);
+        emitPrintOver(checks, Format.HTML);
     }
 
     @Override
     public String printToHtml(Collection<Check> checks) throws IOException {
-        var bytes = checkPrinterFactory.instance(Format.Print.HTML, checks).print();
-        emitPrintOver(checks, Format.Print.HTML);
+        var bytes = checkPrinterFactory.instance(Format.HTML, checks).print();
+        emitPrintOver(checks, Format.HTML);
         return new String(bytes);
     }
 
     @Override
     public void printToPdf(Collection<Check> checks, File destinationFile) throws IOException {
-        checkPrinterFactory.instance(Format.Print.PDF, checks).print(destinationFile);
+        checkPrinterFactory.instance(Format.PDF, checks).print(destinationFile);
         emitPrintOver(checks, destinationFile);
     }
 
     @Override
     public void printToPdf(Collection<Check> checks, OutputStream os) throws IOException {
-        checkPrinterFactory.instance(Format.Print.PDF, checks).print(os);
-        emitPrintOver(checks, Format.Print.PDF);
+        checkPrinterFactory.instance(Format.PDF, checks).print(os);
+        emitPrintOver(checks, Format.PDF);
     }
 
     @Override
     public byte[] printToPdf(Collection<Check> checks) throws IOException {
-        var bytes = checkPrinterFactory.instance(Format.Print.PDF, checks).print();
-        emitPrintOver(checks, Format.Print.PDF);
+        var bytes = checkPrinterFactory.instance(Format.PDF, checks).print();
+        emitPrintOver(checks, Format.PDF);
         return bytes;
     }
 
@@ -101,7 +101,7 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
 
     @Override
     public void printWithTemplateToPdf(Collection<Check> checks, File destinationFile, File templateFile, int templateTopOffset) throws IOException {
-        var printer = checkPrinterFactory.instance(Format.Print.PDF, checks);
+        var printer = checkPrinterFactory.instance(Format.PDF, checks);
         ((PdfCheckLayout) printer.getLayout())
                 .setTemplate(new FilePdfTemplate(templateFile, templateTopOffset));
         printer.print(destinationFile);
@@ -111,12 +111,12 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
 
     @Override
     public void printWithTemplateToPdf(Collection<Check> checks, OutputStream os, File templateFile, int templateTopOffset) throws IOException {
-        var printer = checkPrinterFactory.instance(Format.Print.PDF, checks);
+        var printer = checkPrinterFactory.instance(Format.PDF, checks);
         ((PdfCheckLayout) printer.getLayout())
                 .setTemplate(new FilePdfTemplate(templateFile, templateTopOffset));
         printer.print(os);
 
-        emitPrintOver(checks, Format.Print.PDF);
+        emitPrintOver(checks, Format.PDF);
     }
 
     @AroundExecutionLog(level = LogLevel.NONE)
@@ -128,32 +128,32 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
     @AroundExecutionLog(level = LogLevel.NONE)
     @Override
     public byte[] printWithTemplateToPdf(Collection<Check> checks, File templateFile, int templateTopOffset) throws IOException {
-        var checkPrinter = checkPrinterFactory.instance(Format.Print.PDF, checks);
+        var checkPrinter = checkPrinterFactory.instance(Format.PDF, checks);
         ((PdfCheckLayout) checkPrinter.getLayout())
                 .setTemplate(new FilePdfTemplate(templateFile, templateTopOffset));
         var bytes = checkPrinter.print();
 
-        emitPrintOver(checks, Format.Print.PDF);
+        emitPrintOver(checks, Format.PDF);
 
         return bytes;
     }
 
     @Override
     public void printToText(Collection<Check> checks, File destinationFile) throws IOException {
-        checkPrinterFactory.instance(Format.Print.TEXT, checks).print(destinationFile);
+        checkPrinterFactory.instance(Format.TEXT, checks).print(destinationFile);
         emitPrintOver(checks, destinationFile);
     }
 
     @Override
     public void printToText(Collection<Check> checks, OutputStream os) throws IOException {
-        checkPrinterFactory.instance(Format.Print.TEXT, checks).print(os);
+        checkPrinterFactory.instance(Format.TEXT, checks).print(os);
         emitPrintOver(checks);
     }
 
     @Override
     public String printToText(Collection<Check> checks) throws IOException {
-        var bytes = checkPrinterFactory.instance(Format.Print.TEXT, checks).print();
-        emitPrintOver(checks, Format.Print.TEXT);
+        var bytes = checkPrinterFactory.instance(Format.TEXT, checks).print();
+        emitPrintOver(checks, Format.TEXT);
         return new String(bytes);
     }
 
@@ -170,7 +170,7 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
 
     private void emitPrintOver(Collection<Check> checks, File... files) throws IOException {
 
-        var bytes = checkPrinterFactory.instance(Format.Print.HTML, checks).print();
+        var bytes = checkPrinterFactory.instance(Format.HTML, checks).print();
         var html = new String(bytes);
 
         var eventEmails = eventEmailRepository.findAllByEventType(EventType.PrintEnd);

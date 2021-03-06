@@ -3,7 +3,6 @@ package ru.clevertec.checksystem.core.factory.io;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.print.CheckPrinter;
@@ -13,6 +12,8 @@ import ru.clevertec.checksystem.core.io.print.layout.TextCheckLayout;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.util.Collection;
+
+import static ru.clevertec.checksystem.core.Constants.Format;
 
 @Component
 public final class CheckPrinterFactory {
@@ -36,9 +37,9 @@ public final class CheckPrinterFactory {
         checkPrinter.setChecks(checks);
 
         switch (format) {
-            case Constants.Format.Print.TEXT -> checkPrinter.setLayout(new TextCheckLayout());
-            case Constants.Format.Print.PDF -> checkPrinter.setLayout(new PdfCheckLayout());
-            case Constants.Format.Print.HTML -> checkPrinter.setLayout(new HtmlCheckLayout());
+            case Format.TEXT -> checkPrinter.setLayout(new TextCheckLayout());
+            case Format.PDF -> checkPrinter.setLayout(new PdfCheckLayout());
+            case Format.HTML -> checkPrinter.setLayout(new HtmlCheckLayout());
             default -> throw new ArgumentNotSupportedException("format");
         }
 

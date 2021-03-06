@@ -2,7 +2,6 @@ package ru.clevertec.checksystem.core.entity.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.builder.ICheckBuilder;
 import ru.clevertec.checksystem.core.common.check.ICheckItemAggregable;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
@@ -17,10 +16,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+
 @Entity
 @Table(
-        name = Constants.Entities.Mapping.Table.CHECKS,
-        indexes = @Index(columnList = Constants.Entities.Mapping.Column.NAME, unique = true)
+        name = Entities.Mapping.Table.CHECKS,
+        indexes = @Index(columnList = Entities.Mapping.Column.NAME, unique = true)
 )
 public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, ICheckItemAggregable {
 
@@ -29,32 +30,32 @@ public class Check extends BaseEntity implements IDiscountable<CheckDiscount>, I
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
-            name = Constants.Entities.Mapping.Table.CHECK__CHECK_DISCOUNT,
+            name = Entities.Mapping.Table.CHECK__CHECK_DISCOUNT,
             joinColumns = @JoinColumn(
-                    name = Constants.Entities.Mapping.JoinColumn.CHECK_ID,
-                    referencedColumnName = Constants.Entities.Mapping.Column.ID),
+                    name = Entities.Mapping.JoinColumn.CHECK_ID,
+                    referencedColumnName = Entities.Mapping.Column.ID),
             inverseJoinColumns = @JoinColumn(
-                    name = Constants.Entities.Mapping.JoinColumn.CHECK_DISCOUNT_ID,
-                    referencedColumnName = Constants.Entities.Mapping.Column.ID)
+                    name = Entities.Mapping.JoinColumn.CHECK_DISCOUNT_ID,
+                    referencedColumnName = Entities.Mapping.Column.ID)
     )
     private final Set<CheckDiscount> discounts = new HashSet<>();
 
-    @Column(name = Constants.Entities.Mapping.Column.NAME, nullable = false)
+    @Column(name = Entities.Mapping.Column.NAME, nullable = false)
     private String name;
 
-    @Column(name = Constants.Entities.Mapping.Column.DESCRIPTION, nullable = false)
+    @Column(name = Entities.Mapping.Column.DESCRIPTION, nullable = false)
     private String description;
 
-    @Column(name = Constants.Entities.Mapping.Column.ADDRESS, nullable = false)
+    @Column(name = Entities.Mapping.Column.ADDRESS, nullable = false)
     private String address;
 
-    @Column(name = Constants.Entities.Mapping.Column.PHONE_NUMBER)
+    @Column(name = Entities.Mapping.Column.PHONE_NUMBER)
     private String phoneNumber;
 
-    @Column(name = Constants.Entities.Mapping.Column.CASHIER, nullable = false)
+    @Column(name = Entities.Mapping.Column.CASHIER, nullable = false)
     private String cashier;
 
-    @Column(name = Constants.Entities.Mapping.Column.DATE, nullable = false)
+    @Column(name = Entities.Mapping.Column.DATE, nullable = false)
     private Date date;
 
     //@JsonCreator(mode = JsonCreator.Mode.DISABLED)

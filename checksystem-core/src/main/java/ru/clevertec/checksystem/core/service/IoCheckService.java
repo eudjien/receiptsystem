@@ -12,6 +12,8 @@ import ru.clevertec.checksystem.core.log.LogLevel;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 
 import static ru.clevertec.checksystem.core.Constants.Format;
@@ -34,24 +36,29 @@ public class IoCheckService extends EventEmitter<Object> implements IIoCheckServ
     }
 
     @Override
+    public void serialize(Collection<Check> checks, OutputStream outputStream, String format) throws IOException {
+        checkWriterFactory.instance(format).write(checks, outputStream);
+    }
+
+    @Override
     public void serializeToJson(Collection<Check> checks, File destinationFile) throws IOException {
-        checkWriterFactory.instance(Format.IO.JSON).write(checks, destinationFile);
+        checkWriterFactory.instance(Format.JSON).write(checks, destinationFile);
     }
 
     @Override
     public String serializeToJson(Collection<Check> checks) throws IOException {
-        var writer = checkWriterFactory.instance(Format.IO.JSON);
+        var writer = checkWriterFactory.instance(Format.JSON);
         return new String(writer.write(checks));
     }
 
     @Override
     public void serializeToXml(Collection<Check> checks, File destinationFile) throws IOException {
-        checkWriterFactory.instance(Format.IO.XML).write(checks, destinationFile);
+        checkWriterFactory.instance(Format.XML).write(checks, destinationFile);
     }
 
     @Override
     public String serializeToXml(Collection<Check> checks) throws IOException {
-        var writer = checkWriterFactory.instance(Format.IO.XML);
+        var writer = checkWriterFactory.instance(Format.XML);
         return new String(writer.write(checks));
     }
 
@@ -62,12 +69,17 @@ public class IoCheckService extends EventEmitter<Object> implements IIoCheckServ
     }
 
     @Override
+    public Collection<Check> deserialize(InputStream is, String format) throws IOException {
+        return checkReaderFactory.instance(format).read(is);
+    }
+
+    @Override
     public Collection<Check> deserializeFromJson(File sourceFile) throws IOException {
-        return checkReaderFactory.instance(Format.IO.JSON).read(sourceFile);
+        return checkReaderFactory.instance(Format.JSON).read(sourceFile);
     }
 
     @Override
     public Collection<Check> deserializeFromXml(File sourceFile) throws IOException {
-        return checkReaderFactory.instance(Format.IO.XML).read(sourceFile);
+        return checkReaderFactory.instance(Format.XML).read(sourceFile);
     }
 }

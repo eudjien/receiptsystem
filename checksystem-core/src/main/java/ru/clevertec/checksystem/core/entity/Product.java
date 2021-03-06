@@ -3,7 +3,6 @@ package ru.clevertec.checksystem.core.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.builder.IProductBuilder;
 import ru.clevertec.checksystem.core.common.check.ICheckItemAggregable;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
@@ -16,17 +15,19 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+
 @Entity
 @Table(
-        name = Constants.Entities.Mapping.Table.PRODUCTS,
-        indexes = @Index(columnList = Constants.Entities.Mapping.Column.NAME, unique = true)
+        name = Entities.Mapping.Table.PRODUCTS,
+        indexes = @Index(columnList = Entities.Mapping.Column.NAME, unique = true)
 )
 public class Product extends BaseEntity implements ICheckItemAggregable {
 
-    @Column(name = Constants.Entities.Mapping.Column.NAME, nullable = false)
+    @Column(name = Entities.Mapping.Column.NAME, nullable = false)
     private String name;
 
-    @Column(name = Constants.Entities.Mapping.Column.PRICE, nullable = false)
+    @Column(name = Entities.Mapping.Column.PRICE, nullable = false)
     private BigDecimal price;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product", orphanRemoval = true)

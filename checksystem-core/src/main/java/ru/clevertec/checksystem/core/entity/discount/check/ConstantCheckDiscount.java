@@ -1,6 +1,5 @@
 package ru.clevertec.checksystem.core.entity.discount.check;
 
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IConstable;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -9,10 +8,12 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+
 @MappedSuperclass
 public abstract class ConstantCheckDiscount extends CheckDiscount implements IConstable<BigDecimal> {
 
-    @Column(name = Constants.Entities.Mapping.Column.CONSTANT, nullable = false)
+    @Column(name = Entities.Mapping.Column.CONSTANT, nullable = false)
     private BigDecimal constant = BigDecimal.ZERO;
 
     protected ConstantCheckDiscount() {

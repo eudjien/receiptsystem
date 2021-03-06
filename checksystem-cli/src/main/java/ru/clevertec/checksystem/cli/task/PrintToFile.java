@@ -46,9 +46,9 @@ public class PrintToFile implements Callable<Void> {
         IPrintingCheckService printingCheckService = serviceFactory.instance(PrintingCheckService.class);
 
         switch (format) {
-            case Format.Print.TEXT -> printingCheckService.printToText(sourceChecks, new File(path));
-            case Format.Print.HTML -> printingCheckService.printToHtml(sourceChecks, new File(path));
-            case Format.Print.PDF -> {
+            case Format.TEXT -> printingCheckService.printToText(sourceChecks, new File(path));
+            case Format.HTML -> printingCheckService.printToHtml(sourceChecks, new File(path));
+            case Format.PDF -> {
                 if (argumentsFinder.firstBoolOrDefault(Keys.PRINT_PDF_TEMPLATE)) {
                     var pdfTemplatePath = argumentsFinder.firstStringOrDefault(Keys.PRINT_PDF_TEMPLATE_PATH);
                     printingCheckService.printWithTemplateToPdf(sourceChecks, new File(path),

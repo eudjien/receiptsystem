@@ -2,7 +2,6 @@ package ru.clevertec.checksystem.core.entity.discount.check;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.builder.discount.check.IPercentageCheckDiscountBuilder;
 import ru.clevertec.checksystem.core.entity.check.Check;
 
@@ -11,8 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Collection;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+
 @Entity
-@Table(name = Constants.Entities.Mapping.Table.SIMPLE_PERCENTAGE_CHECK_DISCOUNT)
+@Table(name = Entities.Mapping.Table.SIMPLE_PERCENTAGE_CHECK_DISCOUNT)
 @DiscriminatorValue("SimplePercentageCheckDiscount")
 public final class SimplePercentageCheckDiscount extends PercentageCheckDiscount {
 

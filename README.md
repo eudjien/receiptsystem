@@ -57,7 +57,7 @@ ___
 ```
 -i=deserialize-g 
 -deserialize-g-format=json 
--desirialize-path="C:\checks\checks-generate.json" 
+-desirialize-g-path="C:\checks\checks-generate.json" 
 -serialize=true 
 -serialize-format=json 
 -serialize-path="C:\checks\checks.json"

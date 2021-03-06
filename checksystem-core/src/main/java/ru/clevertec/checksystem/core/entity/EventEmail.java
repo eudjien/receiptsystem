@@ -1,29 +1,29 @@
 package ru.clevertec.checksystem.core.entity;
 
-import ru.clevertec.checksystem.core.Constants;
-
 import javax.persistence.*;
+
+import static ru.clevertec.checksystem.core.Constants.Entities;
 
 @Entity
 @Table(
-        name = Constants.Entities.Mapping.Table.EVENT_EMAILS,
-        indexes = @Index(columnList = Constants.Entities.Mapping.JoinColumn.EMAIL_ID + "," +
-                Constants.Entities.Mapping.Column.EVENT_TYPE,
+        name = Entities.Mapping.Table.EVENT_EMAILS,
+        indexes = @Index(columnList = Entities.Mapping.JoinColumn.EMAIL_ID + "," +
+                Entities.Mapping.Column.EVENT_TYPE,
                 unique = true)
 )
 public class EventEmail extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(
-            name = Constants.Entities.Mapping.JoinColumn.EMAIL_ID,
-            referencedColumnName = Constants.Entities.Mapping.Column.ID,
+            name = Entities.Mapping.JoinColumn.EMAIL_ID,
+            referencedColumnName = Entities.Mapping.Column.ID,
             nullable = false)
     private Email email;
 
-    @Column(name = Constants.Entities.Mapping.Column.EVENT_TYPE, nullable = false)
+    @Column(name = Entities.Mapping.Column.EVENT_TYPE, nullable = false)
     private String eventType;
 
-    @Column(name = Constants.Entities.Mapping.JoinColumn.EMAIL_ID, insertable = false, updatable = false)
+    @Column(name = Entities.Mapping.JoinColumn.EMAIL_ID, insertable = false, updatable = false)
     private Long emailId;
 
     public EventEmail() {

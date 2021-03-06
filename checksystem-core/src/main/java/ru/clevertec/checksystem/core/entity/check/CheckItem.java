@@ -3,7 +3,6 @@ package ru.clevertec.checksystem.core.entity.check;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.builder.ICheckItemBuilder;
 import ru.clevertec.checksystem.core.common.check.ICheckComposable;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
@@ -19,12 +18,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+
 @Entity
 @Table(
-        name = Constants.Entities.Mapping.Table.CHECK_ITEMS,
+        name = Entities.Mapping.Table.CHECK_ITEMS,
         indexes = @Index(columnList =
-                Constants.Entities.Mapping.JoinColumn.PRODUCT_ID + "," +
-                        Constants.Entities.Mapping.JoinColumn.CHECK_ID,
+                Entities.Mapping.JoinColumn.PRODUCT_ID + "," +
+                        Entities.Mapping.JoinColumn.CHECK_ID,
                 unique = true)
 )
 public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDiscount>, ICheckComposable {
@@ -33,32 +34,32 @@ public class CheckItem extends BaseEntity implements IDiscountable<CheckItemDisc
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
-            name = Constants.Entities.Mapping.Table.CHECK_ITEM__CHECK_ITEM_DISCOUNT,
+            name = Entities.Mapping.Table.CHECK_ITEM__CHECK_ITEM_DISCOUNT,
             joinColumns = @JoinColumn(
-                    name = Constants.Entities.Mapping.JoinColumn.CHECK_ITEM_ID,
-                    referencedColumnName = Constants.Entities.Mapping.Column.ID),
+                    name = Entities.Mapping.JoinColumn.CHECK_ITEM_ID,
+                    referencedColumnName = Entities.Mapping.Column.ID),
             inverseJoinColumns = @JoinColumn(
-                    name = Constants.Entities.Mapping.JoinColumn.CHECK_ITEM_DISCOUNT_ID,
-                    referencedColumnName = Constants.Entities.Mapping.Column.ID)
+                    name = Entities.Mapping.JoinColumn.CHECK_ITEM_DISCOUNT_ID,
+                    referencedColumnName = Entities.Mapping.Column.ID)
     )
     private final Set<CheckItemDiscount> discounts = new HashSet<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = Constants.Entities.Mapping.JoinColumn.PRODUCT_ID)
+    @JoinColumn(name = Entities.Mapping.JoinColumn.PRODUCT_ID)
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = Constants.Entities.Mapping.JoinColumn.CHECK_ID)
+    @JoinColumn(name = Entities.Mapping.JoinColumn.CHECK_ID)
     @JsonIgnore
     private Check check;
 
-    @Column(name = Constants.Entities.Mapping.Column.QUANTITY, nullable = false)
+    @Column(name = Entities.Mapping.Column.QUANTITY, nullable = false)
     private int quantity;
 
-    @Column(name = Constants.Entities.Mapping.JoinColumn.PRODUCT_ID, insertable = false, updatable = false)
+    @Column(name = Entities.Mapping.JoinColumn.PRODUCT_ID, insertable = false, updatable = false)
     private Long productId;
 
-    @Column(name = Constants.Entities.Mapping.JoinColumn.CHECK_ID, insertable = false, updatable = false)
+    @Column(name = Entities.Mapping.JoinColumn.CHECK_ID, insertable = false, updatable = false)
     private Long checkId;
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)

@@ -1,6 +1,5 @@
 package ru.clevertec.checksystem.core.entity.discount.checkitem;
 
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.IPercentable;
 import ru.clevertec.checksystem.core.entity.check.CheckItem;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -10,10 +9,13 @@ import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+import static ru.clevertec.checksystem.core.Constants.Percent;
+
 @MappedSuperclass
 public abstract class PercentageCheckItemDiscount extends CheckItemDiscount implements IPercentable {
 
-    @Column(name = Constants.Entities.Mapping.Column.PERCENT, nullable = false)
+    @Column(name = Entities.Mapping.Column.PERCENT, nullable = false)
     private Double percent = 0D;
 
     protected PercentageCheckItemDiscount() {
@@ -37,7 +39,7 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
     @Override
     public void setPercent(Double percent) {
         ThrowUtils.Argument.nullValue("percent", percent);
-        ThrowUtils.Argument.outOfRange("percent", percent, Constants.Percent.MIN, Constants.Percent.MAX);
+        ThrowUtils.Argument.outOfRange("percent", percent, Percent.MIN, Percent.MAX);
         this.percent = percent;
     }
 
@@ -52,7 +54,7 @@ public abstract class PercentageCheckItemDiscount extends CheckItemDiscount impl
             dependentDiscountAmount = getDependentDiscount().discountAmount(checkItem);
         }
 
-        var discount = subTotalAmount.divide(BigDecimal.valueOf(Constants.Percent.MAX), RoundingMode.HALF_EVEN)
+        var discount = subTotalAmount.divide(BigDecimal.valueOf(Percent.MAX), RoundingMode.HALF_EVEN)
                 .multiply(BigDecimal.valueOf(percent));
 
         return discount.add(dependentDiscountAmount);

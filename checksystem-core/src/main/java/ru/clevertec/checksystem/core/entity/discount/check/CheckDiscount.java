@@ -2,7 +2,6 @@ package ru.clevertec.checksystem.core.entity.discount.check;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.common.check.ICheckAggregable;
 import ru.clevertec.checksystem.core.entity.check.Check;
 import ru.clevertec.checksystem.core.entity.discount.AbstractDiscount;
@@ -15,9 +14,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ru.clevertec.checksystem.core.Constants.Entities;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = Constants.Entities.Mapping.Table.CHECK_DISCOUNTS)
+@Table(name = Entities.Mapping.Table.CHECK_DISCOUNTS)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 124)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class CheckDiscount extends AbstractDiscount<CheckDiscount> implements ICheckAggregable {
