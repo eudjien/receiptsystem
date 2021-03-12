@@ -257,7 +257,7 @@ class ArgumentTests {
 
     @Order(11)
     @Test
-    public void generateCheckFromFileThenWriteToJsonFile() {
+    public void generateReceiptFromFileThenWriteToJsonFile() {
 
         var inputFilePath = Path.of(resourcesOutPath, SERIALIZED_TO_GENERATED_JSON_FILE_FROM_PREDEFINED_FILENAME);
         var outputFilePath = Path.of(resourcesOutPath, SERIALIZED_TO_JSON_FILE_FROM_GENERATED_FILENAME);
@@ -278,7 +278,7 @@ class ArgumentTests {
 
     @Order(12)
     @Test
-    public void generateCheckFromJsonFile() {
+    public void generateReceiptFromJsonFile() {
 
         var inputFilePath = Path.of(resourcesOutPath, SERIALIZED_TO_GENERATED_JSON_FILE_FROM_PREDEFINED_FILENAME);
 

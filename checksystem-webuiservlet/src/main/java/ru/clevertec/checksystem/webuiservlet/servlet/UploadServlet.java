@@ -3,10 +3,10 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import ru.clevertec.checksystem.core.common.service.IIoCheckService;
+import ru.clevertec.checksystem.core.common.service.IIoReceiptService;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.helper.FormatHelpers;
-import ru.clevertec.checksystem.core.service.IoCheckService;
+import ru.clevertec.checksystem.core.service.IoReceiptService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -49,10 +49,10 @@ public class UploadServlet extends ApplicationServlet {
 
         var format = FormatHelpers.formatByContentType(part.getContentType());
 
-        IIoCheckService ioCheckService = serviceFactory.instance(IoCheckService.class);
+        IIoReceiptService ioReceiptService = serviceFactory.instance(IoReceiptService.class);
 
-        var checks = ioCheckService.deserialize(part.getInputStream(), format);
-        req.getSession().setAttribute(Sessions.CHECKS_SESSION, checks);
+        var receipts = ioReceiptService.deserialize(part.getInputStream(), format);
+        req.getSession().setAttribute(Sessions.RECEIPTS_SESSION, receipts);
 
         var returnUrl = req.getParameter(Parameters.RETURN_URL_PARAMETER);
         resp.sendRedirect(returnUrl);

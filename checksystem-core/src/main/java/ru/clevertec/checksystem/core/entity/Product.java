@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IProductBuilder;
-import ru.clevertec.checksystem.core.common.check.ICheckItemAggregable;
-import ru.clevertec.checksystem.core.entity.check.CheckItem;
+import ru.clevertec.checksystem.core.common.receipt.IReceiptItemAggregable;
+import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.custom.json.StringifyIgnore;
 
@@ -22,7 +22,7 @@ import static ru.clevertec.checksystem.core.Constants.Entities;
         name = Entities.Mapping.Table.PRODUCTS,
         indexes = @Index(columnList = Entities.Mapping.Column.NAME, unique = true)
 )
-public class Product extends BaseEntity implements ICheckItemAggregable {
+public class Product extends BaseEntity implements IReceiptItemAggregable {
 
     @Column(name = Entities.Mapping.Column.NAME, nullable = false)
     private String name;
@@ -32,7 +32,7 @@ public class Product extends BaseEntity implements ICheckItemAggregable {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product", orphanRemoval = true)
     @JsonIgnore
-    private final Set<CheckItem> checkItems = new HashSet<>();
+    private final Set<ReceiptItem> receiptItems = new HashSet<>();
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public Product() {
@@ -76,46 +76,46 @@ public class Product extends BaseEntity implements ICheckItemAggregable {
 
     @StringifyIgnore
     @Override
-    public Collection<CheckItem> getCheckItems() {
-        return checkItems;
+    public Collection<ReceiptItem> getReceiptItems() {
+        return receiptItems;
     }
 
     @Override
-    public void setCheckItems(Collection<CheckItem> checkItems) {
-        clearCheckItems();
-        addCheckItems(checkItems);
+    public void setReceiptItems(Collection<ReceiptItem> receiptItems) {
+        clearReceiptItems();
+        addReceiptItems(receiptItems);
     }
 
     @Override
-    public void addCheckItem(CheckItem checkItem) {
-        ThrowUtils.Argument.nullValue("checkItem", checkItem);
-        checkItem.setProduct(this);
-        getCheckItems().add(checkItem);
+    public void addReceiptItem(ReceiptItem receiptItem) {
+        ThrowUtils.Argument.nullValue("receiptItem", receiptItem);
+        receiptItem.setProduct(this);
+        getReceiptItems().add(receiptItem);
     }
 
     @Override
-    public void addCheckItems(Collection<CheckItem> checkItems) {
-        ThrowUtils.Argument.nullValue("checkItems", checkItems);
-        checkItems.forEach(this::addCheckItem);
+    public void addReceiptItems(Collection<ReceiptItem> receiptItems) {
+        ThrowUtils.Argument.nullValue("receiptItems", receiptItems);
+        receiptItems.forEach(this::addReceiptItem);
     }
 
     @Override
-    public void removeCheckItem(CheckItem checkItem) {
-        ThrowUtils.Argument.nullValue("checkItem", checkItem);
-        checkItem.setCheck(null);
-        getCheckItems().remove(checkItem);
+    public void removeReceiptItem(ReceiptItem receiptItem) {
+        ThrowUtils.Argument.nullValue("receiptItem", receiptItem);
+        receiptItem.setReceipt(null);
+        getReceiptItems().remove(receiptItem);
     }
 
     @Override
-    public void removeCheckItems(Collection<CheckItem> checkItems) {
-        ThrowUtils.Argument.nullValue("checkItem", checkItems);
-        checkItems.forEach(this::removeCheckItem);
+    public void removeReceiptItems(Collection<ReceiptItem> receiptItems) {
+        ThrowUtils.Argument.nullValue("receiptItem", receiptItems);
+        receiptItems.forEach(this::removeReceiptItem);
     }
 
     @Override
-    public void clearCheckItems() {
-        getCheckItems().forEach(checkItem -> checkItem.setCheck(null));
-        getCheckItems().clear();
+    public void clearReceiptItems() {
+        getReceiptItems().forEach(receiptItem -> receiptItem.setReceipt(null));
+        getReceiptItems().clear();
     }
 
     public static class Builder implements IProductBuilder {

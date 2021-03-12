@@ -12,7 +12,7 @@ public class StreamPdfTemplate extends AbstractPdfTemplate {
         this(templateInputStream, 0);
     }
 
-    public StreamPdfTemplate(InputStream templateInputStream, int topOffset) {
+    public StreamPdfTemplate(InputStream templateInputStream, long topOffset) {
         super(topOffset);
         ThrowUtils.Argument.nullValue("templateInputStream", templateInputStream);
         this.templateInputStream = templateInputStream;

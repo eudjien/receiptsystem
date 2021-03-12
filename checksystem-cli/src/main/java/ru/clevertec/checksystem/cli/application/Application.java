@@ -5,12 +5,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
-import ru.clevertec.checksystem.cli.argument.CheckIdFilter;
+import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
 import ru.clevertec.checksystem.cli.exception.ArgumentNotExistException;
 import ru.clevertec.checksystem.cli.exception.ArgumentNotSupportValueException;
 import ru.clevertec.checksystem.cli.task.*;
 import ru.clevertec.checksystem.core.ProxyIdentifier;
-import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.custom.list.SynchronizedSinglyLinkedList;
 
@@ -36,9 +36,9 @@ public final class Application implements Callable<ApplicationResult> {
 
     private final ArgumentsFinder argumentsFinder;
     private final ServiceFactory serviceFactory;
-    private final CheckIdFilter checkIdFilter;
+    private final ReceiptIdFilter receiptIdFilter;
 
-    private final List<Check> checks = new SynchronizedSinglyLinkedList<>();
+    private final List<Receipt> receipts = new SynchronizedSinglyLinkedList<>();
 
     static {
         startMap.put(Keys.SERIALIZE, "Serializing to a file...");
@@ -56,10 +56,10 @@ public final class Application implements Callable<ApplicationResult> {
     public Application(
             ArgumentsFinder argumentsFinder,
             ServiceFactory serviceFactory,
-            CheckIdFilter checkIdFilter) {
+            ReceiptIdFilter receiptIdFilter) {
         this.argumentsFinder = argumentsFinder;
         this.serviceFactory = serviceFactory;
-        this.checkIdFilter = checkIdFilter;
+        this.receiptIdFilter = receiptIdFilter;
         ProxyIdentifier.setProxied(argumentsFinder.firstBoolOrDefault(Keys.PROXIED_SERVICES));
     }
 
@@ -103,17 +103,17 @@ public final class Application implements Callable<ApplicationResult> {
         var futuresMap = new HashMap<String, Future<Void>>();
 
         if (argumentsFinder.firstBoolOrDefault(Keys.SERIALIZE)) {
-            futuresMap.put(Keys.SERIALIZE, executor.submit(new SerializeToFile(argumentsFinder, serviceFactory, checks)));
+            futuresMap.put(Keys.SERIALIZE, executor.submit(new SerializeToFile(argumentsFinder, serviceFactory, receipts)));
             logger.info(startMap.get(Keys.SERIALIZE));
         }
 
         if (argumentsFinder.firstBoolOrDefault(Keys.PRINT)) {
-            futuresMap.put(Keys.PRINT, executor.submit(new PrintToFile(argumentsFinder, serviceFactory, checks)));
+            futuresMap.put(Keys.PRINT, executor.submit(new PrintToFile(argumentsFinder, serviceFactory, receipts)));
             logger.info(startMap.get(Keys.PRINT));
         }
 
         if (argumentsFinder.firstBoolOrDefault(Keys.GENERATE_SERIALIZE)) {
-            futuresMap.put(Keys.GENERATE_SERIALIZE, executor.submit(new SerializeToGenerateFile(argumentsFinder, serviceFactory, checks)));
+            futuresMap.put(Keys.GENERATE_SERIALIZE, executor.submit(new SerializeToGenerateFile(argumentsFinder, serviceFactory, receipts)));
             logger.info(startMap.get(Keys.GENERATE_SERIALIZE));
         }
 
@@ -127,13 +127,13 @@ public final class Application implements Callable<ApplicationResult> {
         return switch (inputType) {
             case Inputs.DESERIALIZE_GENERATE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DESERIALIZE_GENERATE,
-                    new DeserializeFromGenerateFile(argumentsFinder, checkIdFilter, serviceFactory, checks));
+                    new DeserializeFromGenerateFile(argumentsFinder, receiptIdFilter, serviceFactory, receipts));
             case Inputs.DESERIALIZE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DESERIALIZE,
-                    new DeserializeFromFile(argumentsFinder, checkIdFilter, serviceFactory, checks));
+                    new DeserializeFromFile(argumentsFinder, receiptIdFilter, serviceFactory, receipts));
             case Inputs.DATABASE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DATABASE,
-                    new LoadFromDatabase(argumentsFinder, checkIdFilter, serviceFactory, checks));
+                    new LoadFromDatabase(argumentsFinder, receiptIdFilter, serviceFactory, receipts));
             default -> throw new ArgumentNotSupportValueException(Keys.INPUT, inputType);
         };
     }
@@ -150,7 +150,7 @@ public final class Application implements Callable<ApplicationResult> {
 
     private void resetAll() {
         argumentsFinder.clearArguments();
-        checks.clear();
+        receipts.clear();
     }
 
     public ArgumentsFinder getArgumentsFinder() {

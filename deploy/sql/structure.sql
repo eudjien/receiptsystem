@@ -18,112 +18,36 @@ USE `checksystem`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `_check__check_discount`
+-- Table structure for table `_receipt__receipt_discount`
 --
 
-DROP TABLE IF EXISTS `_check__check_discount`;
+DROP TABLE IF EXISTS `_receipt__receipt_discount`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_check__check_discount` (
-  `check_id` bigint NOT NULL,
-  `check_discount_id` bigint NOT NULL,
-  PRIMARY KEY (`check_id`,`check_discount_id`),
-  KEY `FKnl20k7q5qx1xmxyf8pwlt0mp6` (`check_discount_id`),
-  CONSTRAINT `FKni9xx7wpuabibng8il4h1lqus` FOREIGN KEY (`check_id`) REFERENCES `checks` (`id`),
-  CONSTRAINT `FKnl20k7q5qx1xmxyf8pwlt0mp6` FOREIGN KEY (`check_discount_id`) REFERENCES `check_discounts` (`id`)
+CREATE TABLE `_receipt__receipt_discount` (
+  `receipt_id` bigint NOT NULL,
+  `receipt_discount_id` bigint NOT NULL,
+  PRIMARY KEY (`receipt_id`,`receipt_discount_id`),
+  KEY `FK2tun05jbp5b9h1qtyinjc2jfs` (`receipt_discount_id`),
+  CONSTRAINT `FK2tun05jbp5b9h1qtyinjc2jfs` FOREIGN KEY (`receipt_discount_id`) REFERENCES `receipt_discounts` (`id`),
+  CONSTRAINT `FKfnt0fyjikxwsa3lidu41k412b` FOREIGN KEY (`receipt_id`) REFERENCES `receipts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `_check_item__check_item_discount`
+-- Table structure for table `_receipt_item__receipt_item_discount`
 --
 
-DROP TABLE IF EXISTS `_check_item__check_item_discount`;
+DROP TABLE IF EXISTS `_receipt_item__receipt_item_discount`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_check_item__check_item_discount` (
-  `check_item_id` bigint NOT NULL,
-  `check_item_discount_id` bigint NOT NULL,
-  PRIMARY KEY (`check_item_id`,`check_item_discount_id`),
-  KEY `FK2s02ew5xuud4962ie4of71s5y` (`check_item_discount_id`),
-  CONSTRAINT `FK2s02ew5xuud4962ie4of71s5y` FOREIGN KEY (`check_item_discount_id`) REFERENCES `check_item_discounts` (`id`),
-  CONSTRAINT `FKg64ve0vlad4yje65jhpv8fq0r` FOREIGN KEY (`check_item_id`) REFERENCES `check_items` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `check_discounts`
---
-
-DROP TABLE IF EXISTS `check_discounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `check_discounts` (
-  `type` varchar(124) NOT NULL,
-  `id` bigint NOT NULL,
-  `dependent_discount_id` bigint DEFAULT NULL,
-  `description` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKr9bfxvprmgfxddvu51ivcbmyn` (`dependent_discount_id`),
-  CONSTRAINT `FKr9bfxvprmgfxddvu51ivcbmyn` FOREIGN KEY (`dependent_discount_id`) REFERENCES `check_discounts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `check_item_discounts`
---
-
-DROP TABLE IF EXISTS `check_item_discounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `check_item_discounts` (
-  `type` varchar(86) NOT NULL,
-  `id` bigint NOT NULL,
-  `dependent_discount_id` bigint DEFAULT NULL,
-  `description` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKqpyo3p1g6hpu5qm6p276648mt` (`dependent_discount_id`),
-  CONSTRAINT `FKqpyo3p1g6hpu5qm6p276648mt` FOREIGN KEY (`dependent_discount_id`) REFERENCES `check_item_discounts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `check_items`
---
-
-DROP TABLE IF EXISTS `check_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `check_items` (
-  `id` bigint NOT NULL,
-  `check_id` bigint DEFAULT NULL,
-  `product_id` bigint DEFAULT NULL,
-  `quantity` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UKqu2dpj4d6px6a2sm8nb3nny67` (`product_id`,`check_id`),
-  KEY `FK6drpcu5rw5qhp4meonaxohhh0` (`check_id`),
-  CONSTRAINT `FK6drpcu5rw5qhp4meonaxohhh0` FOREIGN KEY (`check_id`) REFERENCES `checks` (`id`),
-  CONSTRAINT `FK8f90481j0tq7slpiwr4yrop1q` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `checks`
---
-
-DROP TABLE IF EXISTS `checks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `checks` (
-  `id` bigint NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `cashier` varchar(255) NOT NULL,
-  `date` datetime(6) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UKj3kjg7c5v4k0ulh718dylvcf2` (`name`)
+CREATE TABLE `_receipt_item__receipt_item_discount` (
+  `receipt_item_id` bigint NOT NULL,
+  `receipt_item_discount_id` bigint NOT NULL,
+  PRIMARY KEY (`receipt_item_id`,`receipt_item_discount_id`),
+  KEY `FKrkri3fdilypnd5tsqpt9ljwce` (`receipt_item_discount_id`),
+  CONSTRAINT `FKenfarm6ytdx191v67pn6b5b1m` FOREIGN KEY (`receipt_item_id`) REFERENCES `receipt_items` (`id`),
+  CONSTRAINT `FKrkri3fdilypnd5tsqpt9ljwce` FOREIGN KEY (`receipt_item_discount_id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -188,78 +112,154 @@ CREATE TABLE `products` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `simple_constant_check_discounts`
+-- Table structure for table `receipt_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_constant_check_discounts`;
+DROP TABLE IF EXISTS `receipt_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_constant_check_discounts` (
+CREATE TABLE `receipt_discounts` (
+  `type` varchar(124) NOT NULL,
+  `id` bigint NOT NULL,
+  `dependent_discount_id` bigint DEFAULT NULL,
+  `description` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKpplo2q3jqfunvlr0nddje9cln` (`dependent_discount_id`),
+  CONSTRAINT `FKpplo2q3jqfunvlr0nddje9cln` FOREIGN KEY (`dependent_discount_id`) REFERENCES `receipt_discounts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `receipt_item_discounts`
+--
+
+DROP TABLE IF EXISTS `receipt_item_discounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receipt_item_discounts` (
+  `type` varchar(86) NOT NULL,
+  `id` bigint NOT NULL,
+  `dependent_discount_id` bigint DEFAULT NULL,
+  `description` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKgjn0brxm8mpgw8q04snabhx3v` (`dependent_discount_id`),
+  CONSTRAINT `FKgjn0brxm8mpgw8q04snabhx3v` FOREIGN KEY (`dependent_discount_id`) REFERENCES `receipt_item_discounts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `receipt_items`
+--
+
+DROP TABLE IF EXISTS `receipt_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receipt_items` (
+  `id` bigint NOT NULL,
+  `product_id` bigint DEFAULT NULL,
+  `quantity` bigint NOT NULL,
+  `receipt_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK99g19542vt8s3r5eps10rusxx` (`product_id`,`receipt_id`),
+  KEY `FKmyfhuc1y0sjqe2geey8jx9nc2` (`receipt_id`),
+  CONSTRAINT `FKmyfhuc1y0sjqe2geey8jx9nc2` FOREIGN KEY (`receipt_id`) REFERENCES `receipts` (`id`),
+  CONSTRAINT `FKoflo2om70ovsg65ot9uqsk221` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `receipts`
+--
+
+DROP TABLE IF EXISTS `receipts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receipts` (
+  `id` bigint NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `cashier` varchar(255) NOT NULL,
+  `date` datetime(6) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKe6jbf81md2j9a1t1ombo151io` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `simple_constant_receipt_discounts`
+--
+
+DROP TABLE IF EXISTS `simple_constant_receipt_discounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `simple_constant_receipt_discounts` (
   `constant` decimal(19,2) NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKb2utemq7id9sq4afhb7sbhde6` FOREIGN KEY (`id`) REFERENCES `check_discounts` (`id`)
+  CONSTRAINT `FK71yy9a5g72kvl5dnjp3i34jtm` FOREIGN KEY (`id`) REFERENCES `receipt_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `simple_constant_check_item_discounts`
+-- Table structure for table `simple_constant_receipt_item_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_constant_check_item_discounts`;
+DROP TABLE IF EXISTS `simple_constant_receipt_item_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_constant_check_item_discounts` (
+CREATE TABLE `simple_constant_receipt_item_discounts` (
   `constant` decimal(19,2) NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKj0wi0vf11gumtg0gep162scls` FOREIGN KEY (`id`) REFERENCES `check_item_discounts` (`id`)
+  CONSTRAINT `FKt1lvbhpjel4psw0km1xargqg1` FOREIGN KEY (`id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `simple_percentage_check_discounts`
+-- Table structure for table `simple_percentage_receipt_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_percentage_check_discounts`;
+DROP TABLE IF EXISTS `simple_percentage_receipt_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_percentage_check_discounts` (
+CREATE TABLE `simple_percentage_receipt_discounts` (
   `percent` double NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKmdds7fu2x97rbmi2hio1l8sma` FOREIGN KEY (`id`) REFERENCES `check_discounts` (`id`)
+  CONSTRAINT `FKtoe3qwunljv5fkglpfd8mdapo` FOREIGN KEY (`id`) REFERENCES `receipt_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `simple_percentage_check_item_discounts`
+-- Table structure for table `simple_percentage_receipt_item_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_percentage_check_item_discounts`;
+DROP TABLE IF EXISTS `simple_percentage_receipt_item_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_percentage_check_item_discounts` (
+CREATE TABLE `simple_percentage_receipt_item_discounts` (
   `percent` double NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK78cuhwasns3aa2jukb3u0k49q` FOREIGN KEY (`id`) REFERENCES `check_item_discounts` (`id`)
+  CONSTRAINT `FKaypmms62s7s4ahj45adsp9l6l` FOREIGN KEY (`id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `threshold_percentage_check_item_discounts`
+-- Table structure for table `threshold_percentage_receipt_item_discounts`
 --
 
-DROP TABLE IF EXISTS `threshold_percentage_check_item_discounts`;
+DROP TABLE IF EXISTS `threshold_percentage_receipt_item_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `threshold_percentage_check_item_discounts` (
+CREATE TABLE `threshold_percentage_receipt_item_discounts` (
   `percent` double NOT NULL,
   `threshold` bigint NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKhfle4t7mnnnmkhkgvgsuqri9q` FOREIGN KEY (`id`) REFERENCES `check_item_discounts` (`id`)
+  CONSTRAINT `FKarxmw5has101r0k4qx56a80av` FOREIGN KEY (`id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -280,4 +280,4 @@ CREATE TABLE `threshold_percentage_check_item_discounts` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-03  7:20:53
+-- Dump completed on 2021-03-12 18:40:50

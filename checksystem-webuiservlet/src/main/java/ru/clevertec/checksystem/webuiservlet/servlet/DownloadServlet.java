@@ -3,16 +3,16 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import ru.clevertec.checksystem.core.common.service.IIoCheckService;
-import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
-import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.common.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.common.service.IPrintingReceiptService;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.helper.FormatHelpers;
-import ru.clevertec.checksystem.core.repository.CheckRepository;
-import ru.clevertec.checksystem.core.service.IoCheckService;
-import ru.clevertec.checksystem.core.service.PrintingCheckService;
+import ru.clevertec.checksystem.core.repository.ReceiptRepository;
+import ru.clevertec.checksystem.core.service.IoReceiptService;
+import ru.clevertec.checksystem.core.service.PrintingReceiptService;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
-import ru.clevertec.checksystem.webuiservlet.ChecksDataSource;
+import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -35,7 +35,7 @@ import static ru.clevertec.checksystem.webuiservlet.Constants.*;
 )
 public class DownloadServlet extends ApplicationServlet {
 
-    private CheckRepository checkRepository;
+    private ReceiptRepository receiptRepository;
     private ServiceFactory serviceFactory;
 
     public void init(ServletConfig config) throws ServletException {
@@ -59,19 +59,19 @@ public class DownloadServlet extends ApplicationServlet {
                 : Sources.DATABASE;
         var type = req.getParameter(Parameters.TYPE_PARAMETER);
         var format = req.getParameter(Parameters.FORMAT_PARAMETER);
-        var ids = getCheckIds(req);
+        var ids = getReceiptIds(req);
 
-        var checks = new ChecksDataSource(checkRepository, req.getSession(), Sessions.CHECKS_SESSION)
+        var receipts = new ReceiptDataSource(receiptRepository, req.getSession(), Sessions.RECEIPTS_SESSION)
                 .findAllById(source, ids);
 
-        if (CollectionUtils.isNullOrEmpty(checks)) {
+        if (CollectionUtils.isNullOrEmpty(receipts)) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
         setHeaders(resp, format);
 
-        if (!download(resp, type, format, checks)) {
+        if (!download(resp, type, format, receipts)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -79,10 +79,10 @@ public class DownloadServlet extends ApplicationServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
-    private boolean download(HttpServletResponse resp, String type, String format, Collection<Check> checks) throws IOException {
+    private boolean download(HttpServletResponse resp, String type, String format, Collection<Receipt> receipts) throws IOException {
         switch (type) {
-            case Types.PRINT -> print(resp, CollectionUtils.asCollection(checks), format);
-            case Types.SERIALIZE -> serialize(resp, CollectionUtils.asCollection(checks), format);
+            case Types.PRINT -> print(resp, CollectionUtils.asCollection(receipts), format);
+            case Types.SERIALIZE -> serialize(resp, CollectionUtils.asCollection(receipts), format);
             default -> {
                 return false;
             }
@@ -90,14 +90,14 @@ public class DownloadServlet extends ApplicationServlet {
         return true;
     }
 
-    private void print(HttpServletResponse resp, Collection<Check> checks, String format) throws IOException {
-        IPrintingCheckService printingCheckService = serviceFactory.instance(PrintingCheckService.class);
-        printingCheckService.print(checks, resp.getOutputStream(), format);
+    private void print(HttpServletResponse resp, Collection<Receipt> receipts, String format) throws IOException {
+        IPrintingReceiptService printingReceiptService = serviceFactory.instance(PrintingReceiptService.class);
+        printingReceiptService.print(receipts, resp.getOutputStream(), format);
     }
 
-    private void serialize(HttpServletResponse resp, Collection<Check> checks, String format) throws IOException {
-        IIoCheckService ioCheckService = serviceFactory.instance(IoCheckService.class);
-        ioCheckService.serialize(checks, resp.getOutputStream(), format);
+    private void serialize(HttpServletResponse resp, Collection<Receipt> receipts, String format) throws IOException {
+        IIoReceiptService ioCheckService = serviceFactory.instance(IoReceiptService.class);
+        ioCheckService.serialize(receipts, resp.getOutputStream(), format);
     }
 
     private static void setHeaders(HttpServletResponse resp, String format) {
@@ -106,7 +106,7 @@ public class DownloadServlet extends ApplicationServlet {
                 + FormatHelpers.extensionByFormat(format, true));
     }
 
-    private static List<Long> getCheckIds(HttpServletRequest req) {
+    private static List<Long> getReceiptIds(HttpServletRequest req) {
         return Arrays.stream(req.getParameterMap().get(Parameters.ID_PARAMETER))
                 .mapToLong(Long::parseLong)
                 .boxed()
@@ -114,8 +114,8 @@ public class DownloadServlet extends ApplicationServlet {
     }
 
     @Autowired
-    public void setCheckRepository(CheckRepository checkRepository) {
-        this.checkRepository = checkRepository;
+    public void setCheckRepository(ReceiptRepository receiptRepository) {
+        this.receiptRepository = receiptRepository;
     }
 
     @Autowired

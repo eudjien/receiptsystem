@@ -32,6 +32,7 @@ public class EmailSender extends EventEmitter<Object> implements IEmailSender {
     }
 
     private MimeMessage createMessage(Mail mail) throws IOException, MessagingException {
+
         var configProperties = getConfigProperties();
 
         var session = Session.getInstance(configProperties, new MailAuthenticator(configProperties));

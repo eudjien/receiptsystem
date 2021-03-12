@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="checks" scope="request" type="java.util.Collection"/>
+<jsp:useBean id="receipts" scope="request" type="java.util.Collection"/>
 
-<div class="check-toolbar text-muted bg-white px-4 py-2 rounded shadow mb-4">
+<div class="receipt-toolbar text-muted bg-white px-4 py-2 rounded shadow mb-4">
     <div class="row gy-2 gx-4 d-flex align-items-center">
         <div class="col">
             <div class="row g-4 d-flex align-items-center flex-nowrap">
@@ -27,7 +27,7 @@
         <div class="col col-md-auto">
             <div class="row g-4 d-flex align-items-center flex-nowrap">
                 <div class="col-auto border-end">
-                    <span>Всего: <%=checks.size()%></span>
+                    <span>Всего: <%=receipts.size()%></span>
                 </div>
                 <div class="col d-flex justify-content-end">
                     <jsp:include page="toolbar/source-select.jsp"/>

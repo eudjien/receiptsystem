@@ -4,60 +4,60 @@ import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.dto.discount.check.CheckDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.check.SimpleConstantCheckDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.check.SimplePercentageCheckDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.checkitem.CheckItemDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.checkitem.SimpleConstantCheckItemDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.checkitem.SimplePercentageCheckItemDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.checkitem.ThresholdPercentageCheckItemDiscountDto;
-import ru.clevertec.checksystem.core.entity.discount.check.SimpleConstantCheckDiscount;
-import ru.clevertec.checksystem.core.entity.discount.check.SimplePercentageCheckDiscount;
-import ru.clevertec.checksystem.core.entity.discount.checkitem.SimpleConstantCheckItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.checkitem.SimplePercentageCheckItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.checkitem.ThresholdPercentageCheckItemDiscount;
+import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receipt.SimpleConstantReceiptDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receipt.SimplePercentageReceiptDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.SimpleConstantReceiptItemDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.SimplePercentageReceiptItemDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.ThresholdPercentageReceiptItemDiscountDto;
+import ru.clevertec.checksystem.core.entity.discount.receipt.SimpleConstantReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receipt.SimplePercentageReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.SimpleConstantReceiptItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.SimplePercentageReceiptItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.ThresholdPercentageReceiptItemDiscount;
 
 @Component
 public class ApplicationModelMapper extends ModelMapper {
 
     public ApplicationModelMapper() {
         getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        addCheckDiscountConverters(this);
-        addCheckItemDiscountConverters(this);
+        addReceiptDiscountConverters(this);
+        addReceiptItemDiscountConverters(this);
     }
 
-    private static void addCheckDiscountConverters(ModelMapper modelMapper) {
-        modelMapper.addConverter(new AbstractConverter<SimplePercentageCheckDiscount, CheckDiscountDto>() {
+    private static void addReceiptDiscountConverters(ModelMapper modelMapper) {
+        modelMapper.addConverter(new AbstractConverter<SimplePercentageReceiptDiscount, ReceiptDiscountDto>() {
             @Override
-            protected SimplePercentageCheckDiscountDto convert(SimplePercentageCheckDiscount source) {
-                return modelMapper.map(source, SimplePercentageCheckDiscountDto.class);
+            protected SimplePercentageReceiptDiscountDto convert(SimplePercentageReceiptDiscount source) {
+                return modelMapper.map(source, SimplePercentageReceiptDiscountDto.class);
             }
         });
-        modelMapper.addConverter(new AbstractConverter<SimpleConstantCheckDiscount, CheckDiscountDto>() {
+        modelMapper.addConverter(new AbstractConverter<SimpleConstantReceiptDiscount, ReceiptDiscountDto>() {
             @Override
-            protected SimpleConstantCheckDiscountDto convert(SimpleConstantCheckDiscount source) {
-                return modelMapper.map(source, SimpleConstantCheckDiscountDto.class);
+            protected SimpleConstantReceiptDiscountDto convert(SimpleConstantReceiptDiscount source) {
+                return modelMapper.map(source, SimpleConstantReceiptDiscountDto.class);
             }
         });
     }
 
-    private static void addCheckItemDiscountConverters(ModelMapper modelMapper) {
-        modelMapper.addConverter(new AbstractConverter<SimplePercentageCheckItemDiscount, CheckItemDiscountDto>() {
+    private static void addReceiptItemDiscountConverters(ModelMapper modelMapper) {
+        modelMapper.addConverter(new AbstractConverter<SimplePercentageReceiptItemDiscount, ReceiptItemDiscountDto>() {
             @Override
-            protected SimplePercentageCheckItemDiscountDto convert(SimplePercentageCheckItemDiscount source) {
-                return modelMapper.map(source, SimplePercentageCheckItemDiscountDto.class);
+            protected SimplePercentageReceiptItemDiscountDto convert(SimplePercentageReceiptItemDiscount source) {
+                return modelMapper.map(source, SimplePercentageReceiptItemDiscountDto.class);
             }
         });
-        modelMapper.addConverter(new AbstractConverter<ThresholdPercentageCheckItemDiscount, CheckItemDiscountDto>() {
+        modelMapper.addConverter(new AbstractConverter<ThresholdPercentageReceiptItemDiscount, ReceiptItemDiscountDto>() {
             @Override
-            protected ThresholdPercentageCheckItemDiscountDto convert(ThresholdPercentageCheckItemDiscount source) {
-                return modelMapper.map(source, ThresholdPercentageCheckItemDiscountDto.class);
+            protected ThresholdPercentageReceiptItemDiscountDto convert(ThresholdPercentageReceiptItemDiscount source) {
+                return modelMapper.map(source, ThresholdPercentageReceiptItemDiscountDto.class);
             }
         });
-        modelMapper.addConverter(new AbstractConverter<SimpleConstantCheckItemDiscount, CheckItemDiscountDto>() {
+        modelMapper.addConverter(new AbstractConverter<SimpleConstantReceiptItemDiscount, ReceiptItemDiscountDto>() {
             @Override
-            protected SimpleConstantCheckItemDiscountDto convert(SimpleConstantCheckItemDiscount source) {
-                return modelMapper.map(source, SimpleConstantCheckItemDiscountDto.class);
+            protected SimpleConstantReceiptItemDiscountDto convert(SimpleConstantReceiptItemDiscount source) {
+                return modelMapper.map(source, SimpleConstantReceiptItemDiscountDto.class);
             }
         });
     }

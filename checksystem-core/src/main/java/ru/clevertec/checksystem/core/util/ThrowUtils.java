@@ -130,7 +130,7 @@ public final class ThrowUtils {
                         String.format(parameterName, THROW_IF_GREATER_THAN_FORMAT, value, maxInclusive));
         }
 
-        public static void lessThan(String parameterName, int value, int minInclusive) {
+        public static void lessThan(String parameterName, Long value, int minInclusive) {
             if (value < minInclusive)
                 throw new ArgumentOutOfRangeException(
                         String.format(THROW_IF_LESS_THAN_FORMAT, parameterName, value, minInclusive));

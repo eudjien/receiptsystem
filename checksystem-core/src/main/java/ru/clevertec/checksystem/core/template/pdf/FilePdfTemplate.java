@@ -15,7 +15,7 @@ public class FilePdfTemplate extends AbstractPdfTemplate {
         this(templateFile, 0);
     }
 
-    public FilePdfTemplate(File templateFile, int topOffset) {
+    public FilePdfTemplate(File templateFile, long topOffset) {
         super(topOffset);
         setFile(templateFile);
     }

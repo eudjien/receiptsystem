@@ -1,7 +1,7 @@
 package ru.clevertec.checksystem.core.common.template;
 
 public interface IPdfTemplate extends ITemplate {
-    int getTopOffset();
+    long getTopOffset();
 
-    void setTopOffset(int offset);
+    void setTopOffset(long offset);
 }

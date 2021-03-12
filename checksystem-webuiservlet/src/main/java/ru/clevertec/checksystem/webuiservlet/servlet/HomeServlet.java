@@ -3,8 +3,8 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import ru.clevertec.checksystem.core.repository.CheckRepository;
-import ru.clevertec.checksystem.webuiservlet.ChecksDataSource;
+import ru.clevertec.checksystem.core.repository.ReceiptRepository;
+import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,7 +22,7 @@ import static ru.clevertec.checksystem.webuiservlet.Constants.*;
 )
 public class HomeServlet extends ApplicationServlet {
 
-    private CheckRepository checkRepository;
+    private ReceiptRepository receiptRepository;
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -36,17 +36,17 @@ public class HomeServlet extends ApplicationServlet {
                 ? req.getParameter(Parameters.SOURCE_PARAMETER)
                 : Sources.DATABASE;
 
-        var checks = new ChecksDataSource(checkRepository, req.getSession(), Sessions.CHECKS_SESSION)
+        var receipts = new ReceiptDataSource(receiptRepository, req.getSession(), Sessions.RECEIPTS_SESSION)
                 .findAll(source);
 
-        req.setAttribute(Attributes.CHECKS_ATTRIBUTE, checks);
+        req.setAttribute(Attributes.RECEIPTS_ATTRIBUTE, receipts);
         req.setAttribute(Attributes.SOURCE_ATTRIBUTE, source);
 
         req.getRequestDispatcher(Pages.HOME_PAGE).forward(req, resp);
     }
 
     @Autowired
-    public void setCheckRepository(CheckRepository checkRepository) {
-        this.checkRepository = checkRepository;
+    public void setReceiptRepository(ReceiptRepository receiptRepository) {
+        this.receiptRepository = receiptRepository;
     }
 }

@@ -44,17 +44,17 @@ public final class Constants {
                 public static final String EMAILS = "emails";
                 public static final String EVENT_EMAILS = "event_emails";
                 public static final String PRODUCTS = "products";
-                public static final String CHECKS = "checks";
-                public static final String CHECK_DISCOUNTS = "check_discounts";
-                public static final String SIMPLE_CONSTANT_CHECK_DISCOUNT = "simple_constant_check_discounts";
-                public static final String SIMPLE_PERCENTAGE_CHECK_DISCOUNT = "simple_percentage_check_discounts";
-                public static final String CHECK_ITEMS = "check_items";
-                public static final String CHECK_ITEM_DISCOUNTS = "check_item_discounts";
-                public static final String SIMPLE_CONSTANT_CHECK_ITEM_DISCOUNT = "simple_constant_check_item_discounts";
-                public static final String SIMPLE_PERCENTAGE_CHECK_ITEM_DISCOUNT = "simple_percentage_check_item_discounts";
-                public static final String THRESHOLD_PERCENTAGE_CHECK_ITEM_DISCOUNT = "threshold_percentage_check_item_discounts";
-                public static final String CHECK__CHECK_DISCOUNT = "_check__check_discount";
-                public static final String CHECK_ITEM__CHECK_ITEM_DISCOUNT = "_check_item__check_item_discount";
+                public static final String RECEIPTS = "receipts";
+                public static final String RECEIPT_DISCOUNTS = "receipt_discounts";
+                public static final String SIMPLE_CONSTANT_RECEIPT_DISCOUNT = "simple_constant_receipt_discounts";
+                public static final String SIMPLE_PERCENTAGE_RECEIPT_DISCOUNT = "simple_percentage_receipt_discounts";
+                public static final String RECEIPT_ITEMS = "receipt_items";
+                public static final String RECEIPT_ITEM_DISCOUNTS = "receipt_item_discounts";
+                public static final String SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT = "simple_constant_receipt_item_discounts";
+                public static final String SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "simple_percentage_receipt_item_discounts";
+                public static final String THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "threshold_percentage_receipt_item_discounts";
+                public static final String RECEIPT__RECEIPT_DISCOUNT = "_receipt__receipt_discount";
+                public static final String RECEIPT_ITEM__RECEIPT_ITEM_DISCOUNT = "_receipt_item__receipt_item_discount";
             }
 
             public static final class Column {
@@ -75,11 +75,11 @@ public final class Constants {
 
             public static final class JoinColumn {
                 public static final String PRODUCT_ID = "product_id";
-                public static final String CHECK_ID = "check_id";
+                public static final String RECEIPT_ID = "receipt_id";
                 public static final String EMAIL_ID = "email_id";
-                public static final String CHECK_ITEM_ID = "check_item_id";
-                public static final String CHECK_DISCOUNT_ID = "check_discount_id";
-                public static final String CHECK_ITEM_DISCOUNT_ID = "check_item_discount_id";
+                public static final String RECEIPT_ITEM_ID = "receipt_item_id";
+                public static final String RECEIPT_DISCOUNT_ID = "receipt_discount_id";
+                public static final String RECEIPT_ITEM_DISCOUNT_ID = "receipt_item_discount_id";
                 public static final String DEPENDENT_DISCOUNT_ID = "dependent_discount_id";
             }
         }

@@ -2,11 +2,11 @@ package ru.clevertec.checksystem.cli.task;
 
 import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
-import ru.clevertec.checksystem.cli.argument.CheckIdFilter;
-import ru.clevertec.checksystem.core.common.service.ICheckService;
-import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
+import ru.clevertec.checksystem.core.common.service.IReceiptService;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.checksystem.core.service.CheckService;
+import ru.clevertec.checksystem.core.service.ReceiptService;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -14,40 +14,40 @@ import java.util.concurrent.Callable;
 public class LoadFromDatabase implements Callable<Void> {
 
     private final ArgumentsFinder argumentsFinder;
-    private final CheckIdFilter checkIdFilter;
+    private final ReceiptIdFilter receiptIdFilter;
     private final ServiceFactory serviceFactory;
-    private final Collection<Check> destinationChecks;
+    private final Collection<Receipt> destinationReceipts;
 
     public LoadFromDatabase(
             ArgumentsFinder argumentsFinder,
-            CheckIdFilter checkIdFilter,
+            ReceiptIdFilter receiptIdFilter,
             ServiceFactory serviceFactory,
-            Collection<Check> destinationChecks) {
+            Collection<Receipt> destinationReceipts) {
 
         this.argumentsFinder = argumentsFinder;
-        this.checkIdFilter = checkIdFilter;
+        this.receiptIdFilter = receiptIdFilter;
         this.serviceFactory = serviceFactory;
-        this.destinationChecks = destinationChecks;
+        this.destinationReceipts = destinationReceipts;
     }
 
     @Override
     public Void call() throws Exception {
-        loadFromDatabase(argumentsFinder, checkIdFilter, serviceFactory, destinationChecks);
+        loadFromDatabase(argumentsFinder, receiptIdFilter, serviceFactory, destinationReceipts);
         return null;
     }
 
     private static void loadFromDatabase(
             ArgumentsFinder finder,
-            CheckIdFilter checkIdFilter,
+            ReceiptIdFilter receiptIdFilter,
             ServiceFactory serviceFactory,
-            Collection<Check> destinationChecks) {
+            Collection<Receipt> destinationReceipts) {
 
-        ICheckService checkService = serviceFactory.instance(CheckService.class);
+        IReceiptService checkService = serviceFactory.instance(ReceiptService.class);
 
         if (finder.hasArgumentKey(Constants.Keys.INPUT_FILTER_ID))
-            checkService.getCheckRepository().findAllById(
-                    checkIdFilter.getIdentifiers()).forEach(destinationChecks::add);
+            checkService.getReceiptRepository().findAllById(
+                    receiptIdFilter.getIdentifiers()).forEach(destinationReceipts::add);
         else
-            checkService.getCheckRepository().findAll().forEach(destinationChecks::add);
+            checkService.getReceiptRepository().findAll().forEach(destinationReceipts::add);
     }
 }

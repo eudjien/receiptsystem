@@ -57,10 +57,10 @@ ___
 ```
 -i=deserialize-g 
 -deserialize-g-format=json 
--desirialize-g-path="C:\checks\checks-generate.json" 
+-desirialize-g-path="C:\receipts\receipts-generate.json" 
 -serialize=true 
 -serialize-format=json 
--serialize-path="C:\checks\checks.json"
+-serialize-path="C:\receipts\receipts.json"
 ```
 
 **Загрузить все чеки из базы данных и сохранить их в JSON файл:**
@@ -69,7 +69,7 @@ ___
 -i=database
 -serialize=true 
 -serialize-format=json 
--serialize-path="C:\checks\checks.json"
+-serialize-path="C:\receipts\receipts.json"
 ```
 
 **Загрузить все чеки из базы данных и сохранить их в XML файл:**
@@ -78,7 +78,7 @@ ___
 -i=database
 -serialize=true 
 -serialize-format=xml 
--serialize-path="C:\checks\checks.xml"
+-serialize-path="C:\receipts\receipts.xml"
 ```
 
 **Загрузить все чеки из базы данных и напечатать их в текстовый файл:**
@@ -87,7 +87,7 @@ ___
 -i=database
 -print=true 
 -print-format=text 
--print-path="C:\checks\checks_print.txt"
+-print-path="C:\receipts\checks_print.txt"
 ```
 
 **Загрузить все чеки из базы данных и напечатать их в PDF файл:**
@@ -96,18 +96,18 @@ ___
 -i=database
 -print=true 
 -print-format=pdf 
--print-path="C:\checks\checks_print.pdf"
+-print-path="C:\receipts\checks_print.pdf"
 ```
 
 **Загрузить чеки из XML и напечатать их в HTML файл:**
 
 ```
 -i=deserialize 
--deserialize-path="C:\checks\checks.xml" 
+-deserialize-path="C:\receipts\receipts.xml" 
 -deserialize-format=xml 
 -serialize=true 
 -print-format=text 
--print-path="C:\checks\checks.html"
+-print-path="C:\receipts\receipts.html"
 ```
 
 **Загрузить чеки из базы данных, отфильтрованные по Id, и напечатать их в файл в текстовый файл:**
@@ -117,7 +117,7 @@ ___
 -filter-id="1,2,3" 
 -print=true 
 -print-format=text 
--print-path="C:\checks\checks.txt"
+-print-path="C:\receipts\receipts.txt"
 ```
 
 **Загрузить чеки из JSON файла:**
@@ -125,7 +125,7 @@ ___
 ```
 -i=deserialize 
 -deserialize-format=json
--deserialize-path="C:\checks\checks.json" 
+-deserialize-path="C:\receipts\receipts.json" 
 ```
 
 **Загрузить чеки из JSON файла и сохранить их в файл в формате XML:**
@@ -133,9 +133,9 @@ ___
 ```
 -i=deserialize 
 -deserialize-format=json 
--deserialize-path="C:\checks\checks.json" 
+-deserialize-path="C:\receipts\receipts.json" 
 -serialize=true 
 -serialize-format=xml 
--serialize-path="C:\checks\checks.xml"
+-serialize-path="C:\receipts\receipts.xml"
 ```
 

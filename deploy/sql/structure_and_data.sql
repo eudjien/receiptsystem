@@ -18,173 +18,57 @@ USE `checksystem`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `_check__check_discount`
+-- Table structure for table `_receipt__receipt_discount`
 --
 
-DROP TABLE IF EXISTS `_check__check_discount`;
+DROP TABLE IF EXISTS `_receipt__receipt_discount`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_check__check_discount` (
-  `check_id` bigint NOT NULL,
-  `check_discount_id` bigint NOT NULL,
-  PRIMARY KEY (`check_id`,`check_discount_id`),
-  KEY `FKnl20k7q5qx1xmxyf8pwlt0mp6` (`check_discount_id`),
-  CONSTRAINT `FKni9xx7wpuabibng8il4h1lqus` FOREIGN KEY (`check_id`) REFERENCES `checks` (`id`),
-  CONSTRAINT `FKnl20k7q5qx1xmxyf8pwlt0mp6` FOREIGN KEY (`check_discount_id`) REFERENCES `check_discounts` (`id`)
+CREATE TABLE `_receipt__receipt_discount` (
+  `receipt_id` bigint NOT NULL,
+  `receipt_discount_id` bigint NOT NULL,
+  PRIMARY KEY (`receipt_id`,`receipt_discount_id`),
+  KEY `FK2tun05jbp5b9h1qtyinjc2jfs` (`receipt_discount_id`),
+  CONSTRAINT `FK2tun05jbp5b9h1qtyinjc2jfs` FOREIGN KEY (`receipt_discount_id`) REFERENCES `receipt_discounts` (`id`),
+  CONSTRAINT `FKfnt0fyjikxwsa3lidu41k412b` FOREIGN KEY (`receipt_id`) REFERENCES `receipts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `_check__check_discount`
+-- Dumping data for table `_receipt__receipt_discount`
 --
 
-LOCK TABLES `_check__check_discount` WRITE;
-/*!40000 ALTER TABLE `_check__check_discount` DISABLE KEYS */;
-INSERT INTO `_check__check_discount` VALUES (1,15),(16,33),(34,44),(45,61);
-/*!40000 ALTER TABLE `_check__check_discount` ENABLE KEYS */;
+LOCK TABLES `_receipt__receipt_discount` WRITE;
+/*!40000 ALTER TABLE `_receipt__receipt_discount` DISABLE KEYS */;
+INSERT INTO `_receipt__receipt_discount` VALUES (1,2),(16,17),(34,35),(45,46);
+/*!40000 ALTER TABLE `_receipt__receipt_discount` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `_check_item__check_item_discount`
+-- Table structure for table `_receipt_item__receipt_item_discount`
 --
 
-DROP TABLE IF EXISTS `_check_item__check_item_discount`;
+DROP TABLE IF EXISTS `_receipt_item__receipt_item_discount`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_check_item__check_item_discount` (
-  `check_item_id` bigint NOT NULL,
-  `check_item_discount_id` bigint NOT NULL,
-  PRIMARY KEY (`check_item_id`,`check_item_discount_id`),
-  KEY `FK2s02ew5xuud4962ie4of71s5y` (`check_item_discount_id`),
-  CONSTRAINT `FK2s02ew5xuud4962ie4of71s5y` FOREIGN KEY (`check_item_discount_id`) REFERENCES `check_item_discounts` (`id`),
-  CONSTRAINT `FKg64ve0vlad4yje65jhpv8fq0r` FOREIGN KEY (`check_item_id`) REFERENCES `check_items` (`id`)
+CREATE TABLE `_receipt_item__receipt_item_discount` (
+  `receipt_item_id` bigint NOT NULL,
+  `receipt_item_discount_id` bigint NOT NULL,
+  PRIMARY KEY (`receipt_item_id`,`receipt_item_discount_id`),
+  KEY `FKrkri3fdilypnd5tsqpt9ljwce` (`receipt_item_discount_id`),
+  CONSTRAINT `FKenfarm6ytdx191v67pn6b5b1m` FOREIGN KEY (`receipt_item_id`) REFERENCES `receipt_items` (`id`),
+  CONSTRAINT `FKrkri3fdilypnd5tsqpt9ljwce` FOREIGN KEY (`receipt_item_discount_id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `_check_item__check_item_discount`
+-- Dumping data for table `_receipt_item__receipt_item_discount`
 --
 
-LOCK TABLES `_check_item__check_item_discount` WRITE;
-/*!40000 ALTER TABLE `_check_item__check_item_discount` DISABLE KEYS */;
-INSERT INTO `_check_item__check_item_discount` VALUES (8,10),(19,20),(24,26),(29,30),(52,53),(57,58);
-/*!40000 ALTER TABLE `_check_item__check_item_discount` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `check_discounts`
---
-
-DROP TABLE IF EXISTS `check_discounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `check_discounts` (
-  `type` varchar(124) NOT NULL,
-  `id` bigint NOT NULL,
-  `dependent_discount_id` bigint DEFAULT NULL,
-  `description` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKr9bfxvprmgfxddvu51ivcbmyn` (`dependent_discount_id`),
-  CONSTRAINT `FKr9bfxvprmgfxddvu51ivcbmyn` FOREIGN KEY (`dependent_discount_id`) REFERENCES `check_discounts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `check_discounts`
---
-
-LOCK TABLES `check_discounts` WRITE;
-/*!40000 ALTER TABLE `check_discounts` DISABLE KEYS */;
-INSERT INTO `check_discounts` VALUES ('SimplePercentageCheckDiscount',15,NULL,'-35% на сумму чека'),('SimplePercentageCheckDiscount',33,NULL,'-30% на сумму чека'),('SimplePercentageCheckDiscount',44,NULL,'-20% на сумму чека'),('SimpleConstantCheckDiscount',61,NULL,'-5$ на сумму чека'),('SimpleConstantCheckDiscount',65,NULL,'-10$ на сумму чека'),('SimpleConstantCheckDiscount',66,67,'-10$'),('SimplePercentageCheckDiscount',67,NULL,'-35%'),('SimplePercentageCheckDiscount',68,69,'-35%'),('SimpleConstantCheckDiscount',69,NULL,'-10$'),('SimplePercentageCheckDiscount',70,71,'-35%'),('SimpleConstantCheckDiscount',71,72,'-10$'),('SimplePercentageCheckDiscount',72,NULL,'-15%');
-/*!40000 ALTER TABLE `check_discounts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `check_item_discounts`
---
-
-DROP TABLE IF EXISTS `check_item_discounts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `check_item_discounts` (
-  `type` varchar(86) NOT NULL,
-  `id` bigint NOT NULL,
-  `dependent_discount_id` bigint DEFAULT NULL,
-  `description` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKqpyo3p1g6hpu5qm6p276648mt` (`dependent_discount_id`),
-  CONSTRAINT `FKqpyo3p1g6hpu5qm6p276648mt` FOREIGN KEY (`dependent_discount_id`) REFERENCES `check_item_discounts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `check_item_discounts`
---
-
-LOCK TABLES `check_item_discounts` WRITE;
-/*!40000 ALTER TABLE `check_item_discounts` DISABLE KEYS */;
-INSERT INTO `check_item_discounts` VALUES ('ThresholdPercentageCheckItemDiscount',10,NULL,'-10% если количество продукта больше чем 5'),('ThresholdPercentageCheckItemDiscount',20,21,'Скидка 1% если количество продуктов больше 6'),('SimpleConstantCheckItemDiscount',21,NULL,'Скидка 10 на продукт'),('SimplePercentageCheckItemDiscount',26,NULL,'-30%'),('SimplePercentageCheckItemDiscount',30,NULL,'-40%'),('SimpleConstantCheckItemDiscount',53,NULL,'-5$'),('ThresholdPercentageCheckItemDiscount',58,NULL,'Скидка 10% если количество продуктов больше 2'),('SimplePercentageCheckItemDiscount',73,NULL,'-50%');
-/*!40000 ALTER TABLE `check_item_discounts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `check_items`
---
-
-DROP TABLE IF EXISTS `check_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `check_items` (
-  `id` bigint NOT NULL,
-  `check_id` bigint DEFAULT NULL,
-  `product_id` bigint DEFAULT NULL,
-  `quantity` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UKqu2dpj4d6px6a2sm8nb3nny67` (`product_id`,`check_id`),
-  KEY `FK6drpcu5rw5qhp4meonaxohhh0` (`check_id`),
-  CONSTRAINT `FK6drpcu5rw5qhp4meonaxohhh0` FOREIGN KEY (`check_id`) REFERENCES `checks` (`id`),
-  CONSTRAINT `FK8f90481j0tq7slpiwr4yrop1q` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `check_items`
---
-
-LOCK TABLES `check_items` WRITE;
-/*!40000 ALTER TABLE `check_items` DISABLE KEYS */;
-INSERT INTO `check_items` VALUES (2,1,3,1),(4,1,5,3),(6,1,7,2),(8,1,9,8),(11,1,12,1),(13,1,14,9),(17,16,14,9),(18,16,12,10),(19,16,9,8),(22,16,23,6),(24,16,25,8),(27,16,28,8),(29,16,7,7),(31,16,32,5),(35,34,9,15),(36,34,3,1),(37,34,38,6),(39,34,40,1),(41,34,42,3),(43,34,28,11),(46,45,47,3),(48,45,32,3),(49,45,7,1),(50,45,51,6),(52,45,25,15),(54,45,23,1),(55,45,56,11),(57,45,14,15),(59,45,60,6);
-/*!40000 ALTER TABLE `check_items` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `checks`
---
-
-DROP TABLE IF EXISTS `checks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `checks` (
-  `id` bigint NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `cashier` varchar(255) NOT NULL,
-  `date` datetime(6) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UKj3kjg7c5v4k0ulh718dylvcf2` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `checks`
---
-
-LOCK TABLES `checks` WRITE;
-/*!40000 ALTER TABLE `checks` DISABLE KEYS */;
-INSERT INTO `checks` VALUES (1,'ул. Пушкина, д. Калатушкина','Василий Пупкин','2021-03-03 07:10:55.343000','Компьютерный магазин','999 проблем','+375290000000'),(16,'ул. Элементова, д. 1','Екатерина Пупкина','2021-03-03 07:10:55.344000','Гипермаркет','342 элемент','+375290000001'),(34,'ул. Советская, д. 1001','Алексей Пупкин','2021-03-03 07:10:55.344000','Продуктовый магазин','Магазин №1','+375290000002'),(45,'ул. Свиридова, д. 1234','Татьяна Пупкина','2021-03-03 07:10:55.344000','Продуктовый магазин','Магазин №2','+375290000003');
-/*!40000 ALTER TABLE `checks` ENABLE KEYS */;
+LOCK TABLES `_receipt_item__receipt_item_discount` WRITE;
+/*!40000 ALTER TABLE `_receipt_item__receipt_item_discount` DISABLE KEYS */;
+INSERT INTO `_receipt_item__receipt_item_discount` VALUES (5,7),(21,22),(24,25),(31,33),(58,59),(60,61);
+/*!40000 ALTER TABLE `_receipt_item__receipt_item_discount` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -283,134 +167,250 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (3,'Кукуруза',20.00),(5,'Пельмени',12.48),(7,'Макароны',8.50),(9,'Помидоры',3.91),(12,'Картошка',7.50),(14,'Сало',10.00),(23,'Рис',20.00),(25,'Чай',3.51),(28,'Яблоки',8.70),(32,'Апельсины',30.50),(38,'Кофе',3.50),(40,'Колбаса',20.00),(42,'Рыба',50.20),(47,'Монитор',155.50),(51,'HDD',25.50),(56,'Мышка',30.00),(60,'Печенье',2.10),(62,'Конфеты',5.60),(63,'Клавиатура',30.00),(64,'SSD',50.00);
+INSERT INTO `products` VALUES (4,'Картошка',7.50),(6,'Помидоры',3.91),(9,'Макароны',8.50),(11,'Сало',10.00),(13,'Кукуруза',20.00),(15,'Пельмени',12.48),(19,'Яблоки',8.70),(27,'Рис',20.00),(30,'Апельсины',30.50),(32,'Чай',3.51),(37,'Рыба',50.20),(39,'Кофе',3.50),(43,'Колбаса',20.00),(48,'Монитор',155.50),(50,'HDD',25.50),(55,'Мышка',30.00),(57,'Печенье',2.10),(62,'Конфеты',5.60),(63,'Клавиатура',30.00),(64,'SSD',50.00);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `simple_constant_check_discounts`
+-- Table structure for table `receipt_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_constant_check_discounts`;
+DROP TABLE IF EXISTS `receipt_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_constant_check_discounts` (
+CREATE TABLE `receipt_discounts` (
+  `type` varchar(124) NOT NULL,
+  `id` bigint NOT NULL,
+  `dependent_discount_id` bigint DEFAULT NULL,
+  `description` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKpplo2q3jqfunvlr0nddje9cln` (`dependent_discount_id`),
+  CONSTRAINT `FKpplo2q3jqfunvlr0nddje9cln` FOREIGN KEY (`dependent_discount_id`) REFERENCES `receipt_discounts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receipt_discounts`
+--
+
+LOCK TABLES `receipt_discounts` WRITE;
+/*!40000 ALTER TABLE `receipt_discounts` DISABLE KEYS */;
+INSERT INTO `receipt_discounts` VALUES ('SimplePercentageReceiptDiscount',2,NULL,'-35% на сумму чека'),('SimplePercentageReceiptDiscount',17,NULL,'-30% на сумму чека'),('SimplePercentageReceiptDiscount',35,NULL,'-20% на сумму чека'),('SimpleConstantReceiptDiscount',46,NULL,'-5$ на сумму чека'),('SimpleConstantReceiptDiscount',65,NULL,'-10$ на сумму чека'),('SimpleConstantReceiptDiscount',66,67,'-10$'),('SimplePercentageReceiptDiscount',67,NULL,'-35%'),('SimplePercentageReceiptDiscount',68,69,'-35%'),('SimpleConstantReceiptDiscount',69,NULL,'-10$'),('SimplePercentageReceiptDiscount',70,71,'-35%'),('SimpleConstantReceiptDiscount',71,72,'-10$'),('SimplePercentageReceiptDiscount',72,NULL,'-15%');
+/*!40000 ALTER TABLE `receipt_discounts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `receipt_item_discounts`
+--
+
+DROP TABLE IF EXISTS `receipt_item_discounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receipt_item_discounts` (
+  `type` varchar(86) NOT NULL,
+  `id` bigint NOT NULL,
+  `dependent_discount_id` bigint DEFAULT NULL,
+  `description` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKgjn0brxm8mpgw8q04snabhx3v` (`dependent_discount_id`),
+  CONSTRAINT `FKgjn0brxm8mpgw8q04snabhx3v` FOREIGN KEY (`dependent_discount_id`) REFERENCES `receipt_item_discounts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receipt_item_discounts`
+--
+
+LOCK TABLES `receipt_item_discounts` WRITE;
+/*!40000 ALTER TABLE `receipt_item_discounts` DISABLE KEYS */;
+INSERT INTO `receipt_item_discounts` VALUES ('ThresholdPercentageReceiptItemDiscount',7,NULL,'-10% если количество продукта больше чем 5'),('ThresholdPercentageReceiptItemDiscount',22,23,'Скидка 1% если количество продуктов больше 6'),('SimpleConstantReceiptItemDiscount',23,NULL,'Скидка 10 на продукт'),('SimplePercentageReceiptItemDiscount',25,NULL,'-40%'),('SimplePercentageReceiptItemDiscount',33,NULL,'-30%'),('SimpleConstantReceiptItemDiscount',59,NULL,'-5$'),('ThresholdPercentageReceiptItemDiscount',61,NULL,'Скидка 10% если количество продуктов больше 2'),('SimplePercentageReceiptItemDiscount',73,NULL,'-50%');
+/*!40000 ALTER TABLE `receipt_item_discounts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `receipt_items`
+--
+
+DROP TABLE IF EXISTS `receipt_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receipt_items` (
+  `id` bigint NOT NULL,
+  `product_id` bigint DEFAULT NULL,
+  `quantity` bigint NOT NULL,
+  `receipt_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK99g19542vt8s3r5eps10rusxx` (`product_id`,`receipt_id`),
+  KEY `FKmyfhuc1y0sjqe2geey8jx9nc2` (`receipt_id`),
+  CONSTRAINT `FKmyfhuc1y0sjqe2geey8jx9nc2` FOREIGN KEY (`receipt_id`) REFERENCES `receipts` (`id`),
+  CONSTRAINT `FKoflo2om70ovsg65ot9uqsk221` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receipt_items`
+--
+
+LOCK TABLES `receipt_items` WRITE;
+/*!40000 ALTER TABLE `receipt_items` DISABLE KEYS */;
+INSERT INTO `receipt_items` VALUES (3,4,1,1),(5,6,8,1),(8,9,2,1),(10,11,9,1),(12,13,1,1),(14,15,3,1),(18,19,8,16),(20,4,10,16),(21,6,8,16),(24,9,7,16),(26,27,6,16),(28,11,9,16),(29,30,5,16),(31,32,8,16),(36,37,3,34),(38,39,6,34),(40,19,11,34),(41,6,15,34),(42,43,1,34),(44,13,1,34),(47,48,3,45),(49,50,6,45),(51,30,3,45),(52,27,1,45),(53,9,1,45),(54,55,11,45),(56,57,6,45),(58,32,15,45),(60,11,15,45);
+/*!40000 ALTER TABLE `receipt_items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `receipts`
+--
+
+DROP TABLE IF EXISTS `receipts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `receipts` (
+  `id` bigint NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `cashier` varchar(255) NOT NULL,
+  `date` datetime(6) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKe6jbf81md2j9a1t1ombo151io` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `receipts`
+--
+
+LOCK TABLES `receipts` WRITE;
+/*!40000 ALTER TABLE `receipts` DISABLE KEYS */;
+INSERT INTO `receipts` VALUES (1,'ул. Пушкина, д. Калатушкина','Василий Пупкин','2021-03-12 16:48:35.614000','Компьютерный магазин','999 проблем','+375290000000'),(16,'ул. Элементова, д. 1','Екатерина Пупкина','2021-03-12 16:48:35.636000','Гипермаркет','342 элемент','+375290000001'),(34,'ул. Советская, д. 1001','Алексей Пупкин','2021-03-12 16:48:35.636000','Продуктовый магазин','Магазин №1','+375290000002'),(45,'ул. Свиридова, д. 1234','Татьяна Пупкина','2021-03-12 16:48:35.636000','Продуктовый магазин','Магазин №2','+375290000003');
+/*!40000 ALTER TABLE `receipts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `simple_constant_receipt_discounts`
+--
+
+DROP TABLE IF EXISTS `simple_constant_receipt_discounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `simple_constant_receipt_discounts` (
   `constant` decimal(19,2) NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKb2utemq7id9sq4afhb7sbhde6` FOREIGN KEY (`id`) REFERENCES `check_discounts` (`id`)
+  CONSTRAINT `FK71yy9a5g72kvl5dnjp3i34jtm` FOREIGN KEY (`id`) REFERENCES `receipt_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `simple_constant_check_discounts`
+-- Dumping data for table `simple_constant_receipt_discounts`
 --
 
-LOCK TABLES `simple_constant_check_discounts` WRITE;
-/*!40000 ALTER TABLE `simple_constant_check_discounts` DISABLE KEYS */;
-INSERT INTO `simple_constant_check_discounts` VALUES (5.00,61),(10.00,65),(10.00,66),(10.00,69),(10.00,71);
-/*!40000 ALTER TABLE `simple_constant_check_discounts` ENABLE KEYS */;
+LOCK TABLES `simple_constant_receipt_discounts` WRITE;
+/*!40000 ALTER TABLE `simple_constant_receipt_discounts` DISABLE KEYS */;
+INSERT INTO `simple_constant_receipt_discounts` VALUES (5.00,46),(10.00,65),(10.00,66),(10.00,69),(10.00,71);
+/*!40000 ALTER TABLE `simple_constant_receipt_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `simple_constant_check_item_discounts`
+-- Table structure for table `simple_constant_receipt_item_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_constant_check_item_discounts`;
+DROP TABLE IF EXISTS `simple_constant_receipt_item_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_constant_check_item_discounts` (
+CREATE TABLE `simple_constant_receipt_item_discounts` (
   `constant` decimal(19,2) NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKj0wi0vf11gumtg0gep162scls` FOREIGN KEY (`id`) REFERENCES `check_item_discounts` (`id`)
+  CONSTRAINT `FKt1lvbhpjel4psw0km1xargqg1` FOREIGN KEY (`id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `simple_constant_check_item_discounts`
+-- Dumping data for table `simple_constant_receipt_item_discounts`
 --
 
-LOCK TABLES `simple_constant_check_item_discounts` WRITE;
-/*!40000 ALTER TABLE `simple_constant_check_item_discounts` DISABLE KEYS */;
-INSERT INTO `simple_constant_check_item_discounts` VALUES (10.00,21),(5.00,53);
-/*!40000 ALTER TABLE `simple_constant_check_item_discounts` ENABLE KEYS */;
+LOCK TABLES `simple_constant_receipt_item_discounts` WRITE;
+/*!40000 ALTER TABLE `simple_constant_receipt_item_discounts` DISABLE KEYS */;
+INSERT INTO `simple_constant_receipt_item_discounts` VALUES (10.00,23),(5.00,59);
+/*!40000 ALTER TABLE `simple_constant_receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `simple_percentage_check_discounts`
+-- Table structure for table `simple_percentage_receipt_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_percentage_check_discounts`;
+DROP TABLE IF EXISTS `simple_percentage_receipt_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_percentage_check_discounts` (
+CREATE TABLE `simple_percentage_receipt_discounts` (
   `percent` double NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKmdds7fu2x97rbmi2hio1l8sma` FOREIGN KEY (`id`) REFERENCES `check_discounts` (`id`)
+  CONSTRAINT `FKtoe3qwunljv5fkglpfd8mdapo` FOREIGN KEY (`id`) REFERENCES `receipt_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `simple_percentage_check_discounts`
+-- Dumping data for table `simple_percentage_receipt_discounts`
 --
 
-LOCK TABLES `simple_percentage_check_discounts` WRITE;
-/*!40000 ALTER TABLE `simple_percentage_check_discounts` DISABLE KEYS */;
-INSERT INTO `simple_percentage_check_discounts` VALUES (35,15),(30,33),(20,44),(35,67),(35,68),(35,70),(15,72);
-/*!40000 ALTER TABLE `simple_percentage_check_discounts` ENABLE KEYS */;
+LOCK TABLES `simple_percentage_receipt_discounts` WRITE;
+/*!40000 ALTER TABLE `simple_percentage_receipt_discounts` DISABLE KEYS */;
+INSERT INTO `simple_percentage_receipt_discounts` VALUES (35,2),(30,17),(20,35),(35,67),(35,68),(35,70),(15,72);
+/*!40000 ALTER TABLE `simple_percentage_receipt_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `simple_percentage_check_item_discounts`
+-- Table structure for table `simple_percentage_receipt_item_discounts`
 --
 
-DROP TABLE IF EXISTS `simple_percentage_check_item_discounts`;
+DROP TABLE IF EXISTS `simple_percentage_receipt_item_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `simple_percentage_check_item_discounts` (
+CREATE TABLE `simple_percentage_receipt_item_discounts` (
   `percent` double NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK78cuhwasns3aa2jukb3u0k49q` FOREIGN KEY (`id`) REFERENCES `check_item_discounts` (`id`)
+  CONSTRAINT `FKaypmms62s7s4ahj45adsp9l6l` FOREIGN KEY (`id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `simple_percentage_check_item_discounts`
+-- Dumping data for table `simple_percentage_receipt_item_discounts`
 --
 
-LOCK TABLES `simple_percentage_check_item_discounts` WRITE;
-/*!40000 ALTER TABLE `simple_percentage_check_item_discounts` DISABLE KEYS */;
-INSERT INTO `simple_percentage_check_item_discounts` VALUES (30,26),(40,30),(50,73);
-/*!40000 ALTER TABLE `simple_percentage_check_item_discounts` ENABLE KEYS */;
+LOCK TABLES `simple_percentage_receipt_item_discounts` WRITE;
+/*!40000 ALTER TABLE `simple_percentage_receipt_item_discounts` DISABLE KEYS */;
+INSERT INTO `simple_percentage_receipt_item_discounts` VALUES (40,25),(30,33),(50,73);
+/*!40000 ALTER TABLE `simple_percentage_receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `threshold_percentage_check_item_discounts`
+-- Table structure for table `threshold_percentage_receipt_item_discounts`
 --
 
-DROP TABLE IF EXISTS `threshold_percentage_check_item_discounts`;
+DROP TABLE IF EXISTS `threshold_percentage_receipt_item_discounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `threshold_percentage_check_item_discounts` (
+CREATE TABLE `threshold_percentage_receipt_item_discounts` (
   `percent` double NOT NULL,
   `threshold` bigint NOT NULL,
   `id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FKhfle4t7mnnnmkhkgvgsuqri9q` FOREIGN KEY (`id`) REFERENCES `check_item_discounts` (`id`)
+  CONSTRAINT `FKarxmw5has101r0k4qx56a80av` FOREIGN KEY (`id`) REFERENCES `receipt_item_discounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `threshold_percentage_check_item_discounts`
+-- Dumping data for table `threshold_percentage_receipt_item_discounts`
 --
 
-LOCK TABLES `threshold_percentage_check_item_discounts` WRITE;
-/*!40000 ALTER TABLE `threshold_percentage_check_item_discounts` DISABLE KEYS */;
-INSERT INTO `threshold_percentage_check_item_discounts` VALUES (10,5,10),(1,6,20),(10,2,58);
-/*!40000 ALTER TABLE `threshold_percentage_check_item_discounts` ENABLE KEYS */;
+LOCK TABLES `threshold_percentage_receipt_item_discounts` WRITE;
+/*!40000 ALTER TABLE `threshold_percentage_receipt_item_discounts` DISABLE KEYS */;
+INSERT INTO `threshold_percentage_receipt_item_discounts` VALUES (10,5,7),(1,6,22),(10,2,61);
+/*!40000 ALTER TABLE `threshold_percentage_receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -430,4 +430,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-03  7:21:22
+-- Dump completed on 2021-03-12 18:41:20

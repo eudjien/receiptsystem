@@ -33,14 +33,14 @@ public final class Constants {
 
     public static final class Attributes {
         public final static String SOURCE_ATTRIBUTE = "source";
-        public final static String CHECKS_ATTRIBUTE = "checks";
+        public final static String RECEIPTS_ATTRIBUTE = "receipts";
         public final static String QUESTION_ATTRIBUTE = "question";
         public final static String ANSWER_INCORRECT_ATTRIBUTE = "incorrectAnswer";
     }
 
     public static final class Sessions {
         public final static String AUTHENTICATION_SESSION = "authentication";
-        public final static String CHECKS_SESSION = "fileChecks";
+        public final static String RECEIPTS_SESSION = "fileReceipts";
     }
 
     public static final class ServletNames {

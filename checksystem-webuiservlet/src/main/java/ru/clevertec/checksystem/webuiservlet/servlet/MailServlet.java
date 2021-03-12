@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ru.clevertec.checksystem.core.common.service.IEmailService;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.checksystem.core.repository.CheckRepository;
+import ru.clevertec.checksystem.core.repository.ReceiptRepository;
 import ru.clevertec.checksystem.core.service.EmailService;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
-import ru.clevertec.checksystem.webuiservlet.ChecksDataSource;
+import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,7 +29,7 @@ import static ru.clevertec.checksystem.webuiservlet.Constants.*;
 )
 public class MailServlet extends ApplicationServlet {
 
-    private CheckRepository checkRepository;
+    private ReceiptRepository receiptRepository;
     private ServiceFactory serviceFactory;
 
     public void init(ServletConfig config) throws ServletException {
@@ -55,26 +55,26 @@ public class MailServlet extends ApplicationServlet {
         var format = req.getParameter(Parameters.FORMAT_PARAMETER);
         var subject = req.getParameter(Parameters.SUBJECT_PARAMETER);
         var address = req.getParameter(Parameters.ADDRESS_PARAMETER);
-        var ids = getCheckIds(req);
+        var ids = getReceiptIds(req);
 
-        var checks = new ChecksDataSource(checkRepository, req.getSession(), Sessions.CHECKS_SESSION)
+        var receipts = new ReceiptDataSource(receiptRepository, req.getSession(), Sessions.RECEIPTS_SESSION)
                 .findAllById(source, ids);
 
-        if (CollectionUtils.isNullOrEmpty(checks)) {
+        if (CollectionUtils.isNullOrEmpty(receipts)) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
         try {
             IEmailService emailService = serviceFactory.instance(EmailService.class);
-            emailService.sendEmail(subject, address, checks, type, format);
+            emailService.sendEmail(subject, address, receipts, type, format);
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (Throwable e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }
 
-    private static List<Long> getCheckIds(HttpServletRequest req) {
+    private static List<Long> getReceiptIds(HttpServletRequest req) {
         return Arrays.stream(req.getParameterMap().get(Parameters.ID_PARAMETER))
                 .mapToLong(Long::parseLong)
                 .boxed()
@@ -82,8 +82,8 @@ public class MailServlet extends ApplicationServlet {
     }
 
     @Autowired
-    public void setCheckRepository(CheckRepository checkRepository) {
-        this.checkRepository = checkRepository;
+    public void setReceiptRepository(ReceiptRepository receiptRepository) {
+        this.receiptRepository = receiptRepository;
     }
 
     @Autowired

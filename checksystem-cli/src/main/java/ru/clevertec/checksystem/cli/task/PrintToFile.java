@@ -3,10 +3,10 @@ package ru.clevertec.checksystem.cli.task;
 import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
 import ru.clevertec.checksystem.cli.exception.ArgumentNotSupportValueException;
-import ru.clevertec.checksystem.core.common.service.IPrintingCheckService;
-import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.common.service.IPrintingReceiptService;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.checksystem.core.service.PrintingCheckService;
+import ru.clevertec.checksystem.core.service.PrintingReceiptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,14 +20,14 @@ public class PrintToFile implements Callable<Void> {
 
     private final ArgumentsFinder argumentsFinder;
     private final ServiceFactory serviceFactory;
-    private final Collection<Check> sourceChecks;
+    private final Collection<Receipt> sourceReceipts;
 
     public PrintToFile(
-            ArgumentsFinder argumentsFinder, ServiceFactory serviceFactory, Collection<Check> sourceChecks) {
+            ArgumentsFinder argumentsFinder, ServiceFactory serviceFactory, Collection<Receipt> sourceReceipts) {
 
         this.argumentsFinder = argumentsFinder;
         this.serviceFactory = serviceFactory;
-        this.sourceChecks = sourceChecks;
+        this.sourceReceipts = sourceReceipts;
     }
 
     @Override
@@ -43,18 +43,18 @@ public class PrintToFile implements Callable<Void> {
 
     private void printToFile(String path, String format) throws IOException, ArgumentNotSupportValueException {
 
-        IPrintingCheckService printingCheckService = serviceFactory.instance(PrintingCheckService.class);
+        IPrintingReceiptService printingReceiptService = serviceFactory.instance(PrintingReceiptService.class);
 
         switch (format) {
-            case Format.TEXT -> printingCheckService.printToText(sourceChecks, new File(path));
-            case Format.HTML -> printingCheckService.printToHtml(sourceChecks, new File(path));
+            case Format.TEXT -> printingReceiptService.printToText(sourceReceipts, new File(path));
+            case Format.HTML -> printingReceiptService.printToHtml(sourceReceipts, new File(path));
             case Format.PDF -> {
                 if (argumentsFinder.firstBoolOrDefault(Keys.PRINT_PDF_TEMPLATE)) {
                     var pdfTemplatePath = argumentsFinder.firstStringOrDefault(Keys.PRINT_PDF_TEMPLATE_PATH);
-                    printingCheckService.printWithTemplateToPdf(sourceChecks, new File(path),
+                    printingReceiptService.printWithTemplateToPdf(sourceReceipts, new File(path),
                             new File(pdfTemplatePath), argumentsFinder.firstIntOrDefault(Keys.PRINT_PDF_TEMPLATE_OFFSET));
                 } else {
-                    printingCheckService.printToPdf(sourceChecks, new File(path));
+                    printingReceiptService.printToPdf(sourceReceipts, new File(path));
                 }
             }
             default -> throw new ArgumentNotSupportValueException(Constants.Keys.PRINT_FORMAT, format);

@@ -3,10 +3,10 @@ package ru.clevertec.checksystem.cli.task;
 import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
 import ru.clevertec.checksystem.cli.exception.ArgumentNotExistException;
-import ru.clevertec.checksystem.core.common.service.IIoCheckService;
-import ru.clevertec.checksystem.core.entity.check.Check;
+import ru.clevertec.checksystem.core.common.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.checksystem.core.service.IoCheckService;
+import ru.clevertec.checksystem.core.service.IoReceiptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,29 +17,29 @@ public class SerializeToFile implements Callable<Void> {
 
     private final ArgumentsFinder argumentsFinder;
     private final ServiceFactory serviceFactory;
-    private final Collection<Check> checks;
+    private final Collection<Receipt> receipts;
 
     public SerializeToFile(
-            ArgumentsFinder argumentsFinder, ServiceFactory serviceFactory, Collection<Check> checks) {
+            ArgumentsFinder argumentsFinder, ServiceFactory serviceFactory, Collection<Receipt> receipts) {
 
         this.argumentsFinder = argumentsFinder;
         this.serviceFactory = serviceFactory;
-        this.checks = checks;
+        this.receipts = receipts;
     }
 
     @Override
     public Void call() throws Exception {
-        serializeToFile(argumentsFinder, serviceFactory, checks);
+        serializeToFile(argumentsFinder, serviceFactory, receipts);
         return null;
     }
 
     private static void serializeToFile(
-            ArgumentsFinder finder, ServiceFactory serviceFactory, Collection<Check> checks) throws IOException, ArgumentNotExistException {
+            ArgumentsFinder finder, ServiceFactory serviceFactory, Collection<Receipt> receipts) throws IOException, ArgumentNotExistException {
 
         var format = finder.firstStringOrThrow(Constants.Keys.SERIALIZE_FORMAT);
         var path = finder.firstStringOrThrow(Constants.Keys.SERIALIZE_PATH);
 
-        IIoCheckService ioService = serviceFactory.instance(IoCheckService.class);
-        ioService.serialize(checks, new File(path), format);
+        IIoReceiptService ioService = serviceFactory.instance(IoReceiptService.class);
+        ioService.serialize(receipts, new File(path), format);
     }
 }

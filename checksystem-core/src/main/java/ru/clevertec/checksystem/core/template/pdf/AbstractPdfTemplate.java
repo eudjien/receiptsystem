@@ -7,19 +7,19 @@ public abstract class AbstractPdfTemplate implements IPdfTemplate {
 
     private static final int MIN_TOP_OFFSET = 0;
 
-    private int topOffset = 0;
+    private long topOffset = 0;
 
-    protected AbstractPdfTemplate(int topOffset) {
+    protected AbstractPdfTemplate(long topOffset) {
         setTopOffset(topOffset);
     }
 
     @Override
-    public int getTopOffset() {
+    public long getTopOffset() {
         return topOffset;
     }
 
     @Override
-    public void setTopOffset(int topOffset) {
+    public void setTopOffset(long topOffset) {
         ThrowUtils.Argument.lessThan("topOffset", topOffset, MIN_TOP_OFFSET);
         this.topOffset = topOffset;
     }
