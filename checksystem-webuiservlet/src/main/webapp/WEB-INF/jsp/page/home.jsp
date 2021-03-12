@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ru.clevertec.checksystem.core.entity.check.Check" %>
+<%@ page import="ru.clevertec.checksystem.webuiservlet.Constants.*" %>
 <jsp:useBean id="checks" scope="request" type="java.util.Collection"/>
+<jsp:useBean id="source" scope="request" type="java.lang.String"/>
 
 <html>
 <head>
@@ -14,14 +16,17 @@
 </head>
 <body>
 
+<%--<jsp:include page="<%=request.getContextPath()%>/shared/header.jsp"/>--%>
 <jsp:include page="../shared/header.jsp"/>
 
 <div class="container mb-5">
 
     <jsp:include page="../partial/toolbar.jsp"/>
 
+    <% if (source.equals(Sources.FILE) && request.getSession().getAttribute(Sessions.CHECKS_SESSION) == null) { %>
+    <jsp:include page="../partial/file-not-loaded.jsp"/>
+    <% } else { %>
     <div class="row g-3">
-
         <% for (Object checkObj : checks) { %>
         <%
             Check check = (Check) checkObj;
@@ -31,8 +36,8 @@
             <jsp:include page="../partial/check.jsp"/>
         </div>
         <% } %>
-
     </div>
+    <% } %>
 </div>
 
 <script src="<%=request.getContextPath()%>/static/script.js"></script>

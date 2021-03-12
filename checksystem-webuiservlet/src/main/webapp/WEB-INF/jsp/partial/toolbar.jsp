@@ -14,6 +14,9 @@
                 <div class="col col-md-auto d-flex justify-content-end">
                     <jsp:include page="toolbar/download-dropdown.jsp"/>
                 </div>
+                <div class="col col-md-auto d-flex justify-content-end">
+                    <jsp:include page="toolbar/mail-modal.jsp"/>
+                </div>
             </div>
         </div>
         <% if (request.getParameter("source") != null && request.getParameter("source").equals("file")) { %>

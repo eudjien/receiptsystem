@@ -8,20 +8,18 @@ import ru.clevertec.checksystem.webuiservlet.Questionnaire;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static ru.clevertec.checksystem.webuiservlet.Constants.*;
-import static ru.clevertec.checksystem.webuiservlet.Constants.Parameters.ANSWER_PARAMETER;
 
 @Component
 @WebServlet(
-        name = ServletNames.AUTHENTICATION_SERVLET,
-        urlPatterns = UrlPatterns.AUTHENTICATION_PATTERN
+        name = ServletNames.LOGIN_SERVLET,
+        urlPatterns = UrlPatterns.LOGIN_PATTERN
 )
-public class AuthenticationServlet extends HttpServlet {
+public class LogInServlet extends ApplicationServlet {
 
     private Questionnaire questionnaire;
 
@@ -41,11 +39,11 @@ public class AuthenticationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        var answer = req.getParameter(ANSWER_PARAMETER);
+        var answer = req.getParameter(Parameters.ANSWER_PARAMETER);
 
         if (questionnaire.verify(questionnaire.lastQuestion(), answer)) {
+            logIn(req, questionnaire.lastQuestion(), answer);
             req.setAttribute(Attributes.ANSWER_INCORRECT_ATTRIBUTE, false);
-            req.getSession().setAttribute(Sessions.AUTHENTICATED, true);
             resp.sendRedirect(req.getContextPath() + UrlPatterns.ROOT_PATTERN);
         } else {
             req.setAttribute(Attributes.QUESTION_ATTRIBUTE, questionnaire.lastQuestion());
@@ -59,6 +57,7 @@ public class AuthenticationServlet extends HttpServlet {
         questionnaire.addQuestion("Время (секунды), за которое свет, пущенный с Земли, достигает Луны?", new String[]{"0.255", "0,255"});
         questionnaire.addQuestion("Количество лапок у муравья?", new String[]{"6", "шесть"});
         questionnaire.addQuestion("Количество лапок у паука?", new String[]{"8", "восемь"});
+        questionnaire.addQuestion("Чего хочет дима?", new String[]{"servlet", "колбасы"});
     }
 
     @Autowired

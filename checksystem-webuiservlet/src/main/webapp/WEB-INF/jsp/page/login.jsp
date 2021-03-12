@@ -1,3 +1,4 @@
+<%@ page import="ru.clevertec.checksystem.webuiservlet.Constants.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="incorrectAnswer" scope="request" type="java.lang.Boolean"/>
 <jsp:useBean id="question" scope="request" type="java.lang.String"/>
@@ -16,30 +17,39 @@
 
 <div class="container mb-5">
 
-    <div class="card border-0 shadow" style="width: 35rem;">
+    <div class="card border-0 shadow" style="max-width: 32rem;">
         <div class="card-body">
             <h5 class="card-title">Аунтификация</h5>
             <h6 class="card-subtitle mb-4 text-muted">Ответь на вопрос...</h6>
 
-            <form class="px-2" method="post" action="<%=request.getContextPath()%>/authentication">
-                <div class="mb-3 row">
-                    <div class="col-sm-2">Вопрос</div>
-                    <div class="col-sm-10"><p><%= question %>
-                    </p></div>
+            <form class="px-2" method="post" action="<%=request.getContextPath()%><%=UrlPatterns.LOGIN_PATTERN%>">
+
+                <div class="mb-4 row">
+                    <div class="col-sm-2 text-nowrap">Вопрос:</div>
+                    <div class="col-sm-10">
+                        <%=question%>
+                    </div>
                 </div>
-                <div class="mb-3 row">
-                    <label for="answer" class="col-sm-2 col-form-label">Ответ</label>
+
+                <div class="mb-4 row">
+                    <label for="answer" class="col-sm-2 col-form-label">Ответ:</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="answer" name="answer">
                     </div>
                 </div>
 
                 <%if (incorrectAnswer) { %>
-                <div class="text-danger">НЕ ПРАВИЛЬНО!!!</div>
+                <div class="text-danger mb-4">НЕ ПРАВИЛЬНО!!!</div>
                 <% } %>
 
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">Отправить</button>
+                <div class="row g-4 justify-content-between">
+                    <div class="col-12 col-sm-auto">
+                        <a href="<%=request.getContextPath()%><%=UrlPatterns.LOGIN_PATTERN%>"
+                           class="btn btn-outline-secondary w-100">Поменять вопрос</a>
+                    </div>
+                    <div class="col-12 col-sm-auto">
+                        <button type="submit" class="btn btn-primary w-100">Отправить</button>
+                    </div>
                 </div>
             </form>
 

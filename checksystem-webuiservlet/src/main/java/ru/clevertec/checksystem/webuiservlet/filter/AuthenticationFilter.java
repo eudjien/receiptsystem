@@ -1,42 +1,15 @@
 package ru.clevertec.checksystem.webuiservlet.filter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebFilter;
+import ru.clevertec.checksystem.webuiservlet.Authentication;
+
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.*;
+import static ru.clevertec.checksystem.webuiservlet.Constants.Sessions;
 
-@WebFilter(
-        filterName = "Authentication",
-        servletNames = {
-                ServletNames.HOME_SERVLET,
-                ServletNames.DOWNLOAD_SERVLET,
-                ServletNames.UPLOAD_SERVLET,
-                ServletNames.LOGOUT_SERVLET
-        }
-)
-public class AuthenticationFilter extends HttpFilter {
-
-    @Override
-    protected void doFilter(
-            HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-
-        ensureSessionCreated(req);
-
-        var authenticated = (boolean) req.getSession().getAttribute(Sessions.AUTHENTICATED);
-
-        if (authenticated)
-            chain.doFilter(req, res);
-        else
-            res.sendRedirect(req.getContextPath() + UrlPatterns.AUTHENTICATION_PATTERN);
-    }
-
-    private static void ensureSessionCreated(HttpServletRequest req) {
-        if (req.getSession().getAttribute(Sessions.AUTHENTICATED) == null)
-            req.getSession().setAttribute(Sessions.AUTHENTICATED, false);
+public abstract class AuthenticationFilter extends HttpFilter {
+    protected static void ensureSessionCreated(HttpServletRequest req) {
+        if (!(req.getSession().getAttribute(Sessions.AUTHENTICATION_SESSION) instanceof Authentication))
+            req.getSession().setAttribute(Sessions.AUTHENTICATION_SESSION, Authentication.Anonymous());
     }
 }

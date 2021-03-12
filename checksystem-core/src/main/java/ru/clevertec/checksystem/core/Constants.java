@@ -18,6 +18,11 @@ public final class Constants {
         public static final String HTML = "html";
     }
 
+    public static final class Types {
+        public static final String PRINT = "print";
+        public static final String SERIALIZE = "serialize";
+    }
+
     public static final class Properties {
 
         public static final class Config {

@@ -12,6 +12,7 @@ import ru.clevertec.checksystem.core.event.EmailSender;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.event.EventType;
 import ru.clevertec.checksystem.core.factory.io.CheckPrinterFactory;
+import ru.clevertec.checksystem.core.helper.FormatHelpers;
 import ru.clevertec.checksystem.core.io.print.layout.PdfCheckLayout;
 import ru.clevertec.checksystem.core.log.LogLevel;
 import ru.clevertec.checksystem.core.repository.EventEmailRepository;
@@ -159,7 +160,7 @@ public class PrintingCheckService extends EventEmitter<Object> implements IPrint
 
     private void emitPrintOver(Collection<Check> checks, String format) throws IOException {
 
-        var tmpFile = File.createTempFile("checks", format);
+        var tmpFile = File.createTempFile("checks", FormatHelpers.extensionByFormat(format, true));
 
         try (var fos = new FileOutputStream(tmpFile)) {
             checkPrinterFactory.instance(format, checks).print(fos);
