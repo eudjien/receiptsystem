@@ -46,8 +46,7 @@ public final class SimplePercentageReceiptDiscount extends PercentageReceiptDisc
         private final SimplePercentageReceiptDiscount discount = new SimplePercentageReceiptDiscount();
 
         @Override
-        public IPercentageReceiptDiscountBuilder setId(Long id)
-                throws IllegalArgumentException {
+        public IPercentageReceiptDiscountBuilder setId(Long id) {
             discount.setId(id);
             return this;
         }

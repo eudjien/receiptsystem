@@ -1,8 +1,8 @@
 package ru.clevertec.checksystem.core.common.builder.discount.receipt;
 
 import ru.clevertec.checksystem.core.common.builder.discount.IDiscountBuilder;
-import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.entity.discount.receipt.ReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 
 import java.util.Collection;
 

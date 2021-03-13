@@ -30,7 +30,7 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
     @Column(name = Entities.Mapping.Column.PRICE, nullable = false)
     private BigDecimal price;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     @JsonIgnore
     private final Set<ReceiptItem> receiptItems = new HashSet<>();
 
@@ -141,7 +141,7 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
         }
 
         @Override
-        public Product build() throws IllegalArgumentException {
+        public Product build() {
             throwIfNotValid();
             return product;
         }

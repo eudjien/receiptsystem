@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.clevertec.checksystem.cli.Constants.Inputs;
 import static ru.clevertec.checksystem.cli.Constants.Keys;
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = ConsoleTestConfiguration.class)
@@ -78,7 +78,7 @@ class ArgumentTests {
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DATABASE),
                 argument(Keys.SERIALIZE, true),
-                argument(Keys.SERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.SERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.SERIALIZE_PATH, outputFilePath)
         };
 
@@ -95,10 +95,10 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE),
-                argument(Keys.DESERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_PATH, inputFilePath),
                 argument(Keys.SERIALIZE, true),
-                argument(Keys.SERIALIZE_FORMAT, Format.XML),
+                argument(Keys.SERIALIZE_FORMAT, Formats.XML),
                 argument(Keys.SERIALIZE_PATH, outputFilePath),
         };
 
@@ -115,10 +115,10 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE),
-                argument(Keys.DESERIALIZE_FORMAT, Format.XML),
+                argument(Keys.DESERIALIZE_FORMAT, Formats.XML),
                 argument(Keys.DESERIALIZE_PATH, inputFilePath),
                 argument(Keys.SERIALIZE, true),
-                argument(Keys.SERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.SERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.SERIALIZE_PATH, outputFilePath),
         };
 
@@ -135,10 +135,10 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE),
-                argument(Keys.DESERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_PATH, inputFilePath),
                 argument(Keys.PRINT, true),
-                argument(Keys.PRINT_FORMAT, Format.TEXT),
+                argument(Keys.PRINT_FORMAT, Formats.TEXT),
                 argument(Keys.PRINT_PATH, outputFilePath),
         };
 
@@ -155,10 +155,10 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE),
-                argument(Keys.DESERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_PATH, inputFilePath),
                 argument(Keys.PRINT, true),
-                argument(Keys.PRINT_FORMAT, Format.HTML),
+                argument(Keys.PRINT_FORMAT, Formats.HTML),
                 argument(Keys.PRINT_PATH, outputFilePath),
         };
 
@@ -179,7 +179,7 @@ class ArgumentTests {
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DATABASE),
                 argument(Keys.PRINT, true),
-                argument(Keys.PRINT_FORMAT, Format.PDF),
+                argument(Keys.PRINT_FORMAT, Formats.PDF),
                 argument(Keys.PRINT_PATH, outputFilePath),
                 argument(Keys.PRINT_PDF_TEMPLATE, true),
                 argument(Keys.PRINT_PDF_TEMPLATE_PATH, templateFilePath),
@@ -199,10 +199,10 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE),
-                argument(Keys.DESERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_PATH, inputFilePath),
                 argument(Keys.PRINT, true),
-                argument(Keys.PRINT_FORMAT, Format.PDF),
+                argument(Keys.PRINT_FORMAT, Formats.PDF),
                 argument(Keys.PRINT_PATH, outputFilePath),
         };
 
@@ -223,10 +223,10 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE),
-                argument(Keys.DESERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_PATH, inputFilePath),
                 argument(Keys.PRINT, true),
-                argument(Keys.PRINT_FORMAT, Format.PDF),
+                argument(Keys.PRINT_FORMAT, Formats.PDF),
                 argument(Keys.PRINT_PATH, outputFilePath),
                 argument(Keys.PRINT_PDF_TEMPLATE, true),
                 argument(Keys.PRINT_PDF_TEMPLATE_PATH, templateFilePath),
@@ -247,7 +247,7 @@ class ArgumentTests {
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DATABASE),
                 argument(Keys.GENERATE_SERIALIZE, true),
-                argument(Keys.GENERATE_SERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.GENERATE_SERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.GENERATE_SERIALIZE_PATH, outputFilePath),
         };
 
@@ -264,11 +264,11 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE_GENERATE),
-                argument(Keys.DESERIALIZE_GENERATE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_GENERATE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_GENERATE_PATH, inputFilePath),
 
                 argument(Keys.SERIALIZE, true),
-                argument(Keys.SERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.SERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.SERIALIZE_PATH, outputFilePath),
         };
 
@@ -284,7 +284,7 @@ class ArgumentTests {
 
         var args = new String[]{
                 argument(Keys.INPUT, Inputs.DESERIALIZE_GENERATE),
-                argument(Keys.DESERIALIZE_GENERATE_FORMAT, Format.JSON),
+                argument(Keys.DESERIALIZE_GENERATE_FORMAT, Formats.JSON),
                 argument(Keys.DESERIALIZE_GENERATE_PATH, inputFilePath)
         };
 
@@ -304,15 +304,15 @@ class ArgumentTests {
                 argument(Keys.INPUT, Inputs.DATABASE),
 
                 argument(Keys.SERIALIZE, true),
-                argument(Keys.SERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.SERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.SERIALIZE_PATH, m1),
 
                 argument(Keys.PRINT, true),
-                argument(Keys.PRINT_FORMAT, Format.HTML),
+                argument(Keys.PRINT_FORMAT, Formats.HTML),
                 argument(Keys.PRINT_PATH, m2),
 
                 argument(Keys.GENERATE_SERIALIZE, true),
-                argument(Keys.GENERATE_SERIALIZE_FORMAT, Format.JSON),
+                argument(Keys.GENERATE_SERIALIZE_FORMAT, Formats.JSON),
                 argument(Keys.GENERATE_SERIALIZE_PATH, m3)
         };
 

@@ -165,7 +165,7 @@ public class TextReceiptLayout extends AbstractReceiptLayout {
     }
 
     private void appendLineRight(StringBuilder strBuilder, long maxColumnLength, String text) {
-        strBuilder.append(" ".repeat((int)maxColumnLength - text.length()));
+        strBuilder.append(" ".repeat((int) maxColumnLength - text.length()));
         strBuilder.append(text);
     }
 

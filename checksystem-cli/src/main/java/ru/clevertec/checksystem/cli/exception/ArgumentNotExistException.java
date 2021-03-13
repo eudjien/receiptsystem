@@ -7,8 +7,4 @@ public class ArgumentNotExistException extends Exception {
     public ArgumentNotExistException(String argumentName) {
         super(String.format(MESSAGE_FORMAT, argumentName));
     }
-
-    public ArgumentNotExistException(String argumentName, Throwable cause) {
-        super(String.format(MESSAGE_FORMAT, argumentName), cause);
-    }
 }

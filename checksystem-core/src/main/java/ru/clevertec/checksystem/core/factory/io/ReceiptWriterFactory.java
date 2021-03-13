@@ -9,7 +9,7 @@ import ru.clevertec.checksystem.core.io.write.JsonReceiptWriter;
 import ru.clevertec.checksystem.core.io.write.XmlReceiptWriter;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 @Component
 public final class ReceiptWriterFactory {
@@ -26,8 +26,8 @@ public final class ReceiptWriterFactory {
         ThrowUtils.Argument.nullOrBlank("format", format);
 
         return switch (format) {
-            case Format.JSON -> applicationContext.getBean(JsonReceiptWriter.class);
-            case Format.XML -> applicationContext.getBean(XmlReceiptWriter.class);
+            case Formats.JSON -> applicationContext.getBean(JsonReceiptWriter.class);
+            case Formats.XML -> applicationContext.getBean(XmlReceiptWriter.class);
             default -> throw new ArgumentNotSupportedException("format");
         };
     }

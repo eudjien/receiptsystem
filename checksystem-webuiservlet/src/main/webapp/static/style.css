@@ -11,11 +11,11 @@ body {
     background-color: #3a3e42;
 }
 
-.check-card, .check-card table {
+.receipt-card, .receipt-card table {
     font-size: 0.75rem;
 }
 
-.check-toolbar, .check-toolbar button {
+.receipt-toolbar, .receipt-toolbar button {
     text-transform: uppercase;
     font-size: 0.75rem;
 }

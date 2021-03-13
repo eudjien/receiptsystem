@@ -7,7 +7,7 @@ import ru.clevertec.checksystem.webuiservlet.exception.QueryParameterRequiredExc
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 import static ru.clevertec.checksystem.core.Constants.Types;
 import static ru.clevertec.checksystem.webuiservlet.Constants.Parameters;
 import static ru.clevertec.checksystem.webuiservlet.Constants.Sources;
@@ -19,7 +19,7 @@ public class ParameterVerifier {
     static {
         addParameterEntry(Parameters.TYPE_PARAMETER, Types.PRINT, Types.SERIALIZE);
         addParameterEntry(Parameters.SOURCE_PARAMETER, null, "", Sources.FILE, Sources.DATABASE);
-        addParameterEntry(Parameters.FORMAT_PARAMETER, Format.HTML, Format.PDF, Format.TEXT, Format.JSON, Format.XML);
+        addParameterEntry(Parameters.FORMAT_PARAMETER, Formats.HTML, Formats.PDF, Formats.TEXT, Formats.JSON, Formats.XML);
     }
 
     public void verifyForRequired(HttpServletRequest request, String... parameterNames) {
@@ -29,10 +29,11 @@ public class ParameterVerifier {
     }
 
     public void verifyForSuitable(HttpServletRequest request, String... parameterNames) {
-        for (var parameterName : parameterNames)
-            if (!parameterValuesMap.containsKey(parameterName)
-                    || !parameterValuesMap.get(parameterName).contains(request.getParameter(parameterName)))
+        for (var parameterName : parameterNames) {
+            var parameterValue = request.getParameter(parameterName);
+            if (!parameterValuesMap.get(parameterName).contains(parameterValue))
                 throw new QueryParameterIncorrectException(parameterName);
+        }
     }
 
     public void verifyForKnown(String parameterName) {
@@ -48,6 +49,6 @@ public class ParameterVerifier {
 
     private static void addParameterEntry(String parameterName, String... parameterValues) {
         ThrowUtils.Argument.nullOrBlank("parameterName", parameterName);
-        parameterValuesMap.put(Parameters.FORMAT_PARAMETER, new HashSet<>(Arrays.asList(parameterValues)));
+        parameterValuesMap.put(parameterName, new HashSet<>(Arrays.asList(parameterValues)));
     }
 }

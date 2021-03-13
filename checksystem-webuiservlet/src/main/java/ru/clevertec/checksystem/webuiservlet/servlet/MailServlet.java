@@ -3,10 +3,10 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import ru.clevertec.checksystem.core.common.service.IEmailService;
+import ru.clevertec.checksystem.core.common.service.IMailService;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
-import ru.clevertec.checksystem.core.service.EmailService;
+import ru.clevertec.checksystem.core.service.MailService;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
 
@@ -65,9 +65,9 @@ public class MailServlet extends ApplicationServlet {
             return;
         }
 
+        IMailService emailService = serviceFactory.instance(MailService.class);
         try {
-            IEmailService emailService = serviceFactory.instance(EmailService.class);
-            emailService.sendEmail(subject, address, receipts, type, format);
+            emailService.sendReceiptEmail(subject, address, receipts, type, format);
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (Throwable e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());

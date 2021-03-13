@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.common.service;
 
-import ru.clevertec.checksystem.core.dto.ReceiptGenerate;
+import ru.clevertec.checksystem.core.data.generate.ReceiptGenerate;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 
 import java.io.File;

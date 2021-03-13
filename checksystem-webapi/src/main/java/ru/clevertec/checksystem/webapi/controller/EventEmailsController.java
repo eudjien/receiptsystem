@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.checksystem.core.configuration.ApplicationModelMapper;
 import ru.clevertec.checksystem.core.dto.email.EventEmailDto;
 import ru.clevertec.checksystem.core.repository.EventEmailRepository;
-import ru.clevertec.checksystem.core.service.EmailService;
+import ru.clevertec.checksystem.core.service.MailService;
 
 import java.util.List;
 
@@ -19,13 +19,13 @@ import java.util.List;
 public class EventEmailsController {
 
     private final EventEmailRepository eventEmailRepository;
-    private final EmailService emailService;
+    private final MailService mailService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public EventEmailsController(EventEmailRepository eventEmailRepository, EmailService emailService, ApplicationModelMapper modelMapper) {
+    public EventEmailsController(EventEmailRepository eventEmailRepository, MailService mailService, ApplicationModelMapper modelMapper) {
         this.eventEmailRepository = eventEmailRepository;
-        this.emailService = emailService;
+        this.mailService = mailService;
         this.modelMapper = modelMapper;
     }
 

@@ -13,7 +13,7 @@ import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.util.Collection;
 
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 @Component
 public final class ReceiptPrinterFactory {
@@ -37,9 +37,9 @@ public final class ReceiptPrinterFactory {
         receiptPrinter.setReceipts(receipts);
 
         switch (format) {
-            case Format.TEXT -> receiptPrinter.setLayout(new TextReceiptLayout());
-            case Format.PDF -> receiptPrinter.setLayout(new PdfReceiptLayout());
-            case Format.HTML -> receiptPrinter.setLayout(new HtmlReceiptLayout());
+            case Formats.TEXT -> receiptPrinter.setLayout(new TextReceiptLayout());
+            case Formats.PDF -> receiptPrinter.setLayout(new PdfReceiptLayout());
+            case Formats.HTML -> receiptPrinter.setLayout(new HtmlReceiptLayout());
             default -> throw new ArgumentNotSupportedException("format");
         }
 

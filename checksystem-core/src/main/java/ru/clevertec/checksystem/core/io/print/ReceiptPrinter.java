@@ -1,8 +1,8 @@
 package ru.clevertec.checksystem.core.io.print;
 
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.common.receipt.IReceiptAggregable;
 import ru.clevertec.checksystem.core.common.io.print.IReceiptLayout;
+import ru.clevertec.checksystem.core.common.receipt.IReceiptAggregable;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.util.FileUtils;
 import ru.clevertec.custom.list.SinglyLinkedList;

@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 @Service
 public class IoReceiptService extends EventEmitter<Object> implements IIoReceiptService {
@@ -42,23 +42,23 @@ public class IoReceiptService extends EventEmitter<Object> implements IIoReceipt
 
     @Override
     public void serializeToJson(Collection<Receipt> receipts, File destinationFile) throws IOException {
-        receiptWriterFactory.instance(Format.JSON).write(receipts, destinationFile);
+        receiptWriterFactory.instance(Formats.JSON).write(receipts, destinationFile);
     }
 
     @Override
     public String serializeToJson(Collection<Receipt> receipts) throws IOException {
-        var writer = receiptWriterFactory.instance(Format.JSON);
+        var writer = receiptWriterFactory.instance(Formats.JSON);
         return new String(writer.write(receipts));
     }
 
     @Override
     public void serializeToXml(Collection<Receipt> receipts, File destinationFile) throws IOException {
-        receiptWriterFactory.instance(Format.XML).write(receipts, destinationFile);
+        receiptWriterFactory.instance(Formats.XML).write(receipts, destinationFile);
     }
 
     @Override
     public String serializeToXml(Collection<Receipt> receipts) throws IOException {
-        var writer = receiptWriterFactory.instance(Format.XML);
+        var writer = receiptWriterFactory.instance(Formats.XML);
         return new String(writer.write(receipts));
     }
 
@@ -75,11 +75,11 @@ public class IoReceiptService extends EventEmitter<Object> implements IIoReceipt
 
     @Override
     public Collection<Receipt> deserializeFromJson(File sourceFile) throws IOException {
-        return receiptReaderFactory.instance(Format.JSON).read(sourceFile);
+        return receiptReaderFactory.instance(Formats.JSON).read(sourceFile);
     }
 
     @Override
     public Collection<Receipt> deserializeFromXml(File sourceFile) throws IOException {
-        return receiptReaderFactory.instance(Format.XML).read(sourceFile);
+        return receiptReaderFactory.instance(Formats.XML).read(sourceFile);
     }
 }

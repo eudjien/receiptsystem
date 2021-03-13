@@ -3,8 +3,8 @@ package ru.clevertec.checksystem.core.entity.discount.receiptitem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.clevertec.checksystem.core.common.receipt.IReceiptItemAggregable;
-import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.entity.discount.AbstractDiscount;
+import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 import ru.clevertec.custom.json.StringifyIgnore;
 

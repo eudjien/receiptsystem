@@ -3,16 +3,11 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import ru.clevertec.checksystem.core.common.service.IIoReceiptService;
-import ru.clevertec.checksystem.core.common.service.IPrintingReceiptService;
-import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.checksystem.core.helper.FormatHelpers;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
-import ru.clevertec.checksystem.core.service.IoReceiptService;
-import ru.clevertec.checksystem.core.service.PrintingReceiptService;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
+import ru.clevertec.checksystem.webuiservlet.service.DownloadService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,11 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.clevertec.checksystem.core.Constants.Types;
 import static ru.clevertec.checksystem.webuiservlet.Constants.*;
 
 @Component
@@ -37,6 +30,7 @@ public class DownloadServlet extends ApplicationServlet {
 
     private ReceiptRepository receiptRepository;
     private ServiceFactory serviceFactory;
+    private DownloadService downloadService;
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -69,42 +63,12 @@ public class DownloadServlet extends ApplicationServlet {
             return;
         }
 
-        setHeaders(resp, format);
-
-        if (!download(resp, type, format, receipts)) {
+        if (!downloadService.download(resp, receipts, type, format))
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
 
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
-    private boolean download(HttpServletResponse resp, String type, String format, Collection<Receipt> receipts) throws IOException {
-        switch (type) {
-            case Types.PRINT -> print(resp, CollectionUtils.asCollection(receipts), format);
-            case Types.SERIALIZE -> serialize(resp, CollectionUtils.asCollection(receipts), format);
-            default -> {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void print(HttpServletResponse resp, Collection<Receipt> receipts, String format) throws IOException {
-        IPrintingReceiptService printingReceiptService = serviceFactory.instance(PrintingReceiptService.class);
-        printingReceiptService.print(receipts, resp.getOutputStream(), format);
-    }
-
-    private void serialize(HttpServletResponse resp, Collection<Receipt> receipts, String format) throws IOException {
-        IIoReceiptService ioCheckService = serviceFactory.instance(IoReceiptService.class);
-        ioCheckService.serialize(receipts, resp.getOutputStream(), format);
-    }
-
-    private static void setHeaders(HttpServletResponse resp, String format) {
-        resp.setContentType(FormatHelpers.contentTypeByFormat(format));
-        resp.setHeader("Content-disposition", "attachment; filename=checks"
-                + FormatHelpers.extensionByFormat(format, true));
-    }
 
     private static List<Long> getReceiptIds(HttpServletRequest req) {
         return Arrays.stream(req.getParameterMap().get(Parameters.ID_PARAMETER))
@@ -121,5 +85,10 @@ public class DownloadServlet extends ApplicationServlet {
     @Autowired
     public void setServiceFactory(ServiceFactory serviceFactory) {
         this.serviceFactory = serviceFactory;
+    }
+
+    @Autowired
+    public void setDownloadService(DownloadService downloadService) {
+        this.downloadService = downloadService;
     }
 }

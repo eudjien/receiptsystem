@@ -108,7 +108,7 @@
     <div class="card-footer">
         <div class="form-receipt d-flex justify-content-end">
             <label class="form-receipt-label text-muted" for="checkInput<%=receipt.getId()%>">
-                CHECK #<%=receipt.getId()%>
+                ЧЕК #<%=receipt.getId()%>
             </label>
             <input class="form-receipt-input ms-2" type="checkbox"
                    name="checkId" value="<%=receipt.getId()%>" id="checkInput<%=receipt.getId()%>">

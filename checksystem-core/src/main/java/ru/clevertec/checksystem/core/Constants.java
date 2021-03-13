@@ -10,7 +10,7 @@ public final class Constants {
         public static final double MAX = 100;
     }
 
-    public static final class Format {
+    public static final class Formats {
         public static final String JSON = "json";
         public static final String XML = "xml";
         public static final String PDF = "pdf";

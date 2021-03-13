@@ -5,16 +5,21 @@ import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.repository.EmailRepository;
 import ru.clevertec.checksystem.core.repository.EventEmailRepository;
 
-import javax.mail.internet.AddressException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
-public interface IEmailService extends IService {
+public interface IMailService extends IService {
 
     EventEmail assignEmailForEvent(String eventType, String address);
 
-    void sendEmail(String subject, String address, Collection<Receipt> receipts, String type, String format)
-            throws IOException, AddressException;
+    void sendReceiptEmail(String subject, String address, Collection<Receipt> receipts, String type, String format)
+            throws IOException;
+
+    void sendEmail(String subject, Object body, String address, String contentType) throws IOException;
+
+    void sendEmail(String subject, Object body, String address, String contentType, Set<File> attachments);
 
     EmailRepository getEmailRepository();
 

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.common.io.write.IReceiptGenerateWriter;
 import ru.clevertec.checksystem.core.configuration.ApplicationJsonMapper;
-import ru.clevertec.checksystem.core.dto.ReceiptGenerate;
+import ru.clevertec.checksystem.core.data.generate.ReceiptGenerate;
 
 import java.io.File;
 import java.io.IOException;

@@ -3,8 +3,8 @@ package ru.clevertec.checksystem.core.entity.receipt;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IReceiptBuilder;
-import ru.clevertec.checksystem.core.common.receipt.IReceiptItemAggregable;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
+import ru.clevertec.checksystem.core.common.receipt.IReceiptItemAggregable;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.discount.receipt.ReceiptDiscount;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -25,7 +25,7 @@ import static ru.clevertec.checksystem.core.Constants.Entities;
 )
 public class Receipt extends BaseEntity implements IDiscountable<ReceiptDiscount>, IReceiptItemAggregable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receipt", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receipt", fetch = FetchType.EAGER)
     private final Set<ReceiptItem> receiptItems = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

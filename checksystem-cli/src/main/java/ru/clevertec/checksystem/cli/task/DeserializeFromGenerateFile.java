@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import static ru.clevertec.checksystem.cli.Constants.Keys;
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 public class DeserializeFromGenerateFile implements Callable<Void> {
 
@@ -48,7 +48,7 @@ public class DeserializeFromGenerateFile implements Callable<Void> {
             ServiceFactory serviceFactory,
             Collection<Receipt> receipts) throws IOException, ArgumentNotExistException {
 
-        var format = finder.firstStringOrDefault(Keys.DESERIALIZE_GENERATE_FORMAT, Format.JSON);
+        var format = finder.firstStringOrDefault(Keys.DESERIALIZE_GENERATE_FORMAT, Formats.JSON);
         var path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_GENERATE_PATH);
 
         IGenerateReceiptService generateReceiptService = serviceFactory.instance(GenerateReceiptService.class);

@@ -3,28 +3,28 @@ package ru.clevertec.checksystem.core.helper;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 public class FormatHelpers {
 
     private static final BiMap<String, String> formatContentTypeBiMap = HashBiMap.create();
 
     static {
-        formatContentTypeBiMap.put(Format.TEXT, "text/plain");
-        formatContentTypeBiMap.put(Format.HTML, "text/html");
-        formatContentTypeBiMap.put(Format.PDF, "application/pdf");
-        formatContentTypeBiMap.put(Format.XML, "text/xml");
-        formatContentTypeBiMap.put(Format.JSON, "application/json");
+        formatContentTypeBiMap.put(Formats.TEXT, "text/plain");
+        formatContentTypeBiMap.put(Formats.HTML, "text/html");
+        formatContentTypeBiMap.put(Formats.PDF, "application/pdf");
+        formatContentTypeBiMap.put(Formats.XML, "text/xml");
+        formatContentTypeBiMap.put(Formats.JSON, "application/json");
     }
 
     private static final BiMap<String, String> formatExtensionBiMap = HashBiMap.create();
 
     static {
-        formatExtensionBiMap.put(Format.TEXT, "txt");
-        formatExtensionBiMap.put(Format.HTML, "html");
-        formatExtensionBiMap.put(Format.PDF, "pdf");
-        formatExtensionBiMap.put(Format.XML, "xml");
-        formatExtensionBiMap.put(Format.JSON, "json");
+        formatExtensionBiMap.put(Formats.TEXT, "txt");
+        formatExtensionBiMap.put(Formats.HTML, "html");
+        formatExtensionBiMap.put(Formats.PDF, "pdf");
+        formatExtensionBiMap.put(Formats.XML, "xml");
+        formatExtensionBiMap.put(Formats.JSON, "json");
     }
 
     private FormatHelpers() {

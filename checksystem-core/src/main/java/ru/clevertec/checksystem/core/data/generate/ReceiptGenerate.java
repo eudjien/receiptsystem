@@ -1,4 +1,4 @@
-package ru.clevertec.checksystem.core.dto;
+package ru.clevertec.checksystem.core.data.generate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -8,7 +8,7 @@ import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.read.JsonReceiptGenerateReader;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 @Component
 public final class ReceiptGenerateReaderFactory {
@@ -26,7 +26,7 @@ public final class ReceiptGenerateReaderFactory {
 
         //noinspection SwitchStatementWithTooFewBranches
         return switch (format) {
-            case Format.JSON -> applicationContext.getBean(JsonReceiptGenerateReader.class);
+            case Formats.JSON -> applicationContext.getBean(JsonReceiptGenerateReader.class);
             default -> throw new ArgumentNotSupportedException("format");
         };
     }

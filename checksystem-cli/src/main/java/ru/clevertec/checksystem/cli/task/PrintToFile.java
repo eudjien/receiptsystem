@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import static ru.clevertec.checksystem.cli.Constants.Keys;
-import static ru.clevertec.checksystem.core.Constants.Format;
+import static ru.clevertec.checksystem.core.Constants.Formats;
 
 public class PrintToFile implements Callable<Void> {
 
@@ -46,9 +46,9 @@ public class PrintToFile implements Callable<Void> {
         IPrintingReceiptService printingReceiptService = serviceFactory.instance(PrintingReceiptService.class);
 
         switch (format) {
-            case Format.TEXT -> printingReceiptService.printToText(sourceReceipts, new File(path));
-            case Format.HTML -> printingReceiptService.printToHtml(sourceReceipts, new File(path));
-            case Format.PDF -> {
+            case Formats.TEXT -> printingReceiptService.printToText(sourceReceipts, new File(path));
+            case Formats.HTML -> printingReceiptService.printToHtml(sourceReceipts, new File(path));
+            case Formats.PDF -> {
                 if (argumentsFinder.firstBoolOrDefault(Keys.PRINT_PDF_TEMPLATE)) {
                     var pdfTemplatePath = argumentsFinder.firstStringOrDefault(Keys.PRINT_PDF_TEMPLATE_PATH);
                     printingReceiptService.printWithTemplateToPdf(sourceReceipts, new File(path),
