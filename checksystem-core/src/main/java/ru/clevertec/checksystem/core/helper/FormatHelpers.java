@@ -3,6 +3,9 @@ package ru.clevertec.checksystem.core.helper;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static ru.clevertec.checksystem.core.Constants.Formats;
 
 public class FormatHelpers {
@@ -25,6 +28,24 @@ public class FormatHelpers {
         formatExtensionBiMap.put(Formats.PDF, "pdf");
         formatExtensionBiMap.put(Formats.XML, "xml");
         formatExtensionBiMap.put(Formats.JSON, "json");
+    }
+
+    private static final Map<String, String> testMap = new HashMap<>();
+
+    static {
+        testMap.put(Formats.TEXT, "txt");
+        testMap.put(Formats.HTML, "html");
+        testMap.put(Formats.PDF, "pdf");
+        testMap.put(Formats.XML, "xml");
+        testMap.put(Formats.JSON, "json");
+
+        var extension = testMap.get(Formats.PDF);
+
+        var format = testMap.entrySet().stream()
+                .filter(e -> e.getValue().equals("pdf"))
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElseThrow();
     }
 
     private FormatHelpers() {

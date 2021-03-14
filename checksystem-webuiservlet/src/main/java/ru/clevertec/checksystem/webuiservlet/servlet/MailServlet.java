@@ -67,9 +67,10 @@ public class MailServlet extends ApplicationServlet {
 
         IMailService emailService = serviceFactory.instance(MailService.class);
         try {
-            emailService.sendReceiptEmail(subject, address, receipts, type, format);
+            emailService.sendReceiptEmail(subject, receipts, type, format, address);
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (Throwable e) {
+            e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }

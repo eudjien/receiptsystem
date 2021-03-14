@@ -8,8 +8,6 @@ import ru.clevertec.checksystem.core.entity.EventEmail;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.exception.EmailNotFoundException;
-import ru.clevertec.checksystem.core.factory.io.ReceiptPrinterFactory;
-import ru.clevertec.checksystem.core.factory.io.ReceiptWriterFactory;
 import ru.clevertec.checksystem.core.helper.FormatHelpers;
 import ru.clevertec.checksystem.core.mail.Mail;
 import ru.clevertec.checksystem.core.mail.MailAddress;
@@ -20,13 +18,10 @@ import ru.clevertec.checksystem.core.repository.EventEmailRepository;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Set;
 
-import static ru.clevertec.checksystem.core.Constants.Formats;
 import static ru.clevertec.checksystem.core.Constants.Types;
 
 @Service
@@ -34,24 +29,24 @@ public class MailService extends EventEmitter<Object> implements IMailService {
 
     private final MailSender mailSender;
 
-    private final ReceiptPrinterFactory receiptPrinterFactory;
-    private final ReceiptWriterFactory receiptWriterFactory;
-
     private final EmailRepository emailRepository;
     private final EventEmailRepository eventEmailRepository;
+
+    private final IoReceiptService ioReceiptService;
+    private final PrintingReceiptService printingService;
 
     @Autowired
     public MailService(
             MailSender mailSender,
-            ReceiptPrinterFactory receiptPrinterFactory,
-            ReceiptWriterFactory receiptWriterFactory,
             EmailRepository emailRepository,
-            EventEmailRepository eventEmailRepository) {
+            EventEmailRepository eventEmailRepository,
+            IoReceiptService ioReceiptService,
+            PrintingReceiptService printingService) {
         this.mailSender = mailSender;
-        this.receiptPrinterFactory = receiptPrinterFactory;
-        this.receiptWriterFactory = receiptWriterFactory;
         this.emailRepository = emailRepository;
         this.eventEmailRepository = eventEmailRepository;
+        this.ioReceiptService = ioReceiptService;
+        this.printingService = printingService;
     }
 
     public EventEmail assignEmailForEvent(String eventType, String address) {
@@ -63,50 +58,36 @@ public class MailService extends EventEmitter<Object> implements IMailService {
     @Override
     @SuppressWarnings("UnstableApiUsage")
     public void sendReceiptEmail(
-            String subject, String address, Collection<Receipt> receipts, String type, String format) throws IOException {
+            String subject, Collection<Receipt> receipts, String type, String format, String... addresses) throws IOException {
 
-        var tempFile = createTempFile(type, format, receipts);
+        var tempFile = createTempFile(format);
+        writeReceiptsToFile(receipts, tempFile, type, format);
 
-        writeReceiptsToTempFile(receipts, tempFile, type, format);
+        var htmlBody = printingService.printToHtml(receipts);
 
-        var htmlBody = new String(receiptPrinterFactory.instance(Formats.HTML, receipts).print(), StandardCharsets.UTF_8);
-
-        var mail = new Mail(subject, htmlBody, new MailAddress(address));
+        var mail = new Mail(subject, htmlBody, MediaType.HTML_UTF_8, MailAddress.parseArray(addresses));
         mail.getAttachments().add(tempFile);
-        mail.setBodyMediaType(MediaType.HTML_UTF_8);
 
-        mailSender.sendMail(mail);
+        mailSender.send(mail);
     }
 
-
     @Override
-    public void sendEmail(String subject, Object body, String address, String contentType) {
-        sendEmail(subject, body, address, contentType, null);
+    public void sendEmail(String subject, Object body, String contentType, String... addresses) {
+        sendEmail(subject, body, contentType, null, addresses);
     }
 
     @Override
     @SuppressWarnings("UnstableApiUsage")
-    public void sendEmail(String subject, Object body, String address, String contentType, Set<File> attachments) {
+    public void sendEmail(String subject, Object body, String contentType, Set<File> attachments, String... addresses) {
 
-        var mail = new Mail(subject, body, new MailAddress(address));
-        mail.setBodyMediaType(MediaType.parse(contentType));
+        var mail = new Mail(subject, body, MediaType.parse(contentType), MailAddress.parseArray(addresses));
         mail.setAttachments(attachments);
 
-        mailSender.sendMail(mail);
+        mailSender.send(mail);
     }
 
-    private File createTempFile(String type, String format, Collection<Receipt> receipts) throws IOException {
-
-        var tempFile = File.createTempFile("receipts", FormatHelpers.extensionByFormat(format, true));
-
-        try (var fos = new FileOutputStream(tempFile)) {
-            switch (type) {
-                case Types.PRINT -> receiptPrinterFactory.instance(format, receipts).print(fos);
-                case Types.SERIALIZE -> receiptWriterFactory.instance(format).write(receipts, fos);
-            }
-        }
-
-        return tempFile;
+    private static File createTempFile(String format) throws IOException {
+        return File.createTempFile("receipts", FormatHelpers.extensionByFormat(format, true));
     }
 
     public boolean isValidEmailAddress(String emailAddress) {
@@ -118,10 +99,10 @@ public class MailService extends EventEmitter<Object> implements IMailService {
         }
     }
 
-    private void writeReceiptsToTempFile(Collection<Receipt> receipts, File tempFile, String type, String format) throws IOException {
+    private void writeReceiptsToFile(Collection<Receipt> receipts, File file, String type, String format) throws IOException {
         switch (type) {
-            case Types.PRINT -> receiptPrinterFactory.instance(format, receipts).print(tempFile);
-            case Types.SERIALIZE -> receiptWriterFactory.instance(format).write(receipts, tempFile);
+            case Types.PRINT -> printingService.print(receipts, file, format);
+            case Types.SERIALIZE -> ioReceiptService.serialize(receipts, file, format);
         }
     }
 

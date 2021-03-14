@@ -5,7 +5,7 @@ import ru.clevertec.checksystem.core.mail.Mail;
 import javax.mail.MessagingException;
 import java.io.IOException;
 
-public interface IEmailSender extends IEventEmitter<Object>, IEventListener<Mail> {
+public interface IMailSender extends IEventEmitter<Object>, IEventListener<Mail> {
 
-    void sendMail(Mail mail) throws IOException, MessagingException;
+    void send(Mail mail) throws IOException, MessagingException;
 }

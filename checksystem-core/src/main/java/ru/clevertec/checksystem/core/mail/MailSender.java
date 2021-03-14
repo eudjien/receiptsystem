@@ -3,9 +3,9 @@ package ru.clevertec.checksystem.core.mail;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.Constants;
 import ru.clevertec.checksystem.core.auth.MailAuthenticator;
-import ru.clevertec.checksystem.core.common.event.IEmailSender;
+import ru.clevertec.checksystem.core.common.event.IMailSender;
 import ru.clevertec.checksystem.core.event.EventEmitter;
-import ru.clevertec.checksystem.core.util.CollectionUtils;
+import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -16,14 +16,26 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Component
-public class MailSender extends EventEmitter<Object> implements IEmailSender {
+public class MailSender extends EventEmitter<Object> implements IMailSender {
+
+    private static final Properties configProperties = new Properties();
+
+    public MailSender() throws IOException {
+        loadConfigProperties();
+    }
 
     @Override
     public void next(Mail mail) {
         sendMail(mail);
     }
 
-    public void sendMail(Mail mail) {
+    @Override
+    public void send(Mail mail) {
+        sendMail(mail);
+    }
+
+    private static void sendMail(Mail mail) {
+        ThrowUtils.Argument.nullValue("mail", mail);
         try {
             Transport.send(createMessage(mail));
         } catch (MessagingException | IOException e) {
@@ -31,9 +43,7 @@ public class MailSender extends EventEmitter<Object> implements IEmailSender {
         }
     }
 
-    private Message createMessage(Mail mail) throws IOException, MessagingException {
-
-        var configProperties = getConfigProperties();
+    private static Message createMessage(Mail mail) throws IOException, MessagingException {
 
         var session = Session.getInstance(configProperties, new MailAuthenticator(configProperties));
 
@@ -48,7 +58,7 @@ public class MailSender extends EventEmitter<Object> implements IEmailSender {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private Multipart createMessageContent(Mail mail) throws MessagingException, IOException {
+    private static Multipart createMessageContent(Mail mail) throws MessagingException, IOException {
 
         var multipart = new MimeMultipart();
 
@@ -57,24 +67,20 @@ public class MailSender extends EventEmitter<Object> implements IEmailSender {
 
         multipart.addBodyPart(contentPart);
 
-        if (!CollectionUtils.isNullOrEmpty(mail.getAttachments())) {
-            for (var attachment : mail.getAttachments()) {
-                var attachmentPart = new MimeBodyPart();
-                attachmentPart.attachFile(attachment);
-                multipart.addBodyPart(attachmentPart);
-            }
+        for (var attachment : mail.getAttachments()) {
+            var attachmentPart = new MimeBodyPart();
+            attachmentPart.attachFile(attachment);
+            multipart.addBodyPart(attachmentPart);
         }
 
         return multipart;
     }
 
-    private Properties getConfigProperties() throws IOException {
+    private static void loadConfigProperties() throws IOException {
+
         var configStream = MailSender.class.getClassLoader()
                 .getResourceAsStream(Constants.Properties.Config.FILENAME);
 
-        var properties = new Properties();
-        properties.load(configStream);
-
-        return properties;
+        MailSender.configProperties.load(configStream);
     }
 }

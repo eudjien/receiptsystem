@@ -1,5 +1,6 @@
 package ru.clevertec.checksystem.core.service;
 
+import com.google.common.net.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.clevertec.checksystem.core.Constants.Formats;
@@ -18,16 +19,15 @@ import ru.clevertec.checksystem.core.mail.MailAddress;
 import ru.clevertec.checksystem.core.mail.MailSender;
 import ru.clevertec.checksystem.core.repository.EventEmailRepository;
 import ru.clevertec.checksystem.core.template.pdf.FilePdfTemplate;
-import ru.clevertec.checksystem.core.util.CollectionUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Subscribe(eventType = EventType.PrintEnd, listenerClass = MailSender.class)
 @Service
@@ -44,14 +44,24 @@ public class PrintingReceiptService extends EventEmitter<Object> implements IPri
 
     @Override
     public void print(Collection<Receipt> receipts, File destinationFile, String format) throws IOException {
+        print(receipts, destinationFile, format, true);
+    }
+
+    private void print(Collection<Receipt> receipts, File destinationFile, String format, boolean emitPrintOver) throws IOException {
         receiptPrinterFactory.instance(format, receipts).print(destinationFile);
-        emitPrintOver(receipts, destinationFile);
+        if (emitPrintOver)
+            emitPrintOver(receipts, destinationFile);
     }
 
     @Override
     public void print(Collection<Receipt> receipts, OutputStream os, String format) throws IOException {
+        print(receipts, os, format, true);
+    }
+
+    private void print(Collection<Receipt> receipts, OutputStream os, String format, boolean emitPrintOver) throws IOException {
         receiptPrinterFactory.instance(format, receipts).print(os);
-        emitPrintOver(receipts, format);
+        if (emitPrintOver)
+            emitPrintOver(receipts, format);
     }
 
     @Override
@@ -68,9 +78,14 @@ public class PrintingReceiptService extends EventEmitter<Object> implements IPri
 
     @Override
     public String printToHtml(Collection<Receipt> receipts) throws IOException {
+        return printToHtml(receipts, true);
+    }
+
+    private String printToHtml(Collection<Receipt> receipts, boolean emitPrintOver) throws IOException {
         var bytes = receiptPrinterFactory.instance(Formats.HTML, receipts).print();
-        emitPrintOver(receipts, Formats.HTML);
-        return new String(bytes);
+        if (emitPrintOver)
+            emitPrintOver(receipts, Formats.HTML);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     @Override
@@ -162,26 +177,23 @@ public class PrintingReceiptService extends EventEmitter<Object> implements IPri
 
     private void emitPrintOver(Collection<Receipt> receipts, String format) throws IOException {
 
-        var tmpFile = File.createTempFile("receipts", FormatHelpers.extensionByFormat(format, true));
+        var tempFile = File.createTempFile("receipts", FormatHelpers.extensionByFormat(format, true));
+        print(receipts, tempFile, format, false);
 
-        try (var fos = new FileOutputStream(tmpFile)) {
-            receiptPrinterFactory.instance(format, receipts).print(fos);
-        }
-
-        emitPrintOver(receipts, tmpFile);
+        emitPrintOver(receipts, tempFile);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void emitPrintOver(Collection<Receipt> receipts, File... attachments) throws IOException {
-
-        var bytes = receiptPrinterFactory.instance(Formats.HTML, receipts).print();
-        var html = new String(bytes, StandardCharsets.UTF_8);
 
         var eventEmails = eventEmailRepository.findAllByEventType(EventType.PrintEnd);
 
-        var addresses = CollectionUtils.asCollection(eventEmails).stream()
+        var addresses = StreamSupport.stream(eventEmails.spliterator(), false)
                 .map(a -> new MailAddress(a.getEmail().getAddress())).toArray(MailAddress[]::new);
 
-        var mail = new Mail("Printing is over!", html, addresses);
+        var htmlBody = printToHtml(receipts, false);
+
+        var mail = new Mail("Printing is over!", htmlBody, MediaType.HTML_UTF_8, addresses);
         mail.setAttachments(Arrays.stream(attachments).collect(Collectors.toSet()));
 
         emit(EventType.PrintEnd, mail);

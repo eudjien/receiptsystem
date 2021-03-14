@@ -3,7 +3,6 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
 import ru.clevertec.checksystem.core.util.CollectionUtils;
 import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
@@ -29,7 +28,6 @@ import static ru.clevertec.checksystem.webuiservlet.Constants.*;
 public class DownloadServlet extends ApplicationServlet {
 
     private ReceiptRepository receiptRepository;
-    private ServiceFactory serviceFactory;
     private DownloadService downloadService;
 
     public void init(ServletConfig config) throws ServletException {
@@ -63,8 +61,10 @@ public class DownloadServlet extends ApplicationServlet {
             return;
         }
 
-        if (!downloadService.download(resp, receipts, type, format))
+        if (!downloadService.download(resp, receipts, type, format)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
         resp.setStatus(HttpServletResponse.SC_OK);
     }
@@ -80,11 +80,6 @@ public class DownloadServlet extends ApplicationServlet {
     @Autowired
     public void setCheckRepository(ReceiptRepository receiptRepository) {
         this.receiptRepository = receiptRepository;
-    }
-
-    @Autowired
-    public void setServiceFactory(ServiceFactory serviceFactory) {
-        this.serviceFactory = serviceFactory;
     }
 
     @Autowired

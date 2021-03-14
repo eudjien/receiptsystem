@@ -4,7 +4,7 @@ import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
+import java.util.HashSet;
 
 public class MailAddress extends Address {
 
@@ -60,10 +60,12 @@ public class MailAddress extends Address {
         return internetAddress.getType();
     }
 
-    public static MailAddress[] parse(String addressList) {
+    public static MailAddress[] parseArray(String[] addresses) {
         try {
-            var internetAddresses = InternetAddress.parse(addressList);
-            return Arrays.stream(internetAddresses).map(MailAddress::new).toArray(MailAddress[]::new);
+            var addressList = new HashSet<InternetAddress>();
+            for (var address : addresses)
+                addressList.add(new InternetAddress(address));
+            return addressList.stream().map(MailAddress::new).toArray(MailAddress[]::new);
         } catch (AddressException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }

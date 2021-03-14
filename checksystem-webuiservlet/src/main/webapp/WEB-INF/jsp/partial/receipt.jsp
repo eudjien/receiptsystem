@@ -106,11 +106,11 @@
         </div>
     </div>
     <div class="card-footer">
-        <div class="form-receipt d-flex justify-content-end">
-            <label class="form-receipt-label text-muted" for="checkInput<%=receipt.getId()%>">
+        <div class="form-check d-flex justify-content-end align-items-center">
+            <label class="form-check-label text-muted" for="checkInput<%=receipt.getId()%>">
                 ЧЕК #<%=receipt.getId()%>
             </label>
-            <input class="form-receipt-input ms-2" type="checkbox"
+            <input class="form-check-input ms-2 mt-0" type="checkbox"
                    name="checkId" value="<%=receipt.getId()%>" id="checkInput<%=receipt.getId()%>">
         </div>
     </div>

@@ -4,7 +4,6 @@ import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,18 +13,14 @@ public class Mail {
 
     private String subject;
     private Object body;
-    private MediaType bodyMediaType = MediaType.PLAIN_TEXT_UTF_8;
-    private Set<MailAddress> addresses;
+    private MediaType bodyMediaType;
+    private Set<MailAddress> addresses = new HashSet<>();
     private Set<File> attachments = new HashSet<>();
 
     public Mail(String subject, Object body, MediaType bodyMediaType, MailAddress... addresses) {
-        this(subject, body, addresses);
-        setBodyMediaType(bodyMediaType);
-    }
-
-    public Mail(String subject, Object body, MailAddress... addresses) {
         setSubject(subject);
         setBody(body);
+        setBodyMediaType(bodyMediaType);
         setAddresses(Arrays.stream(addresses).collect(Collectors.toSet()));
     }
 
@@ -37,11 +32,11 @@ public class Mail {
         return body;
     }
 
-    public Collection<MailAddress> getAddresses() {
+    public Set<MailAddress> getAddresses() {
         return addresses;
     }
 
-    public Collection<File> getAttachments() {
+    public Set<File> getAttachments() {
         return attachments;
     }
 
@@ -54,13 +49,15 @@ public class Mail {
     }
 
     public void setAttachments(Set<File> attachments) {
-        this.attachments.clear();
-        if (attachments != null)
-            this.attachments = attachments;
+        this.attachments = attachments;
+        if (this.attachments == null)
+            this.attachments = new HashSet<>();
     }
 
     public void setAddresses(Set<MailAddress> addresses) {
         this.addresses = addresses;
+        if (this.addresses == null)
+            this.addresses = new HashSet<>();
     }
 
     public MediaType getBodyContentType() {

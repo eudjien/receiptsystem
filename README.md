@@ -87,7 +87,7 @@ ___
 -i=database
 -print=true 
 -print-format=text 
--print-path="C:\receipts\checks_print.txt"
+-print-path="C:\receipts\receipts_print.txt"
 ```
 
 **Загрузить все чеки из базы данных и напечатать их в PDF файл:**
@@ -96,7 +96,7 @@ ___
 -i=database
 -print=true 
 -print-format=pdf 
--print-path="C:\receipts\checks_print.pdf"
+-print-path="C:\receipts\receipts_print.pdf"
 ```
 
 **Загрузить чеки из XML и напечатать их в HTML файл:**

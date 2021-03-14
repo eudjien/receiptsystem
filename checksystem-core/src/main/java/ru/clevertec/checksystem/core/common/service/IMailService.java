@@ -14,12 +14,12 @@ public interface IMailService extends IService {
 
     EventEmail assignEmailForEvent(String eventType, String address);
 
-    void sendReceiptEmail(String subject, String address, Collection<Receipt> receipts, String type, String format)
+    void sendReceiptEmail(String subject, Collection<Receipt> receipts, String type, String format, String... addresses)
             throws IOException;
 
-    void sendEmail(String subject, Object body, String address, String contentType) throws IOException;
+    void sendEmail(String subject, Object body, String contentType, String... address) throws IOException;
 
-    void sendEmail(String subject, Object body, String address, String contentType, Set<File> attachments);
+    void sendEmail(String subject, Object body, String contentType, Set<File> attachments, String... addresses);
 
     EmailRepository getEmailRepository();
 
