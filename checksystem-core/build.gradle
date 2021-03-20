@@ -7,9 +7,11 @@ group = 'ru.clevertec.checksystem'
 version = '1.0'
 sourceCompatibility = '14'
 
-def jacksonVersion = '2.12.1'
-def springVersion = '2.4.3'
-def aspectSourceDir = "src/aspects/java"
+ext {
+    jacksonVersion = '2.12.2'
+    springVersion = '2.4.4'
+    aspectSourceDir = 'src/aspect/java'
+}
 
 repositories {
     mavenCentral()
@@ -21,7 +23,7 @@ sourceSets {
             srcDir aspectSourceDir
         }
     }
-    aspects {
+    aspect {
         java {
             srcDir aspectSourceDir
         }
@@ -30,6 +32,7 @@ sourceSets {
 
 configurations.all {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    exclude group: "org.springframework", module: "spring-webmvc"
 }
 
 dependencies {
@@ -38,20 +41,14 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:$jacksonVersion"
-
-    implementation 'com.itextpdf:itext7-core:7.1.13'
-
-    implementation "com.sun.mail:javax.mail:1.6.2"
-
+    implementation 'com.itextpdf:itext7-core:7.1.14'
     api 'com.google.guava:guava:30.1-jre'
-
+    api "org.springframework.boot:spring-boot-starter-web:$springVersion"
+    api "org.springframework.boot:spring-boot-starter-mail:$springVersion"
     api "org.springframework.boot:spring-boot-starter-log4j2:$springVersion"
     api "org.springframework.boot:spring-boot-starter-data-jpa:$springVersion"
-
     api 'org.modelmapper:modelmapper:2.3.9'
-
     runtimeOnly 'mysql:mysql-connector-java:8.0.23'
-    runtimeOnly 'com.h2database:h2:1.4.200'
 }
 
 test {
@@ -61,7 +58,7 @@ test {
 aspectjltw {
     xlint = "ignore"
     fork = true
-    sourceRoots = sourceSets.aspects.java.srcDirs
+    sourceRoots = sourceSets.aspect.java.srcDirs
     destDir = sourceSets.main.java.outputDir
     classpath = sourceSets.main.runtimeClasspath
 }

@@ -1,6 +1,10 @@
 package ru.clevertec.checksystem.webuiservlet.filter;
 
 import ru.clevertec.checksystem.webuiservlet.Authentication;
+import ru.clevertec.checksystem.webuiservlet.constant.Filters;
+import ru.clevertec.checksystem.webuiservlet.constant.Servlets;
+import ru.clevertec.checksystem.webuiservlet.constant.Sessions;
+import ru.clevertec.checksystem.webuiservlet.constant.UrlPatterns;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,16 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.*;
-
 @WebFilter(
-        filterName = FilterNames.AUTHENTICATED_FILTER,
+        filterName = Filters.AUTHENTICATED_FILTER,
         servletNames = {
-                ServletNames.HOME_SERVLET,
-                ServletNames.DOWNLOAD_SERVLET,
-                ServletNames.MAIL_SERVLET,
-                ServletNames.UPLOAD_SERVLET,
-                ServletNames.LOGOUT_SERVLET
+                Servlets.HOME_SERVLET,
+                Servlets.DOWNLOAD_SERVLET,
+                Servlets.MAIL_SERVLET,
+                Servlets.UPLOAD_SERVLET,
+                Servlets.LOGOUT_SERVLET
         },
         initParams = @WebInitParam(name = "enabled", value = "true")
 )

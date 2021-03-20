@@ -2,50 +2,30 @@ package ru.clevertec.checksystem.core.helper;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static ru.clevertec.checksystem.core.Constants.Formats;
+import org.springframework.http.MediaType;
+import ru.clevertec.checksystem.core.constant.Extensions;
+import ru.clevertec.checksystem.core.constant.Formats;
 
 public class FormatHelpers {
 
     private static final BiMap<String, String> formatContentTypeBiMap = HashBiMap.create();
 
     static {
-        formatContentTypeBiMap.put(Formats.TEXT, "text/plain");
-        formatContentTypeBiMap.put(Formats.HTML, "text/html");
-        formatContentTypeBiMap.put(Formats.PDF, "application/pdf");
-        formatContentTypeBiMap.put(Formats.XML, "text/xml");
-        formatContentTypeBiMap.put(Formats.JSON, "application/json");
+        formatContentTypeBiMap.put(Formats.TEXT, MediaType.TEXT_PLAIN_VALUE);
+        formatContentTypeBiMap.put(Formats.HTML, MediaType.TEXT_HTML_VALUE);
+        formatContentTypeBiMap.put(Formats.PDF, MediaType.APPLICATION_PDF_VALUE);
+        formatContentTypeBiMap.put(Formats.XML, MediaType.TEXT_XML_VALUE);
+        formatContentTypeBiMap.put(Formats.JSON, MediaType.APPLICATION_JSON_VALUE);
     }
 
     private static final BiMap<String, String> formatExtensionBiMap = HashBiMap.create();
 
     static {
-        formatExtensionBiMap.put(Formats.TEXT, "txt");
-        formatExtensionBiMap.put(Formats.HTML, "html");
-        formatExtensionBiMap.put(Formats.PDF, "pdf");
-        formatExtensionBiMap.put(Formats.XML, "xml");
-        formatExtensionBiMap.put(Formats.JSON, "json");
-    }
-
-    private static final Map<String, String> testMap = new HashMap<>();
-
-    static {
-        testMap.put(Formats.TEXT, "txt");
-        testMap.put(Formats.HTML, "html");
-        testMap.put(Formats.PDF, "pdf");
-        testMap.put(Formats.XML, "xml");
-        testMap.put(Formats.JSON, "json");
-
-        var extension = testMap.get(Formats.PDF);
-
-        var format = testMap.entrySet().stream()
-                .filter(e -> e.getValue().equals("pdf"))
-                .findFirst()
-                .map(Map.Entry::getKey)
-                .orElseThrow();
+        formatExtensionBiMap.put(Formats.TEXT, Extensions.TXT);
+        formatExtensionBiMap.put(Formats.HTML, Extensions.HTML);
+        formatExtensionBiMap.put(Formats.PDF, Extensions.PDF);
+        formatExtensionBiMap.put(Formats.XML, Extensions.XML);
+        formatExtensionBiMap.put(Formats.JSON, Extensions.JSON);
     }
 
     private FormatHelpers() {

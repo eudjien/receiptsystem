@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="ru.clevertec.checksystem.core.entity.receipt.Receipt" %>
-<%@ page import="ru.clevertec.checksystem.webuiservlet.Constants.*" %>
+<%@ page import="ru.clevertec.checksystem.webuiservlet.constant.Sources" %>
+<%@ page import="ru.clevertec.checksystem.webuiservlet.constant.Sessions" %>
 <jsp:useBean id="receipts" scope="request" type="java.util.Collection"/>
 <jsp:useBean id="source" scope="request" type="java.lang.String"/>
 

@@ -1,13 +1,4 @@
-### Build & run
-
-**CLI**
-
-```
-gradlew checksystem-cli:build
-gradlew checksystem-cli:run --args="..."
-```
-
-### CLI arguments
+### Command-line interface arguments
 
 - **-i=[deserialize/deserialize/database]**:
   этот аргумент всегда должен присутствовать, он отвечает за то что будет делать программа при её запуске. Доступные
@@ -43,10 +34,6 @@ ___
 
 - **-input-filter-id=[id1,id2,id3]**: фильтрация чеков по Id, неважно откуда были загружены чеки, из файла или памяти
   этот аргумент доступен при **-i=[generate/deserialize/pre-defined]**
-
----
-
-- **-proxied-services=[true/false]**: подключить dynamic proxy для логирования сервисов
 
 ---
 

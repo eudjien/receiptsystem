@@ -1,21 +1,21 @@
 package ru.clevertec.checksystem.core.io.print;
 
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.common.io.print.IReceiptLayout;
 import ru.clevertec.checksystem.core.common.receipt.IReceiptAggregable;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
+import ru.clevertec.checksystem.core.io.print.layout.IReceiptLayout;
 import ru.clevertec.checksystem.core.util.FileUtils;
-import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
 public class ReceiptPrinter extends AbstractPrinter<Receipt> implements IReceiptAggregable {
 
-    private final Collection<Receipt> receipts = new SinglyLinkedList<>();
+    private final Collection<Receipt> receipts = new ArrayList<>();
 
     public ReceiptPrinter() {
     }
@@ -72,8 +72,8 @@ public class ReceiptPrinter extends AbstractPrinter<Receipt> implements IReceipt
     }
 
     @Override
-    public void print(OutputStream outputStream) throws IOException {
-        outputStream.write(getLayout().getAllLayoutData(getReceipts()));
+    public void print(OutputStream os) throws IOException {
+        os.write(getLayout().getAllLayoutData(getReceipts()));
     }
 
     @Override

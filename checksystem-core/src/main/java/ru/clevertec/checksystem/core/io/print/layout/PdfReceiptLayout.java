@@ -16,8 +16,8 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import ru.clevertec.checksystem.core.common.ITemplatable;
-import ru.clevertec.checksystem.core.common.template.IPdfTemplate;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
+import ru.clevertec.checksystem.core.template.pdf.IPdfTemplate;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.io.ByteArrayInputStream;

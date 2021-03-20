@@ -1,4 +1,4 @@
-<%@ page import="ru.clevertec.checksystem.webuiservlet.Constants.*" %>
+<%@ page import="ru.clevertec.checksystem.webuiservlet.constant.UrlPatterns" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="incorrectAnswer" scope="request" type="java.lang.Boolean"/>
 <jsp:useBean id="question" scope="request" type="java.lang.String"/>

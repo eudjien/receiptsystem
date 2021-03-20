@@ -1,9 +1,27 @@
 package ru.clevertec.checksystem.core.log;
 
-public abstract class LogLevel {
-    public static final String INFO = "info";
-    public static final String DEBUG = "debug";
-    public static final String ERROR = "error";
-    public static final String TRACE = "trace";
-    public static final String NONE = "none";
+import org.apache.logging.log4j.Level;
+
+public enum LogLevel {
+
+    INFO(Level.INFO),
+    DEBUG(Level.DEBUG),
+    ERROR(Level.ERROR),
+    TRACE(Level.TRACE),
+    OFF(Level.OFF);
+
+    private final Level level;
+
+    LogLevel(Level level) {
+        this.level = level;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    @Override
+    public String toString() {
+        return level.toString();
+    }
 }

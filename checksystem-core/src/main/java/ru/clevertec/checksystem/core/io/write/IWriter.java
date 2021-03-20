@@ -1,0 +1,15 @@
+package ru.clevertec.checksystem.core.io.write;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+
+public interface IWriter<TInput> {
+
+    byte[] write(Collection<TInput> input) throws IOException;
+
+    void write(Collection<TInput> input, OutputStream os) throws IOException;
+
+    void write(Collection<TInput> input, File destinationFile) throws IOException;
+}

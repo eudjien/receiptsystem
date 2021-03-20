@@ -32,10 +32,9 @@ function setDownloadClickListener() {
 
         downloadButton.addEventListener('click', evt => {
 
-            const type = evt.target.getAttribute('data-type');
-            const format = evt.target.getAttribute('data-format');
+            const formatType = evt.target.value;
 
-            const form = createDownloadForm(type, format, source);
+            const form = createDownloadForm(formatType, source);
             document.body.appendChild(form);
             form.submit();
             document.body.removeChild(form);
@@ -86,17 +85,15 @@ function setSendMailClickListener() {
 
         const selectedOption = formatSelect.options[formatSelect.selectedIndex];
 
-        const type = selectedOption.getAttribute('data-type');
-        const format = selectedOption.getAttribute('data-format');
+        const formatType = selectedOption.value;
         const subject = document.querySelector('#mailSubject').value;
         const address = document.querySelector('#mailAddress').value;
 
         const queryString = contextPath + "/mail" +
             "?source=" + source +
-            "&type=" + type +
-            "&format=" + format +
+            "&formatType=" + formatType +
             "&subject=" + subject +
-            "&address=" + address +
+            "&email=" + address +
             "&" + getIdQueryString();
 
         console.log("Sending mail...");
@@ -174,7 +171,7 @@ function initialSetUp() {
     });
 }
 
-function createDownloadForm(type, format, source) {
+function createDownloadForm(formatType, source) {
 
     const form = document.createElement('form');
     form.style.display = 'none';
@@ -184,8 +181,7 @@ function createDownloadForm(type, format, source) {
     document.createElement('input')
 
     form.appendChild(createHiddenInput('source', source));
-    form.appendChild(createHiddenInput('type', type));
-    form.appendChild(createHiddenInput('format', format));
+    form.appendChild(createHiddenInput('formatType', formatType));
 
     collectCheckedIds().forEach(id => {
         form.appendChild(createHiddenInput('id', id));

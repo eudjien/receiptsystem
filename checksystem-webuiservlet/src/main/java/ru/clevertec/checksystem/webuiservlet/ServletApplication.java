@@ -9,8 +9,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.clevertec.checksystem.core.data.DataSeed;
-
-import static ru.clevertec.checksystem.webuiservlet.Constants.Packages;
+import ru.clevertec.checksystem.webuiservlet.constant.Packages;
 
 @SpringBootApplication
 @ComponentScan({Packages.CORE.ROOT, Packages.WEB_UI_SERVLET.ROOT})

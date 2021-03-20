@@ -15,7 +15,7 @@
                     <jsp:include page="toolbar/download-dropdown.jsp"/>
                 </div>
                 <div class="col col-md-auto d-flex justify-content-end">
-                    <jsp:include page="toolbar/mail-modal.jsp"/>
+                    <jsp:include page="toolbar/email-modal.jsp"/>
                 </div>
             </div>
         </div>

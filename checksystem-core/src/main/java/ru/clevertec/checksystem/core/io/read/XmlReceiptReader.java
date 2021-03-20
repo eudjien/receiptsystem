@@ -1,28 +1,27 @@
 package ru.clevertec.checksystem.core.io.read;
 
 import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.common.io.read.IReceiptReader;
-import ru.clevertec.checksystem.core.configuration.ApplicationXmlMapper;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
-import ru.clevertec.custom.list.SinglyLinkedList;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
 public class XmlReceiptReader implements IReceiptReader {
 
-    private final ApplicationXmlMapper mapper;
+    private final XmlMapper mapper;
     private final CollectionType collectionType;
 
     @Autowired
-    public XmlReceiptReader(ApplicationXmlMapper xmlMapper) {
+    public XmlReceiptReader(XmlMapper xmlMapper) {
         mapper = xmlMapper;
-        collectionType = xmlMapper.getTypeFactory().constructCollectionType(SinglyLinkedList.class, Receipt.class);
+        collectionType = xmlMapper.getTypeFactory().constructCollectionType(ArrayList.class, Receipt.class);
     }
 
     @Override
@@ -31,12 +30,12 @@ public class XmlReceiptReader implements IReceiptReader {
     }
 
     @Override
-    public Collection<Receipt> read(InputStream inputStream) throws IOException {
-        return mapper.readValue(inputStream, collectionType);
+    public Collection<Receipt> read(InputStream is) throws IOException {
+        return mapper.readValue(is, collectionType);
     }
 
     @Override
-    public Collection<Receipt> read(File sourceFile) throws IOException {
-        return mapper.readValue(sourceFile, collectionType);
+    public Collection<Receipt> read(File file) throws IOException {
+        return mapper.readValue(file, collectionType);
     }
 }

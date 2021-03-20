@@ -1,14 +1,26 @@
 package ru.clevertec.checksystem.core.event;
 
-import ru.clevertec.checksystem.core.common.event.IEventEmitter;
-import ru.clevertec.checksystem.core.common.event.IEventListener;
-import ru.clevertec.custom.list.SinglyLinkedList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class EventEmitter<T> implements IEventEmitter<T> {
+
+    private final ApplicationContext applicationContext;
+
+    @Override
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    @Autowired
+    public EventEmitter(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     private final Map<String, List<IEventListener<T>>> listeners = new HashMap<>();
 
@@ -49,7 +61,7 @@ public abstract class EventEmitter<T> implements IEventEmitter<T> {
         if (listeners.containsKey(eventType))
             observerList = listeners.get(eventType);
         else
-            listeners.put(eventType, (observerList = new SinglyLinkedList<>()));
+            listeners.put(eventType, (observerList = new ArrayList<>()));
 
         return observerList;
     }

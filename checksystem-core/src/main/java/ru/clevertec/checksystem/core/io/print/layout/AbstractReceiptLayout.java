@@ -1,6 +1,5 @@
 package ru.clevertec.checksystem.core.io.print.layout;
 
-import ru.clevertec.checksystem.core.common.io.print.IReceiptLayout;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 public abstract class AbstractReceiptLayout implements IReceiptLayout {

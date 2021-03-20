@@ -1,4 +1,4 @@
-<%@ page import="ru.clevertec.checksystem.webuiservlet.Constants.*" %>
+<%@ page import="ru.clevertec.checksystem.webuiservlet.constant.UrlPatterns" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="authentication" scope="session" type="ru.clevertec.checksystem.webuiservlet.Authentication"/>
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ru.clevertec.checksystem.webuiservlet.Questionnaire;
+import ru.clevertec.checksystem.webuiservlet.constant.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,11 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.*;
-
 @Component
 @WebServlet(
-        name = ServletNames.LOGIN_SERVLET,
+        name = Servlets.LOGIN_SERVLET,
         urlPatterns = UrlPatterns.LOGIN_PATTERN
 )
 public class LogInServlet extends ApplicationServlet {
@@ -43,7 +42,6 @@ public class LogInServlet extends ApplicationServlet {
 
         if (questionnaire.verify(questionnaire.lastQuestion(), answer)) {
             logIn(req, questionnaire.lastQuestion(), answer);
-            req.setAttribute(Attributes.ANSWER_INCORRECT_ATTRIBUTE, false);
             resp.sendRedirect(req.getContextPath() + UrlPatterns.ROOT_PATTERN);
         } else {
             req.setAttribute(Attributes.QUESTION_ATTRIBUTE, questionnaire.lastQuestion());

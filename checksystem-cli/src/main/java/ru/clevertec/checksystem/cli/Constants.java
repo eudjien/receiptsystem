@@ -32,7 +32,6 @@ public final class Constants {
         public static final String PRINT_PDF_TEMPLATE_OFFSET = "print-pdf-template-offset";
 
         public static final String INPUT_FILTER_ID = "input-filter-id";
-        public static final String PROXIED_SERVICES = "proxied-services";
     }
 
     public static final class Inputs {
@@ -41,9 +40,7 @@ public final class Constants {
         public static final String DATABASE = "database";
     }
 
-    public static final class Packages extends ru.clevertec.checksystem.core.Constants.Packages {
-        public static final class CLI {
-            public static final String ROOT = Packages.ROOT + ".cli";
-        }
+    public static final class ExceptionMessages {
+
     }
 }

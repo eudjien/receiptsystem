@@ -31,7 +31,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `_receipt_item__receipt_item_discount` WRITE;
 /*!40000 ALTER TABLE `_receipt_item__receipt_item_discount` DISABLE KEYS */;
-INSERT INTO `_receipt_item__receipt_item_discount` VALUES (5,7),(21,22),(24,25),(31,33),(58,59),(60,61);
+INSERT INTO `_receipt_item__receipt_item_discount` VALUES (11,13),(18,20),(21,22),(26,27),(48,49),(50,51);
 /*!40000 ALTER TABLE `_receipt_item__receipt_item_discount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71,7 +71,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (4,'Картошка',7.50),(6,'Помидоры',3.91),(9,'Макароны',8.50),(11,'Сало',10.00),(13,'Кукуруза',20.00),(15,'Пельмени',12.48),(19,'Яблоки',8.70),(27,'Рис',20.00),(30,'Апельсины',30.50),(32,'Чай',3.51),(37,'Рыба',50.20),(39,'Кофе',3.50),(43,'Колбаса',20.00),(48,'Монитор',155.50),(50,'HDD',25.50),(55,'Мышка',30.00),(57,'Печенье',2.10),(62,'Конфеты',5.60),(63,'Клавиатура',30.00),(64,'SSD',50.00);
+INSERT INTO `products` VALUES (4,'Пельмени',12.48),(6,'Картошка',7.50),(8,'Кукуруза',20.00),(10,'Сало',10.00),(12,'Помидоры',3.91),(15,'Макароны',8.50),(19,'Чай',3.51),(25,'Рис',20.00),(30,'Апельсины',30.50),(32,'Яблоки',8.70),(39,'Колбаса',20.00),(41,'Кофе',3.50),(43,'Рыба',50.20),(54,'Печенье',2.10),(57,'Монитор',155.50),(59,'Мышка',30.00),(61,'HDD',25.50),(62,'Конфеты',5.60),(63,'Клавиатура',30.00),(64,'SSD',50.00);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,7 +91,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `receipt_item_discounts` WRITE;
 /*!40000 ALTER TABLE `receipt_item_discounts` DISABLE KEYS */;
-INSERT INTO `receipt_item_discounts` VALUES ('ThresholdPercentageReceiptItemDiscount',7,NULL,'-10% если количество продукта больше чем 5'),('ThresholdPercentageReceiptItemDiscount',22,23,'Скидка 1% если количество продуктов больше 6'),('SimpleConstantReceiptItemDiscount',23,NULL,'Скидка 10 на продукт'),('SimplePercentageReceiptItemDiscount',25,NULL,'-40%'),('SimplePercentageReceiptItemDiscount',33,NULL,'-30%'),('SimpleConstantReceiptItemDiscount',59,NULL,'-5$'),('ThresholdPercentageReceiptItemDiscount',61,NULL,'Скидка 10% если количество продуктов больше 2'),('SimplePercentageReceiptItemDiscount',73,NULL,'-50%');
+INSERT INTO `receipt_item_discounts` VALUES ('ThresholdPercentageReceiptItemDiscount',13,NULL,'-10% если количество продукта больше чем 5'),('SimplePercentageReceiptItemDiscount',20,NULL,'-30%'),('ThresholdPercentageReceiptItemDiscount',22,23,'Скидка 1% если количество продуктов больше 6'),('SimpleConstantReceiptItemDiscount',23,NULL,'Скидка 10 на продукт'),('SimplePercentageReceiptItemDiscount',27,NULL,'-40%'),('SimpleConstantReceiptItemDiscount',49,NULL,'-5$'),('ThresholdPercentageReceiptItemDiscount',51,NULL,'Скидка 10% если количество продуктов больше 2'),('SimplePercentageReceiptItemDiscount',73,NULL,'-50%');
 /*!40000 ALTER TABLE `receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -101,7 +101,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `receipt_items` WRITE;
 /*!40000 ALTER TABLE `receipt_items` DISABLE KEYS */;
-INSERT INTO `receipt_items` VALUES (3,4,1,1),(5,6,8,1),(8,9,2,1),(10,11,9,1),(12,13,1,1),(14,15,3,1),(18,19,8,16),(20,4,10,16),(21,6,8,16),(24,9,7,16),(26,27,6,16),(28,11,9,16),(29,30,5,16),(31,32,8,16),(36,37,3,34),(38,39,6,34),(40,19,11,34),(41,6,15,34),(42,43,1,34),(44,13,1,34),(47,48,3,45),(49,50,6,45),(51,30,3,45),(52,27,1,45),(53,9,1,45),(54,55,11,45),(56,57,6,45),(58,32,15,45),(60,11,15,45);
+INSERT INTO `receipt_items` VALUES (3,4,3,1),(5,6,1,1),(7,8,1,1),(9,10,9,1),(11,12,8,1),(14,15,2,1),(18,19,8,16),(21,12,8,16),(24,25,6,16),(26,15,7,16),(28,10,9,16),(29,30,5,16),(31,32,8,16),(33,6,10,16),(36,8,1,34),(37,32,11,34),(38,39,1,34),(40,41,6,34),(42,43,3,34),(44,12,15,34),(47,25,1,45),(48,19,15,45),(50,10,15,45),(52,30,3,45),(53,54,6,45),(55,15,1,45),(56,57,3,45),(58,59,11,45),(60,61,6,45);
 /*!40000 ALTER TABLE `receipt_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,7 +111,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `receipts` WRITE;
 /*!40000 ALTER TABLE `receipts` DISABLE KEYS */;
-INSERT INTO `receipts` VALUES (1,'ул. Пушкина, д. Калатушкина','Василий Пупкин','2021-03-12 16:48:35.614000','Компьютерный магазин','999 проблем','+375290000000'),(16,'ул. Элементова, д. 1','Екатерина Пупкина','2021-03-12 16:48:35.636000','Гипермаркет','342 элемент','+375290000001'),(34,'ул. Советская, д. 1001','Алексей Пупкин','2021-03-12 16:48:35.636000','Продуктовый магазин','Магазин №1','+375290000002'),(45,'ул. Свиридова, д. 1234','Татьяна Пупкина','2021-03-12 16:48:35.636000','Продуктовый магазин','Магазин №2','+375290000003');
+INSERT INTO `receipts` VALUES (1,'ул. Пушкина, д. Калатушкина','Василий Пупкин','2021-03-20 21:30:43.303000','Компьютерный магазин','999 проблем','+375290000000'),(16,'ул. Элементова, д. 1','Екатерина Пупкина','2021-03-20 21:30:43.313000','Гипермаркет','342 элемент','+375290000001'),(34,'ул. Советская, д. 1001','Алексей Пупкин','2021-03-20 21:30:43.314000','Продуктовый магазин','Магазин №1','+375290000002'),(45,'ул. Свиридова, д. 1234','Татьяна Пупкина','2021-03-20 21:30:43.314000','Продуктовый магазин','Магазин №2','+375290000003');
 /*!40000 ALTER TABLE `receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,7 +131,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `simple_constant_receipt_item_discounts` WRITE;
 /*!40000 ALTER TABLE `simple_constant_receipt_item_discounts` DISABLE KEYS */;
-INSERT INTO `simple_constant_receipt_item_discounts` VALUES (10.00,23),(5.00,59);
+INSERT INTO `simple_constant_receipt_item_discounts` VALUES (10.00,23),(5.00,49);
 /*!40000 ALTER TABLE `simple_constant_receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +151,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `simple_percentage_receipt_item_discounts` WRITE;
 /*!40000 ALTER TABLE `simple_percentage_receipt_item_discounts` DISABLE KEYS */;
-INSERT INTO `simple_percentage_receipt_item_discounts` VALUES (40,25),(30,33),(50,73);
+INSERT INTO `simple_percentage_receipt_item_discounts` VALUES (30,20),(40,27),(50,73);
 /*!40000 ALTER TABLE `simple_percentage_receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `threshold_percentage_receipt_item_discounts` WRITE;
 /*!40000 ALTER TABLE `threshold_percentage_receipt_item_discounts` DISABLE KEYS */;
-INSERT INTO `threshold_percentage_receipt_item_discounts` VALUES (10,5,7),(1,6,22),(10,2,61);
+INSERT INTO `threshold_percentage_receipt_item_discounts` VALUES (10,5,13),(1,6,22),(10,2,51);
 /*!40000 ALTER TABLE `threshold_percentage_receipt_item_discounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -182,4 +182,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-12 18:39:32
+-- Dump completed on 2021-03-20 21:37:54

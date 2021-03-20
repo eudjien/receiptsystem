@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import ru.clevertec.checksystem.cli.application.Application;
+import ru.clevertec.checksystem.core.constant.Formats;
 import ru.clevertec.checksystem.core.data.DataSeed;
 
 import java.nio.file.Path;
@@ -15,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.clevertec.checksystem.cli.Constants.Inputs;
 import static ru.clevertec.checksystem.cli.Constants.Keys;
-import static ru.clevertec.checksystem.core.Constants.Formats;
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = ConsoleTestConfiguration.class)

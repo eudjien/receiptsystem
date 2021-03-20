@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
 import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
+import ru.clevertec.checksystem.webuiservlet.constant.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,11 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.*;
-
 @Component
 @WebServlet(
-        name = ServletNames.HOME_SERVLET,
+        name = Servlets.HOME_SERVLET,
         urlPatterns = UrlPatterns.HOME_PATTERN
 )
 public class HomeServlet extends ApplicationServlet {
@@ -36,7 +35,7 @@ public class HomeServlet extends ApplicationServlet {
                 ? req.getParameter(Parameters.SOURCE_PARAMETER)
                 : Sources.DATABASE;
 
-        var receipts = new ReceiptDataSource(receiptRepository, req.getSession(), Sessions.RECEIPTS_SESSION)
+        var receipts = new ReceiptDataSource(receiptRepository, req.getSession())
                 .findAll(source);
 
         req.setAttribute(Attributes.RECEIPTS_ATTRIBUTE, receipts);

@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IReceiptItemBuilder;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.common.receipt.IReceiptComposable;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.Product;
 import ru.clevertec.checksystem.core.entity.discount.receiptitem.ReceiptItemDiscount;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.custom.json.StringifyIgnore;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -18,14 +18,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-
 @Entity
 @Table(
-        name = Entities.Mapping.Table.RECEIPT_ITEMS,
+        name = Entities.Table.RECEIPT_ITEMS,
         indexes = @Index(columnList =
-                Entities.Mapping.JoinColumn.PRODUCT_ID + "," +
-                        Entities.Mapping.JoinColumn.RECEIPT_ID,
+                Entities.JoinColumn.PRODUCT_ID + "," +
+                        Entities.JoinColumn.RECEIPT_ID,
                 unique = true)
 )
 public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItemDiscount>, IReceiptComposable {
@@ -34,32 +32,32 @@ public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItem
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
-            name = Entities.Mapping.Table.RECEIPT_ITEM__RECEIPT_ITEM_DISCOUNT,
+            name = Entities.Table.RECEIPT_ITEM__RECEIPT_ITEM_DISCOUNT,
             joinColumns = @JoinColumn(
-                    name = Entities.Mapping.JoinColumn.RECEIPT_ITEM_ID,
-                    referencedColumnName = Entities.Mapping.Column.ID),
+                    name = Entities.JoinColumn.RECEIPT_ITEM_ID,
+                    referencedColumnName = Entities.Column.ID),
             inverseJoinColumns = @JoinColumn(
-                    name = Entities.Mapping.JoinColumn.RECEIPT_ITEM_DISCOUNT_ID,
-                    referencedColumnName = Entities.Mapping.Column.ID)
+                    name = Entities.JoinColumn.RECEIPT_ITEM_DISCOUNT_ID,
+                    referencedColumnName = Entities.Column.ID)
     )
     private final Set<ReceiptItemDiscount> discounts = new HashSet<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = Entities.Mapping.JoinColumn.PRODUCT_ID)
+    @JoinColumn(name = Entities.JoinColumn.PRODUCT_ID)
     private Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = Entities.Mapping.JoinColumn.RECEIPT_ID)
+    @JoinColumn(name = Entities.JoinColumn.RECEIPT_ID)
     @JsonIgnore
     private Receipt receipt;
 
-    @Column(name = Entities.Mapping.Column.QUANTITY, nullable = false)
+    @Column(name = Entities.Column.QUANTITY, nullable = false)
     private Long quantity = 0L;
 
-    @Column(name = Entities.Mapping.JoinColumn.PRODUCT_ID, insertable = false, updatable = false)
+    @Column(name = Entities.JoinColumn.PRODUCT_ID, insertable = false, updatable = false)
     private Long productId;
 
-    @Column(name = Entities.Mapping.JoinColumn.RECEIPT_ID, insertable = false, updatable = false)
+    @Column(name = Entities.JoinColumn.RECEIPT_ID, insertable = false, updatable = false)
     private Long receiptId;
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -162,7 +160,7 @@ public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItem
 
     @Override
     public void addDiscount(ReceiptItemDiscount receiptItemDiscount) {
-        ThrowUtils.Argument.nullValue("receiptItemDiscounts", receiptItemDiscount);
+        ThrowUtils.Argument.nullValue("receiptItemDiscount", receiptItemDiscount);
         getDiscounts().add(receiptItemDiscount);
         receiptItemDiscount.getReceiptItems().add(this);
     }
@@ -191,7 +189,6 @@ public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItem
         getDiscounts().clear();
     }
 
-    @StringifyIgnore
     @Override
     public Receipt getReceipt() {
         return receipt;

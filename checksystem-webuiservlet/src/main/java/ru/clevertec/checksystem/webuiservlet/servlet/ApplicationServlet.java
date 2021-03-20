@@ -1,16 +1,18 @@
 package ru.clevertec.checksystem.webuiservlet.servlet;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.clevertec.checksystem.webuiservlet.Authentication;
-import ru.clevertec.checksystem.webuiservlet.ParameterVerifier;
+import ru.clevertec.checksystem.webuiservlet.constant.Sessions;
+import ru.clevertec.checksystem.webuiservlet.validation.ParameterValidatorFactory;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.Sessions;
 
 public abstract class ApplicationServlet extends HttpServlet {
 
-    private final static ParameterVerifier parameterVerifier = new ParameterVerifier();
+    private ParameterValidatorFactory parameterValidatorFactory;
 
     protected Authentication authentication(HttpServletRequest request) {
         return (Authentication) request.getSession().getAttribute(Sessions.AUTHENTICATION_SESSION);
@@ -24,19 +26,13 @@ public abstract class ApplicationServlet extends HttpServlet {
         request.getSession().setAttribute(Sessions.AUTHENTICATION_SESSION, Authentication.Anonymous());
     }
 
-    protected void verifyForRequired(HttpServletRequest request, String... parameterNames) {
-        parameterVerifier.verifyForRequired(request, parameterNames);
+    protected void validate(HttpServletRequest req, String... parameterNames) {
+        for (var parameterName : parameterNames)
+            parameterValidatorFactory.instance(parameterName).validate(req.getParameterMap());
     }
 
-    protected void verifyForSuitable(HttpServletRequest request, String... parameterNames) {
-        parameterVerifier.verifyForSuitable(request, parameterNames);
-    }
-
-    protected void isKnownParameter(String parameterName) {
-        parameterVerifier.verifyForKnown(parameterName);
-    }
-
-    protected void verifyForKnownAndSuitable(String parameterName, String parameterValue) {
-        parameterVerifier.verifyForKnownAndSuitable(parameterName, parameterValue);
+    @Autowired
+    public void setParameterValidatorFactory(ParameterValidatorFactory parameterValidatorFactory) {
+        this.parameterValidatorFactory = parameterValidatorFactory;
     }
 }

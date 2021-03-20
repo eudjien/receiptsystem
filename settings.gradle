@@ -9,5 +9,4 @@ rootProject.name = 'checksystem'
 
 include 'checksystem-core'
 include 'checksystem-cli'
-include 'checksystem-webapi'
 include 'checksystem-webuiservlet'

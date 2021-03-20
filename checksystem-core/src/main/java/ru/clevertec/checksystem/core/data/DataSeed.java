@@ -16,10 +16,10 @@ import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.event.EventType;
 import ru.clevertec.checksystem.core.repository.*;
-import ru.clevertec.custom.list.SinglyLinkedList;
 
 import javax.mail.internet.AddressException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -66,7 +66,7 @@ public final class DataSeed {
 
     public static Collection<Product> products() {
         if (products == null) {
-            products = new SinglyLinkedList<>();
+            products = new ArrayList<>();
 
             products.add(new Product.Builder()
                     .setName("Пельмени")
@@ -178,7 +178,7 @@ public final class DataSeed {
         var receiptItemDiscounts = receiptItemDiscounts().toArray(ReceiptItemDiscount[]::new);
 
         if (receipts == null) {
-            receipts = new SinglyLinkedList<>();
+            receipts = new ArrayList<>();
 
             var products = products().toArray(Product[]::new);
 
@@ -193,7 +193,7 @@ public final class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            var receiptItems = new SinglyLinkedList<ReceiptItem>();
+            var receiptItems = new ArrayList<ReceiptItem>();
 
             receiptItems.add(new ReceiptItem.Builder()
                     .setProduct(products[0])
@@ -241,7 +241,7 @@ public final class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            receiptItems = new SinglyLinkedList<>();
+            receiptItems = new ArrayList<>();
 
             receiptItems.add(new ReceiptItem.Builder()
 
@@ -301,7 +301,7 @@ public final class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            receiptItems = new SinglyLinkedList<>();
+            receiptItems = new ArrayList<>();
 
             receiptItems.add(new ReceiptItem.Builder()
                     .setProduct(products[2])
@@ -347,7 +347,7 @@ public final class DataSeed {
                     .setDate(new Date())
                     .build();
 
-            receiptItems = new SinglyLinkedList<>();
+            receiptItems = new ArrayList<>();
 
             receiptItems.add(new ReceiptItem.Builder()
                     .setProduct(products[3])
@@ -407,7 +407,7 @@ public final class DataSeed {
     public static Collection<ReceiptDiscount> receiptDiscounts() {
 
         if (receiptDiscounts == null) {
-            receiptDiscounts = new SinglyLinkedList<>();
+            receiptDiscounts = new ArrayList<>();
 
             receiptDiscounts.add(new SimplePercentageReceiptDiscount.Builder()
                     .setPercent(30D)
@@ -473,7 +473,7 @@ public final class DataSeed {
     public static Collection<ReceiptItemDiscount> receiptItemDiscounts() {
 
         if (receiptItemDiscounts == null) {
-            receiptItemDiscounts = new SinglyLinkedList<>();
+            receiptItemDiscounts = new ArrayList<>();
 
             receiptItemDiscounts.add(new SimpleConstantReceiptItemDiscount.Builder()
                     .setConstant(BigDecimal.valueOf(5))
@@ -525,7 +525,7 @@ public final class DataSeed {
     public static Collection<Email> emails() {
         if (emails == null) {
             try {
-                emails = new SinglyLinkedList<>();
+                emails = new ArrayList<>();
                 emails.add(new Email("lakadmakatag@gmail.com"));
                 emails.add(new Email("chcksstm1@gmail.com"));
 
@@ -538,7 +538,7 @@ public final class DataSeed {
 
     public static Collection<EventEmail> eventEmails() {
         if (eventEmails == null) {
-            eventEmails = new SinglyLinkedList<>();
+            eventEmails = new ArrayList<>();
             emails().forEach(email -> eventEmails.add(new EventEmail(email, EventType.PrintEnd)));
         }
         return eventEmails;

@@ -2,8 +2,8 @@ package ru.clevertec.checksystem.core.data.generate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.clevertec.custom.list.SinglyLinkedList;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -16,8 +16,8 @@ public class ReceiptGenerate {
     private String cashier;
     private String phoneNumber;
     private Date date;
-    private Collection<Long> discountIds = new SinglyLinkedList<>();
-    private Collection<ReceiptItemGenerate> receiptItemGenerates = new SinglyLinkedList<>();
+    private Collection<Long> discountIds = new ArrayList<>();
+    private Collection<ReceiptItemGenerate> receiptItemGenerates = new ArrayList<>();
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public ReceiptGenerate() {
@@ -118,7 +118,7 @@ public class ReceiptGenerate {
     }
 
     public void setDiscountIds(Collection<Long> discountIds) {
-        this.discountIds = discountIds != null ? discountIds : new SinglyLinkedList<>();
+        this.discountIds = discountIds != null ? discountIds : new ArrayList<>();
     }
 
     public Collection<ReceiptItemGenerate> getReceiptItemGenerates() {
@@ -126,6 +126,6 @@ public class ReceiptGenerate {
     }
 
     public void setReceiptItems(Collection<ReceiptItemGenerate> receiptItemGenerates) {
-        this.receiptItemGenerates = receiptItemGenerates != null ? receiptItemGenerates : new SinglyLinkedList<>();
+        this.receiptItemGenerates = receiptItemGenerates != null ? receiptItemGenerates : new ArrayList<>();
     }
 }

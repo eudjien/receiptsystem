@@ -4,35 +4,38 @@ import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
-import ru.clevertec.checksystem.core.util.CollectionUtils;
-import ru.clevertec.custom.list.SinglyLinkedList;
+import ru.clevertec.checksystem.webuiservlet.constant.Sessions;
+import ru.clevertec.checksystem.webuiservlet.constant.Sources;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ReceiptDataSource {
 
     private final HttpSession httpSession;
     private final ReceiptRepository receiptRepository;
-    private final String sessionName;
 
-    public ReceiptDataSource(ReceiptRepository receiptRepository, HttpSession httpSession, String sessionName) {
+    public ReceiptDataSource(ReceiptRepository receiptRepository, HttpSession httpSession) {
         this.receiptRepository = receiptRepository;
         this.httpSession = httpSession;
-        this.sessionName = sessionName;
     }
 
     @SuppressWarnings("unchecked")
     public Collection<Receipt> findAll(String source) {
 
-        var list = new SinglyLinkedList<Receipt>();
+        var list = new ArrayList<Receipt>();
 
         switch (source) {
-            case Constants.Sources.DATABASE -> list.addAll(CollectionUtils.asList(receiptRepository.findAll()));
-            case Constants.Sources.FILE -> {
-                var receipts = httpSession.getAttribute(sessionName);
+            case Sources.DATABASE -> list.addAll(
+                    StreamSupport.stream(receiptRepository.findAll().spliterator(), true)
+                            .collect(Collectors.toList())
+            );
+            case Sources.FILE -> {
+                var receipts = httpSession.getAttribute(Sessions.RECEIPTS_SESSION);
                 if (receipts != null)
                     list.addAll((Collection<Receipt>) receipts);
             }
@@ -45,10 +48,11 @@ public class ReceiptDataSource {
     @SuppressWarnings("unchecked")
     public Collection<Receipt> findAllById(String source, Collection<Long> ids) {
         switch (source) {
-            case Constants.Sources.DATABASE:
-                return CollectionUtils.asList(receiptRepository.findAllById(ids));
-            case Constants.Sources.FILE:
-                var checksObj = httpSession.getAttribute(sessionName);
+            case Sources.DATABASE:
+                return StreamSupport.stream(receiptRepository.findAllById(ids).spliterator(), true)
+                        .collect(Collectors.toList());
+            case Sources.FILE:
+                var checksObj = httpSession.getAttribute(Sessions.RECEIPTS_SESSION);
                 if (checksObj != null) {
                     var receipts = ((Collection<Receipt>) checksObj);
                     return ids.stream()
@@ -56,7 +60,7 @@ public class ReceiptDataSource {
                             .sorted(Comparator.comparing(BaseEntity::getId))
                             .collect(Collectors.toList());
                 }
-                return new SinglyLinkedList<>();
+                return new ArrayList<>();
             default:
                 throw new ArgumentNotSupportedException("source");
         }

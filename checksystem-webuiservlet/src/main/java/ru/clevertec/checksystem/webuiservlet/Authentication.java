@@ -1,5 +1,6 @@
 package ru.clevertec.checksystem.webuiservlet;
 
+
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 public class Authentication {

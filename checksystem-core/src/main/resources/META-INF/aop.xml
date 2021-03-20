@@ -1,11 +1,11 @@
 <!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
 <aspectj>
     <weaver options="-Xset:weaveJavaxPackages=true">
-        <exclude within="ru.clevertec.checksystem.core.aspects..*"/>
+        <exclude within="ru.clevertec.checksystem.core.aspect..*"/>
         <include within="ru.clevertec.checksystem..*"/>
     </weaver>
     <aspects>
-<!--        <aspect name="ru.clevertec.checksystem.core.aspects.ExecutionLoggingAspect"/>-->
-        <aspect name="ru.clevertec.checksystem.core.aspects.SubscribingAspect"/>
+        <aspect name="ru.clevertec.checksystem.core.aspect.ExecutionLoggingAspect"/>
+        <aspect name="ru.clevertec.checksystem.core.aspect.SubscribingAspect"/>
     </aspects>
 </aspectj>

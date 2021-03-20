@@ -7,7 +7,7 @@ import java.io.OutputStream;
 public interface IPrintable {
     byte[] print() throws IOException;
 
-    void print(OutputStream outputStream) throws IOException;
+    void print(OutputStream os) throws IOException;
 
     void print(File destinationFile) throws IOException;
 }

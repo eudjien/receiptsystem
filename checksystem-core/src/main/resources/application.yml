@@ -1,0 +1,28 @@
+spring:
+  main:
+    banner_mode: off
+  jpa:
+    generate-ddl: true
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/checksystem
+    username: root
+    password: root
+    driverClassName: com.mysql.cj.jdbc.Driver
+  mail:
+    protocol: smtp
+    host: smtp.gmail.com
+    port: 465
+    username: lakadmakatag@gmail.com
+    password: clevertec
+    properties:
+      "[mail.smtp.auth]": true
+      "[mail.smtp.ssl.enable]": true
+      "[mail.smtp.connectiontimeout]": 5000
+      "[mail.smtp.timeout]": 3000
+      "[mail.smtp.writetimeout]": 5000

@@ -1,23 +1,22 @@
 package ru.clevertec.checksystem.core.entity.discount;
 
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.persistence.*;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-
 @MappedSuperclass
 public abstract class AbstractDiscount<T extends AbstractDiscount<T>> extends BaseEntity {
 
-    @Column(name = Entities.Mapping.Column.DESCRIPTION, nullable = false)
+    @Column(name = Entities.Column.DESCRIPTION, nullable = false)
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = Entities.Mapping.JoinColumn.DEPENDENT_DISCOUNT_ID)
+    @JoinColumn(name = Entities.JoinColumn.DEPENDENT_DISCOUNT_ID)
     private T dependentDiscount;
 
-    @Column(name = Entities.Mapping.JoinColumn.DEPENDENT_DISCOUNT_ID, insertable = false, updatable = false)
+    @Column(name = Entities.JoinColumn.DEPENDENT_DISCOUNT_ID, insertable = false, updatable = false)
     private Long dependentDiscountId;
 
     protected AbstractDiscount() {

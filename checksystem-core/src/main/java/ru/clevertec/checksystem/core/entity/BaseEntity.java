@@ -1,15 +1,15 @@
 package ru.clevertec.checksystem.core.entity;
 
-import javax.persistence.*;
+import ru.clevertec.checksystem.core.constant.Entities;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
+import javax.persistence.*;
 
 @MappedSuperclass
 public abstract class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = Entities.Mapping.Column.ID)
+    @Column(name = Entities.Column.ID)
     private Long id;
 
     public BaseEntity() {

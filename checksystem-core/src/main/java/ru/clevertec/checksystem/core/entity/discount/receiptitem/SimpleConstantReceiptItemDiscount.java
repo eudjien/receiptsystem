@@ -3,6 +3,7 @@ package ru.clevertec.checksystem.core.entity.discount.receiptitem;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.receiptitem.IConstantReceiptItemDiscountBuilder;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 
 import javax.persistence.DiscriminatorValue;
@@ -11,11 +12,10 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
 
 @Entity
-@Table(name = Entities.Mapping.Table.SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT)
-@DiscriminatorValue("SimpleConstantReceiptItemDiscount")
+@Table(name = Entities.Table.SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT)
+@DiscriminatorValue(Entities.DiscriminatorValues.SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT)
 public final class SimpleConstantReceiptItemDiscount extends ConstantReceiptItemDiscount {
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)

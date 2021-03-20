@@ -3,6 +3,7 @@ package ru.clevertec.checksystem.core.entity.discount.receiptitem;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.receiptitem.IThresholdPercentageReceiptItemDiscountBuilder;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
@@ -14,16 +15,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-
 @Entity
-@Table(name = Entities.Mapping.Table.THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT)
-@DiscriminatorValue("ThresholdPercentageReceiptItemDiscount")
+@Table(name = Entities.Table.THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT)
+@DiscriminatorValue(Entities.DiscriminatorValues.THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT)
 public final class ThresholdPercentageReceiptItemDiscount extends PercentageReceiptItemDiscount {
 
     private static final int MIN_THRESHOLD = 1;
 
-    @Column(name = Entities.Mapping.Column.THRESHOLD, nullable = false)
+    @Column(name = Entities.Column.THRESHOLD, nullable = false)
     private Long threshold = 0L;
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)

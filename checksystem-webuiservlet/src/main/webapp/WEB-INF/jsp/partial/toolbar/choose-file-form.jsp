@@ -1,4 +1,4 @@
-<%@ page import="ru.clevertec.checksystem.webuiservlet.Constants.*" %>
+<%@ page import="ru.clevertec.checksystem.webuiservlet.constant.UrlPatterns" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <form class="d-flex m-0" method="post" enctype="multipart/form-data"

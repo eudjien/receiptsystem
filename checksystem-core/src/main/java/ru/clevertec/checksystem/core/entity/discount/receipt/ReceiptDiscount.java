@@ -3,10 +3,10 @@ package ru.clevertec.checksystem.core.entity.discount.receipt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.clevertec.checksystem.core.common.receipt.IReceiptAggregable;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.discount.AbstractDiscount;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.custom.json.StringifyIgnore;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,12 +14,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = Entities.Mapping.Table.RECEIPT_DISCOUNTS)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 124)
+@Table(name = Entities.Table.RECEIPT_DISCOUNTS)
+@DiscriminatorColumn(name = Entities.DiscriminatorNames.RECEIPT_DISCOUNT, discriminatorType = DiscriminatorType.STRING, length = 124)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class ReceiptDiscount extends AbstractDiscount<ReceiptDiscount> implements IReceiptAggregable {
 
@@ -38,7 +36,6 @@ public abstract class ReceiptDiscount extends AbstractDiscount<ReceiptDiscount> 
         super(description, dependentDiscount);
     }
 
-    @StringifyIgnore
     @Override
     public Collection<Receipt> getReceipts() {
         return receipts;

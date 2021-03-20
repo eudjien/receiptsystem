@@ -1,9 +1,8 @@
 package ru.clevertec.checksystem.core.io.write;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.common.io.write.IReceiptGenerateWriter;
-import ru.clevertec.checksystem.core.configuration.ApplicationJsonMapper;
 import ru.clevertec.checksystem.core.data.generate.ReceiptGenerate;
 
 import java.io.File;
@@ -15,26 +14,26 @@ import java.util.Collection;
 @Component
 public class JsonReceiptGenerateWriter implements IReceiptGenerateWriter {
 
-    private final ApplicationJsonMapper jsonMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public JsonReceiptGenerateWriter(ApplicationJsonMapper jsonMapper) {
-        this.jsonMapper = jsonMapper;
+    public JsonReceiptGenerateWriter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Override
-    public byte[] write(Collection<ReceiptGenerate> checks) throws IOException {
-        return jsonMapper.writeValueAsBytes(checks);
+    public byte[] write(Collection<ReceiptGenerate> receiptGenerates) throws IOException {
+        return objectMapper.writeValueAsBytes(receiptGenerates);
     }
 
     @Override
-    public void write(Collection<ReceiptGenerate> checks, OutputStream outputStream) throws IOException {
-        jsonMapper.writeValue(outputStream, checks);
+    public void write(Collection<ReceiptGenerate> receiptGenerates, OutputStream os) throws IOException {
+        objectMapper.writeValue(os, receiptGenerates);
     }
 
     @Override
-    public void write(Collection<ReceiptGenerate> checks, File destinationFile) throws IOException {
+    public void write(Collection<ReceiptGenerate> receiptGenerates, File destinationFile) throws IOException {
         Files.createDirectories(destinationFile.toPath().getParent());
-        jsonMapper.writeValue(destinationFile, checks);
+        objectMapper.writeValue(destinationFile, receiptGenerates);
     }
 }

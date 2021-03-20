@@ -7,6 +7,6 @@ task cleanTemplateResources(type: Delete) {
     followSymlinks = true
 }
 
-clean {
-    dependsOn(cleanTemplateResources)
+clean.doLast {
+    cleanTemplateResources
 }

@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.annotation.subscribe;
 
-import ru.clevertec.checksystem.core.common.event.IEventListener;
+import ru.clevertec.checksystem.core.event.IEventListener;
 
 import java.lang.annotation.*;
 

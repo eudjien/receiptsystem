@@ -280,4 +280,4 @@ CREATE TABLE `threshold_percentage_receipt_item_discounts` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-12 18:40:50
+-- Dump completed on 2021-03-20 21:37:20

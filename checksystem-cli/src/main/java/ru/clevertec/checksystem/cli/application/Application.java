@@ -4,24 +4,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.cli.argument.ArgumentsFinder;
+import ru.clevertec.checksystem.cli.argument.ArgumentFinder;
 import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
-import ru.clevertec.checksystem.cli.exception.ArgumentNotExistException;
-import ru.clevertec.checksystem.cli.exception.ArgumentNotSupportValueException;
-import ru.clevertec.checksystem.cli.task.*;
-import ru.clevertec.checksystem.core.ProxyIdentifier;
+import ru.clevertec.checksystem.cli.task.input.DeserializeFromFile;
+import ru.clevertec.checksystem.cli.task.input.DeserializeFromGenerateFile;
+import ru.clevertec.checksystem.cli.task.input.LoadFromDatabase;
+import ru.clevertec.checksystem.cli.task.output.PrintToFile;
+import ru.clevertec.checksystem.cli.task.output.SerializeToFile;
+import ru.clevertec.checksystem.cli.task.output.SerializeToGenerateFile;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
-import ru.clevertec.checksystem.core.factory.service.ServiceFactory;
-import ru.clevertec.custom.list.SynchronizedSinglyLinkedList;
+import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
+import ru.clevertec.checksystem.core.repository.ReceiptRepository;
+import ru.clevertec.checksystem.core.service.IIoReceiptService;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static ru.clevertec.checksystem.cli.Constants.Inputs;
 import static ru.clevertec.checksystem.cli.Constants.Keys;
@@ -34,11 +34,14 @@ public final class Application implements Callable<ApplicationResult> {
     private static final Map<String, String> startMap = new HashMap<>();
     private static final Map<String, String> errorsMap = new HashMap<>();
 
-    private final ArgumentsFinder argumentsFinder;
-    private final ServiceFactory serviceFactory;
+    private final IIoReceiptService ioReceiptService;
+
+    private final ReceiptRepository receiptRepository;
+
+    private final ArgumentFinder argumentFinder;
     private final ReceiptIdFilter receiptIdFilter;
 
-    private final List<Receipt> receipts = new SynchronizedSinglyLinkedList<>();
+    private final List<Receipt> receipts = new CopyOnWriteArrayList<>();
 
     static {
         startMap.put(Keys.SERIALIZE, "Serializing to a file...");
@@ -54,13 +57,14 @@ public final class Application implements Callable<ApplicationResult> {
 
     @Autowired
     public Application(
-            ArgumentsFinder argumentsFinder,
-            ServiceFactory serviceFactory,
+            IIoReceiptService ioReceiptService,
+            ReceiptRepository receiptRepository,
+            ArgumentFinder argumentFinder,
             ReceiptIdFilter receiptIdFilter) {
-        this.argumentsFinder = argumentsFinder;
-        this.serviceFactory = serviceFactory;
+        this.ioReceiptService = ioReceiptService;
+        this.receiptRepository = receiptRepository;
+        this.argumentFinder = argumentFinder;
         this.receiptIdFilter = receiptIdFilter;
-        ProxyIdentifier.setProxied(argumentsFinder.firstBoolOrDefault(Keys.PROXIED_SERVICES));
     }
 
     @Override
@@ -80,14 +84,14 @@ public final class Application implements Callable<ApplicationResult> {
         var executeResultBuilder = new ApplicationResult.Builder();
 
         try {
-            var inputType = argumentsFinder.firstStringOrThrow(Keys.INPUT);
+            var inputType = argumentFinder.firstStringOrThrow(Keys.INPUT);
 
             var inputCallableEntry = selectCallable(inputType);
             var future = Executors.newSingleThreadExecutor().submit(inputCallableEntry.getValue());
 
             futureResult(inputCallableEntry.getKey(), future, executeResultBuilder);
 
-        } catch (ArgumentNotExistException | ArgumentNotSupportValueException e) {
+        } catch (Throwable e) {
             logger.error(e.getMessage());
             executeResultBuilder.addError(e, e.getMessage());
         }
@@ -102,18 +106,18 @@ public final class Application implements Callable<ApplicationResult> {
         var executor = Executors.newCachedThreadPool();
         var futuresMap = new HashMap<String, Future<Void>>();
 
-        if (argumentsFinder.firstBoolOrDefault(Keys.SERIALIZE)) {
-            futuresMap.put(Keys.SERIALIZE, executor.submit(new SerializeToFile(argumentsFinder, serviceFactory, receipts)));
+        if (argumentFinder.firstBoolOrDefault(Keys.SERIALIZE)) {
+            futuresMap.put(Keys.SERIALIZE, executor.submit(new SerializeToFile(argumentFinder, ioReceiptService, receipts)));
             logger.info(startMap.get(Keys.SERIALIZE));
         }
 
-        if (argumentsFinder.firstBoolOrDefault(Keys.PRINT)) {
-            futuresMap.put(Keys.PRINT, executor.submit(new PrintToFile(argumentsFinder, serviceFactory, receipts)));
+        if (argumentFinder.firstBoolOrDefault(Keys.PRINT)) {
+            futuresMap.put(Keys.PRINT, executor.submit(new PrintToFile(argumentFinder, ioReceiptService, receipts)));
             logger.info(startMap.get(Keys.PRINT));
         }
 
-        if (argumentsFinder.firstBoolOrDefault(Keys.GENERATE_SERIALIZE)) {
-            futuresMap.put(Keys.GENERATE_SERIALIZE, executor.submit(new SerializeToGenerateFile(argumentsFinder, serviceFactory, receipts)));
+        if (argumentFinder.firstBoolOrDefault(Keys.GENERATE_SERIALIZE)) {
+            futuresMap.put(Keys.GENERATE_SERIALIZE, executor.submit(new SerializeToGenerateFile(argumentFinder, ioReceiptService, receipts)));
             logger.info(startMap.get(Keys.GENERATE_SERIALIZE));
         }
 
@@ -123,18 +127,18 @@ public final class Application implements Callable<ApplicationResult> {
         return executeResultBuilder.build();
     }
 
-    private Map.Entry<String, Callable<Void>> selectCallable(String inputType) throws ArgumentNotSupportValueException {
+    private Map.Entry<String, Callable<Void>> selectCallable(String inputType) {
         return switch (inputType) {
             case Inputs.DESERIALIZE_GENERATE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DESERIALIZE_GENERATE,
-                    new DeserializeFromGenerateFile(argumentsFinder, receiptIdFilter, serviceFactory, receipts));
+                    new DeserializeFromGenerateFile(argumentFinder, receiptIdFilter, ioReceiptService, receipts));
             case Inputs.DESERIALIZE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DESERIALIZE,
-                    new DeserializeFromFile(argumentsFinder, receiptIdFilter, serviceFactory, receipts));
+                    new DeserializeFromFile(argumentFinder, receiptIdFilter, ioReceiptService, receipts));
             case Inputs.DATABASE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DATABASE,
-                    new LoadFromDatabase(argumentsFinder, receiptIdFilter, serviceFactory, receipts));
-            default -> throw new ArgumentNotSupportValueException(Keys.INPUT, inputType);
+                    new LoadFromDatabase(argumentFinder, receiptIdFilter, receiptRepository, receipts));
+            default -> throw new ArgumentNotSupportedException(Keys.INPUT, inputType);
         };
     }
 
@@ -149,11 +153,11 @@ public final class Application implements Callable<ApplicationResult> {
     }
 
     private void resetAll() {
-        argumentsFinder.clearArguments();
+        argumentFinder.clearArguments();
         receipts.clear();
     }
 
-    public ArgumentsFinder getArgumentsFinder() {
-        return argumentsFinder;
+    public ArgumentFinder getArgumentsFinder() {
+        return argumentFinder;
     }
 }

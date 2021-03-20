@@ -9,13 +9,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.clevertec.checksystem.cli.application.Application;
+import ru.clevertec.checksystem.cli.constant.Packages;
 import ru.clevertec.checksystem.core.data.DataSeed;
 
 @Profile("!test")
 @SpringBootApplication
-@ComponentScan({Constants.Packages.CORE.ROOT, Constants.Packages.CLI.ROOT})
-@EntityScan(Constants.Packages.CORE.ENTITY)
-@EnableJpaRepositories(Constants.Packages.CORE.REPOSITORY)
+@ComponentScan({Packages.CORE.ROOT, Packages.CLI.ROOT})
+@EntityScan(Packages.CORE.ENTITY)
+@EnableJpaRepositories(Packages.CORE.REPOSITORY)
 public class ConsoleApplication implements CommandLineRunner {
 
     private final Application application;
@@ -27,7 +28,6 @@ public class ConsoleApplication implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
-        //System.out.println(Arrays.stream(args).reduce((a, b) -> a + " " + b).orElse("noArgs"));
         SpringApplication.run(ConsoleApplication.class, args);
     }
 

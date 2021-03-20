@@ -1,7 +1,6 @@
 package ru.clevertec.checksystem.core.io.print;
 
-import ru.clevertec.checksystem.core.common.ILayout;
-import ru.clevertec.checksystem.core.common.IPrinter;
+import ru.clevertec.checksystem.core.io.print.layout.ILayout;
 
 public abstract class AbstractPrinter<T> implements IPrinter<T> {
 

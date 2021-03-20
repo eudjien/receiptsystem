@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IProductBuilder;
 import ru.clevertec.checksystem.core.common.receipt.IReceiptItemAggregable;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
-import ru.clevertec.custom.json.StringifyIgnore;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,19 +15,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-
 @Entity
 @Table(
-        name = Entities.Mapping.Table.PRODUCTS,
-        indexes = @Index(columnList = Entities.Mapping.Column.NAME, unique = true)
+        name = Entities.Table.PRODUCTS,
+        indexes = @Index(columnList = Entities.Column.NAME, unique = true)
 )
 public class Product extends BaseEntity implements IReceiptItemAggregable {
 
-    @Column(name = Entities.Mapping.Column.NAME, nullable = false)
+    @Column(name = Entities.Column.NAME, nullable = false)
     private String name;
 
-    @Column(name = Entities.Mapping.Column.PRICE, nullable = false)
+    @Column(name = Entities.Column.PRICE, nullable = false)
     private BigDecimal price;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
@@ -74,7 +72,6 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
         this.price = price;
     }
 
-    @StringifyIgnore
     @Override
     public Collection<ReceiptItem> getReceiptItems() {
         return receiptItems;

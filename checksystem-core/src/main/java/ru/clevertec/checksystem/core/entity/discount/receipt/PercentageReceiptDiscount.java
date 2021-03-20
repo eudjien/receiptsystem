@@ -1,6 +1,7 @@
 package ru.clevertec.checksystem.core.entity.discount.receipt;
 
 import ru.clevertec.checksystem.core.common.IPercentable;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
@@ -9,13 +10,12 @@ import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-import static ru.clevertec.checksystem.core.Constants.Percent;
+import static ru.clevertec.checksystem.core.constant.Constants.Percent;
 
 @MappedSuperclass
 public abstract class PercentageReceiptDiscount extends ReceiptDiscount implements IPercentable {
 
-    @Column(name = Entities.Mapping.Column.PERCENT, nullable = false)
+    @Column(name = Entities.Column.PERCENT, nullable = false)
     private Double percent = 0D;
 
     protected PercentageReceiptDiscount() {

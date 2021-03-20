@@ -1,5 +1,6 @@
 package ru.clevertec.checksystem.core.util;
 
+
 import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.exception.ArgumentOutOfRangeException;
 
@@ -17,6 +18,8 @@ public final class ThrowUtils {
                 = "The '%s' argument's value '%b' greater be less than %b";
         private static final String THROW_IF_LESS_THAN_FORMAT
                 = "The '%s' argument's value '%b' cannot be less than %b";
+        private static final String THROW_IF_ARGUMENT_HAS_UNSUPPORTED_VALUE_FORMAT
+                = "Argument '% s' has unsupported value";
 
         public static <T> void nullValue(String parameterName, T argument) {
             if (argument == null)

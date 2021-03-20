@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.common;
 
-import ru.clevertec.checksystem.core.common.template.ITemplate;
+import ru.clevertec.checksystem.core.template.ITemplate;
 
 public interface ITemplatable<T extends ITemplate> {
     boolean hasTemplate();

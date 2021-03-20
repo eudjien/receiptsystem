@@ -1,8 +1,5 @@
 package ru.clevertec.checksystem.core.event;
 
-import ru.clevertec.checksystem.core.common.event.IEventListener;
-import ru.clevertec.checksystem.core.common.event.ISubscription;
-
 import java.util.List;
 import java.util.Map;
 

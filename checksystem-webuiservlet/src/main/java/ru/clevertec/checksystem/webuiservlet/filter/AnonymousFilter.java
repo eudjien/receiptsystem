@@ -1,6 +1,10 @@
 package ru.clevertec.checksystem.webuiservlet.filter;
 
 import ru.clevertec.checksystem.webuiservlet.Authentication;
+import ru.clevertec.checksystem.webuiservlet.constant.Filters;
+import ru.clevertec.checksystem.webuiservlet.constant.Servlets;
+import ru.clevertec.checksystem.webuiservlet.constant.Sessions;
+import ru.clevertec.checksystem.webuiservlet.constant.UrlPatterns;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,12 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.*;
-
 @WebFilter(
-        filterName = FilterNames.ANONYMOUS_FILTER,
+        filterName = Filters.ANONYMOUS_FILTER,
         servletNames = {
-                ServletNames.LOGIN_SERVLET
+                Servlets.LOGIN_SERVLET
         }
 )
 public class AnonymousFilter extends AuthenticationFilter {

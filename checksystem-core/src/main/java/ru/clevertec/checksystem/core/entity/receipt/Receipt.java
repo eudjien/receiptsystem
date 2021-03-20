@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.IReceiptBuilder;
 import ru.clevertec.checksystem.core.common.discount.IDiscountable;
 import ru.clevertec.checksystem.core.common.receipt.IReceiptItemAggregable;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
 import ru.clevertec.checksystem.core.entity.discount.receipt.ReceiptDiscount;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
@@ -16,12 +17,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
-
 @Entity
 @Table(
-        name = Entities.Mapping.Table.RECEIPTS,
-        indexes = @Index(columnList = Entities.Mapping.Column.NAME, unique = true)
+        name = Entities.Table.RECEIPTS,
+        indexes = @Index(columnList = Entities.Column.NAME, unique = true)
 )
 public class Receipt extends BaseEntity implements IDiscountable<ReceiptDiscount>, IReceiptItemAggregable {
 
@@ -30,32 +29,32 @@ public class Receipt extends BaseEntity implements IDiscountable<ReceiptDiscount
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
-            name = Entities.Mapping.Table.RECEIPT__RECEIPT_DISCOUNT,
+            name = Entities.Table.RECEIPT__RECEIPT_DISCOUNT,
             joinColumns = @JoinColumn(
-                    name = Entities.Mapping.JoinColumn.RECEIPT_ID,
-                    referencedColumnName = Entities.Mapping.Column.ID),
+                    name = Entities.JoinColumn.RECEIPT_ID,
+                    referencedColumnName = Entities.Column.ID),
             inverseJoinColumns = @JoinColumn(
-                    name = Entities.Mapping.JoinColumn.RECEIPT_DISCOUNT_ID,
-                    referencedColumnName = Entities.Mapping.Column.ID)
+                    name = Entities.JoinColumn.RECEIPT_DISCOUNT_ID,
+                    referencedColumnName = Entities.Column.ID)
     )
     private final Set<ReceiptDiscount> discounts = new HashSet<>();
 
-    @Column(name = Entities.Mapping.Column.NAME, nullable = false)
+    @Column(name = Entities.Column.NAME, nullable = false)
     private String name;
 
-    @Column(name = Entities.Mapping.Column.DESCRIPTION, nullable = false)
+    @Column(name = Entities.Column.DESCRIPTION, nullable = false)
     private String description;
 
-    @Column(name = Entities.Mapping.Column.ADDRESS, nullable = false)
+    @Column(name = Entities.Column.ADDRESS, nullable = false)
     private String address;
 
-    @Column(name = Entities.Mapping.Column.PHONE_NUMBER)
+    @Column(name = Entities.Column.PHONE_NUMBER)
     private String phoneNumber;
 
-    @Column(name = Entities.Mapping.Column.CASHIER, nullable = false)
+    @Column(name = Entities.Column.CASHIER, nullable = false)
     private String cashier;
 
-    @Column(name = Entities.Mapping.Column.DATE, nullable = false)
+    @Column(name = Entities.Column.DATE, nullable = false)
     private Date date;
 
     //@JsonCreator(mode = JsonCreator.Mode.DISABLED)

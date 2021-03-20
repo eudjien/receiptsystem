@@ -6,12 +6,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import ru.clevertec.checksystem.cli.constant.Packages;
 
 @Profile("test")
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan({Constants.Packages.CORE.ROOT, Constants.Packages.CLI.ROOT})
-@EntityScan(Constants.Packages.CORE.ENTITY)
-@EnableJpaRepositories(Constants.Packages.CORE.REPOSITORY)
+@ComponentScan({Packages.CORE.ROOT, Packages.CLI.ROOT})
+@EntityScan(Packages.CORE.ENTITY)
+@EnableJpaRepositories(Packages.CORE.REPOSITORY)
 public class ConsoleTestConfiguration {
 }

@@ -3,6 +3,7 @@ package ru.clevertec.checksystem.core.entity.discount.receiptitem;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.clevertec.checksystem.core.common.builder.discount.receiptitem.ISimplePercentageReceiptItemDiscountBuilder;
+import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 
 import javax.persistence.DiscriminatorValue;
@@ -10,11 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Collection;
 
-import static ru.clevertec.checksystem.core.Constants.Entities;
 
 @Entity
-@Table(name = Entities.Mapping.Table.SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT)
-@DiscriminatorValue(value = "SimplePercentageReceiptItemDiscount")
+@Table(name = Entities.Table.SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT)
+@DiscriminatorValue(Entities.DiscriminatorValues.SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT)
 public final class SimplePercentageReceiptItemDiscount extends PercentageReceiptItemDiscount {
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)

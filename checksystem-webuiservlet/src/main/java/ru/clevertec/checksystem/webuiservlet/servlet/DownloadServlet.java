@@ -3,10 +3,15 @@ package ru.clevertec.checksystem.webuiservlet.servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import ru.clevertec.checksystem.core.helper.FormatHelpers;
+import ru.clevertec.checksystem.core.io.FormatType;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
-import ru.clevertec.checksystem.core.util.CollectionUtils;
+import ru.clevertec.checksystem.core.service.IIoReceiptService;
 import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
-import ru.clevertec.checksystem.webuiservlet.service.DownloadService;
+import ru.clevertec.checksystem.webuiservlet.constant.Parameters;
+import ru.clevertec.checksystem.webuiservlet.constant.Servlets;
+import ru.clevertec.checksystem.webuiservlet.constant.Sources;
+import ru.clevertec.checksystem.webuiservlet.constant.UrlPatterns;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,17 +23,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.clevertec.checksystem.webuiservlet.Constants.*;
-
 @Component
 @WebServlet(
-        name = ServletNames.DOWNLOAD_SERVLET,
+        name = Servlets.DOWNLOAD_SERVLET,
         urlPatterns = UrlPatterns.DOWNLOAD_PATTERN
 )
 public class DownloadServlet extends ApplicationServlet {
 
     private ReceiptRepository receiptRepository;
-    private DownloadService downloadService;
+    private IIoReceiptService ioReceiptService;
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -39,8 +42,7 @@ public class DownloadServlet extends ApplicationServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         try {
-            verifyForRequired(req, Parameters.TYPE_PARAMETER, Parameters.FORMAT_PARAMETER);
-            verifyForSuitable(req, Parameters.TYPE_PARAMETER, Parameters.SOURCE_PARAMETER, Parameters.FORMAT_PARAMETER);
+            validate(req, Parameters.SOURCE_PARAMETER, Parameters.FORMAT_TYPE_PARAMETER);
         } catch (RuntimeException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
@@ -49,26 +51,29 @@ public class DownloadServlet extends ApplicationServlet {
         var source = req.getParameter(Parameters.SOURCE_PARAMETER) != null
                 ? req.getParameter(Parameters.SOURCE_PARAMETER)
                 : Sources.DATABASE;
-        var type = req.getParameter(Parameters.TYPE_PARAMETER);
-        var format = req.getParameter(Parameters.FORMAT_PARAMETER);
+        var formatType = req.getParameter(Parameters.FORMAT_TYPE_PARAMETER);
         var ids = getReceiptIds(req);
 
-        var receipts = new ReceiptDataSource(receiptRepository, req.getSession(), Sessions.RECEIPTS_SESSION)
+        var receipts = new ReceiptDataSource(receiptRepository, req.getSession())
                 .findAllById(source, ids);
 
-        if (CollectionUtils.isNullOrEmpty(receipts)) {
+        if (receipts == null || receipts.size() == 0) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        if (!downloadService.download(resp, receipts, type, format)) {
+        var _formatType = FormatType.parse(formatType);
+        setHeaders(resp, _formatType.getFormat());
+
+        try {
+            ioReceiptService.write(receipts, resp.getOutputStream(), _formatType);
+        } catch (Exception e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         resp.setStatus(HttpServletResponse.SC_OK);
     }
-
 
     private static List<Long> getReceiptIds(HttpServletRequest req) {
         return Arrays.stream(req.getParameterMap().get(Parameters.ID_PARAMETER))
@@ -83,7 +88,13 @@ public class DownloadServlet extends ApplicationServlet {
     }
 
     @Autowired
-    public void setDownloadService(DownloadService downloadService) {
-        this.downloadService = downloadService;
+    public void setIoReceiptService(IIoReceiptService ioReceiptService) {
+        this.ioReceiptService = ioReceiptService;
+    }
+
+    private static void setHeaders(HttpServletResponse resp, String format) {
+        resp.setContentType(FormatHelpers.contentTypeByFormat(format));
+        resp.setHeader("Content-disposition", "attachment; filename=receipts"
+                + FormatHelpers.extensionByFormat(format, true));
     }
 }
