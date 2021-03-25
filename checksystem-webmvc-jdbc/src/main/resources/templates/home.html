@@ -1,0 +1,33 @@
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="source" th:content="${source}">
+    <link rel="stylesheet" th:href="@{/lib/bootstrap/css/bootstrap.css}">
+    <link th:href="@{/style.css}" rel="stylesheet"/>
+    <title>Чеки</title>
+</head>
+<body>
+
+<div th:replace="/shared/header"></div>
+
+<div class="container mb-5" th:with="sources=${T(ru.clevertec.checksystem.webmvcjdbc.constant.Sources)}">
+
+    <div th:replace="/partial/toolbar"></div>
+
+    <div th:if="${source.equals(sources.FILE) && session.fileReceipts == null}">
+        <div th:replace="partial/file-not-loaded"></div>
+    </div>
+
+    <div th:unless="${receipts == null || receipts.isEmpty()}" class="row g-3">
+        <div class="col-12 col-lg-6 col-xl-4" th:each="receipt: ${receipts}">
+            <div th:replace="partial/receipt"></div>
+        </div>
+    </div>
+
+</div>
+
+<script th:src="@{/script.js}"></script>
+<script th:src="@{/lib/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

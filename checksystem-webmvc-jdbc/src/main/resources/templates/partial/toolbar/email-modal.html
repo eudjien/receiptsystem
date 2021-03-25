@@ -1,0 +1,48 @@
+<button id="mailButton" type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+        data-bs-target="#emailModal">
+    Отпрвить Email
+</button>
+<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModal" aria-hidden="true"
+     xmlns:th="http://www.thymeleaf.org">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Отправка на Email</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="mailSubject" class="form-label">Заголовок</label>
+                    <input name="text" type="text" class="form-control" id="mailSubject">
+                </div>
+                <div class="mb-3">
+                    <label for="mailAddress" class="form-label">Email адрес</label>
+                    <input name="email" type="email" class="form-control" id="mailAddress"
+                           placeholder="name@example.com">
+                </div>
+                <div class="mb-3">
+                    <label for="formatSelect" class="form-label">Формат</label>
+                    <select id="formatSelect" class="form-select" aria-label="formatSelect"
+                            th:with="formatType=${T(ru.clevertec.checksystem.core.io.FormatType)}">
+                        <optgroup label="Печать">
+                            <option value="1" th:value="${formatType.PDF_PRINT.toString()}" selected>PDF</option>
+                            <option value="2" th:value="${formatType.TEXT_PRINT.toString()}">TEXT</option>
+                            <option value="3" th:value="${formatType.HTML_PRINT.toString()}">HTML</option>
+                        </optgroup>
+                        <optgroup label="Структура">
+                            <option value="4" th:value="${formatType.JSON_STRUCTURE.toString()}">JSON</option>
+                            <option value="5" th:value="${formatType.XML_STRUCTURE.toString()}">XML</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="emailSentProcess" class="text-dark me-auto" style="display: none"></div>
+                <div id="emailSentError" class="text-danger me-auto" style="display: none"></div>
+                <div id="emailSentSuccess" class="text-success me-auto" style="display: none"></div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="sendMailButton">Отправить</button>
+            </div>
+        </div>
+    </div>
+</div>

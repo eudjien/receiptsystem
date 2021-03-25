@@ -1,0 +1,21 @@
+* {
+    outline: none;
+}
+
+body {
+    background: #dfe3e6;
+    background: linear-gradient(66deg, rgb(229 196 234) 0%, rgb(217 226 204) 50%, rgb(226 238 249) 100%);
+}
+
+.header {
+    background-color: #3a3e42;
+}
+
+.receipt-card, .receipt-card table {
+    font-size: 0.75rem;
+}
+
+.receipt-toolbar, .receipt-toolbar button {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}

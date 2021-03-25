@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'ru.clevertec.plugin.aspectj.ltw' version '1.1.1'
 }
 
 group = 'ru.clevertec.checksystem'
@@ -35,6 +34,10 @@ configurations.all {
     exclude group: "org.springframework", module: "spring-webmvc"
 }
 
+configurations {
+    runtimeAgent
+}
+
 dependencies {
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
@@ -47,18 +50,13 @@ dependencies {
     api "org.springframework.boot:spring-boot-starter-mail:$springVersion"
     api "org.springframework.boot:spring-boot-starter-log4j2:$springVersion"
     api "org.springframework.boot:spring-boot-starter-data-jpa:$springVersion"
+    api "org.springframework.boot:spring-boot-starter-aop:$springVersion"
     api 'org.modelmapper:modelmapper:2.3.9'
     runtimeOnly 'mysql:mysql-connector-java:8.0.23'
+    runtimeAgent 'org.aspectj:aspectjweaver:1.9.6'
+    runtimeAgent 'org.springframework:spring-instrument:5.3.5'
 }
 
 test {
     useJUnitPlatform()
-}
-
-aspectjltw {
-    xlint = "ignore"
-    fork = true
-    sourceRoots = sourceSets.aspect.java.srcDirs
-    destDir = sourceSets.main.java.outputDir
-    classpath = sourceSets.main.runtimeClasspath
 }

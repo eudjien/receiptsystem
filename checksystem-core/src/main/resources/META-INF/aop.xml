@@ -1,7 +1,6 @@
 <!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
 <aspectj>
     <weaver options="-Xset:weaveJavaxPackages=true">
-        <exclude within="ru.clevertec.checksystem.core.aspect..*"/>
         <include within="ru.clevertec.checksystem..*"/>
     </weaver>
     <aspects>

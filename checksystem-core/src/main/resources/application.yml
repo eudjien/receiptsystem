@@ -26,3 +26,6 @@ spring:
       "[mail.smtp.connectiontimeout]": 5000
       "[mail.smtp.timeout]": 3000
       "[mail.smtp.writetimeout]": 5000
+  aop:
+    auto: false
+    proxy-target-class: false

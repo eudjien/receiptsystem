@@ -1,0 +1,54 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group 'ru.clevertec.checksystem.webmvc-jdbc'
+version '1.0'
+sourceCompatibility = '14'
+
+ext {
+    coreProject = project(":checksystem-core")
+    coreMainResourcesDir = "$coreProject.projectDir/src/main/resources"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir coreMainResourcesDir
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations.all {
+    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+}
+
+dependencies {
+    implementation coreProject
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+def applyJvmArgs = { o ->
+    o.jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED"]
+    coreProject.configurations.runtimeAgent.each { o.jvmArgs "-javaagent:$it.absolutePath" }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    doFirst { t -> applyJvmArgs(t) }
+}
+
+tasks.withType(JavaExec) {
+    it.each { t -> doFirst { applyJvmArgs(t) } }
+}
