@@ -21,8 +21,8 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class ReceiptItemDiscount extends AbstractDiscount<ReceiptItemDiscount> implements IReceiptItemAggregable {
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "discounts")
     @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "discounts")
     private final Set<ReceiptItem> receiptItems = new HashSet<>();
 
     protected ReceiptItemDiscount() {

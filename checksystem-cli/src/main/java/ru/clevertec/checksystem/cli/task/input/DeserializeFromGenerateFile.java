@@ -6,7 +6,7 @@ import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
 import ru.clevertec.checksystem.core.constant.Formats;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.io.format.GenerateFormat;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.io.File;
 import java.io.IOException;

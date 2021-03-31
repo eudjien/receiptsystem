@@ -85,14 +85,14 @@ public final class ThrowUtils {
 
         public static void nullOrEmpty(String parameterName, String str) {
             if (str == null)
-                throw new ArgumentNullException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
+                throw new ArgumentNullException(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName);
             if (str.isEmpty())
                 throw new IllegalArgumentException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
         }
 
         public static void nullOrBlank(String parameterName, String str) {
             if (str == null)
-                throw new ArgumentNullException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
+                throw new ArgumentNullException(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName);
             if (str.isBlank())
                 throw new IllegalArgumentException(String.format(THROW_IF_NULL_OR_EMPTY_FORMAT, parameterName));
         }

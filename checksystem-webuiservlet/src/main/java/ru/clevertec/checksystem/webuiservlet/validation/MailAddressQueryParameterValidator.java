@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.webuiservlet.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.service.IMailService;
+import ru.clevertec.checksystem.core.service.common.IEmailService;
 import ru.clevertec.checksystem.webuiservlet.constant.Parameters;
 import ru.clevertec.checksystem.webuiservlet.exception.QueryParameterIncorrectException;
 import ru.clevertec.checksystem.webuiservlet.exception.QueryParameterRequiredException;
@@ -12,10 +12,10 @@ import java.util.Map;
 @Component
 public class MailAddressQueryParameterValidator extends QueryParameterValidator {
 
-    private final IMailService mailService;
+    private final IEmailService mailService;
 
     @Autowired
-    public MailAddressQueryParameterValidator(IMailService mailService) {
+    public MailAddressQueryParameterValidator(IEmailService mailService) {
         this.mailService = mailService;
     }
 

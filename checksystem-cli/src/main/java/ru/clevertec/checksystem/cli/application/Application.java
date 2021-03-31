@@ -15,7 +15,7 @@ import ru.clevertec.checksystem.cli.task.output.SerializeToGenerateFile;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.util.AbstractMap;
 import java.util.HashMap;

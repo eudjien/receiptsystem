@@ -2,15 +2,15 @@ package ru.clevertec.checksystem.core.dto.email;
 
 public class EmailDto {
 
-    private Integer id;
+    private Long id = 0L;
 
     private String address;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,22 +1,29 @@
 package ru.clevertec.checksystem.core.dto.receipt;
 
+import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
+
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ReceiptDto {
 
-    private int id;
+    private Long id = 0L;
     private String name;
     private String description;
     private String address;
     private String phoneNumber;
     private String cashier;
     private Date date;
+    private final Set<ReceiptItemDto> receiptItems = new HashSet<>();
+    private final Set<ReceiptDiscountDto> discounts = new HashSet<>();
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,5 +73,25 @@ public class ReceiptDto {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Collection<ReceiptItemDto> getReceiptItems() {
+        return receiptItems;
+    }
+
+    public void setReceiptItems(Collection<ReceiptItemDto> receiptItems) {
+        this.receiptItems.clear();
+        if (receiptItems != null)
+            this.receiptItems.addAll(receiptItems);
+    }
+
+    public Collection<ReceiptDiscountDto> getDiscounts() {
+        return discounts;
+    }
+
+    public void setDiscounts(Collection<ReceiptDiscountDto> discounts) {
+        this.discounts.clear();
+        if (discounts != null)
+            this.discounts.addAll(discounts);
     }
 }

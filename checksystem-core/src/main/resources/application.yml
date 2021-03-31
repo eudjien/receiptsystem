@@ -2,10 +2,10 @@ spring:
   main:
     banner_mode: off
   jpa:
-    generate-ddl: true
-    show-sql: false
+    generate-ddl: false
+    show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -13,7 +13,8 @@ spring:
     url: jdbc:mysql://localhost:3306/checksystem
     username: root
     password: root
-    driverClassName: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
+    continue-on-error: true
   mail:
     protocol: smtp
     host: smtp.gmail.com
@@ -29,3 +30,6 @@ spring:
   aop:
     auto: false
     proxy-target-class: false
+application:
+  object-mapper:
+    hibernate-aware: true

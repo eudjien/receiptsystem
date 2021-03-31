@@ -52,6 +52,7 @@ dependencies {
     api "org.springframework.boot:spring-boot-starter-data-jpa:$springVersion"
     api "org.springframework.boot:spring-boot-starter-aop:$springVersion"
     api 'org.modelmapper:modelmapper:2.3.9'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:$springVersion"
     runtimeOnly 'mysql:mysql-connector-java:8.0.23'
     runtimeAgent 'org.aspectj:aspectjweaver:1.9.6'
     runtimeAgent 'org.springframework:spring-instrument:5.3.5'

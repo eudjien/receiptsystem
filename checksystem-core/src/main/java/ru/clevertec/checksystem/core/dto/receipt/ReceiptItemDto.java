@@ -1,43 +1,68 @@
 package ru.clevertec.checksystem.core.dto.receipt;
 
-import ru.clevertec.checksystem.core.entity.Product;
+import ru.clevertec.checksystem.core.dto.ProductDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ReceiptItemDto {
 
-    private Product product;
-    private int quantity;
-    private Integer productId;
-    private Integer receiptId;
+    private Long id = 0L;
+    private Long quantity;
+    private Long productId;
+    private Long receiptId;
+    private ProductDto product;
+    private final Set<ReceiptItemDiscountDto> discounts = new HashSet<>();
 
-    public Product getProduct() {
-        return product;
+    public Long getId() {
+        return id;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public int getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
 
-    public int getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public int getReceiptId() {
+    public Long getReceiptId() {
         return receiptId;
     }
 
-    public void setReceiptId(int receiptId) {
+    public void setReceiptId(Long receiptId) {
         this.receiptId = receiptId;
+    }
+
+    public ProductDto getProduct() {
+        return product;
+    }
+
+    public void setProduct(ProductDto product) {
+        this.product = product;
+    }
+
+    public Collection<ReceiptItemDiscountDto> getDiscounts() {
+        return discounts;
+    }
+
+    public void setDiscounts(Collection<ReceiptItemDiscountDto> discounts) {
+        this.discounts.clear();
+        if (discounts != null)
+            this.discounts.addAll(discounts);
     }
 }

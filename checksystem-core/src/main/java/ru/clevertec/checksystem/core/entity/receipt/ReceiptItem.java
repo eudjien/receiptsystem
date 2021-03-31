@@ -21,47 +21,45 @@ import java.util.Set;
 @Entity
 @Table(
         name = Entities.Table.RECEIPT_ITEMS,
-        indexes = @Index(columnList =
-                Entities.JoinColumn.PRODUCT_ID + "," +
-                        Entities.JoinColumn.RECEIPT_ID,
-                unique = true)
+        indexes = @Index(columnList = Entities.JoinColumn.PRODUCT_ID + "," + Entities.JoinColumn.RECEIPT_ID, unique = true)
 )
 public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItemDiscount>, IReceiptComposable {
 
     private final static int MIN_QUANTITY = 1;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = Entities.Table.RECEIPT_ITEM__RECEIPT_ITEM_DISCOUNT,
-            joinColumns = @JoinColumn(
-                    name = Entities.JoinColumn.RECEIPT_ITEM_ID,
-                    referencedColumnName = Entities.Column.ID),
-            inverseJoinColumns = @JoinColumn(
-                    name = Entities.JoinColumn.RECEIPT_ITEM_DISCOUNT_ID,
-                    referencedColumnName = Entities.Column.ID)
+            joinColumns = @JoinColumn(name = Entities.JoinColumn.RECEIPT_ITEM_ID, referencedColumnName = Entities.Column.ID),
+            inverseJoinColumns = @JoinColumn(name = Entities.JoinColumn.RECEIPT_ITEM_DISCOUNT_ID, referencedColumnName = Entities.Column.ID)
     )
     private final Set<ReceiptItemDiscount> discounts = new HashSet<>();
 
-    @ManyToOne(cascade = {CascadeType.PERSIST}, optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = Entities.JoinColumn.PRODUCT_ID)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = Entities.JoinColumn.RECEIPT_ID)
     @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = Entities.JoinColumn.RECEIPT_ID)
     private Receipt receipt;
 
     @Column(name = Entities.Column.QUANTITY, nullable = false)
     private Long quantity = 0L;
 
-    @Column(name = Entities.JoinColumn.PRODUCT_ID, insertable = false, updatable = false)
+    @Column(name = Entities.JoinColumn.PRODUCT_ID, insertable = false, updatable = false, nullable = false)
     private Long productId;
 
-    @Column(name = Entities.JoinColumn.RECEIPT_ID, insertable = false, updatable = false)
+    @Column(name = Entities.JoinColumn.RECEIPT_ID, insertable = false, updatable = false, nullable = false)
     private Long receiptId;
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public ReceiptItem() {
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    public ReceiptItem(Long id) {
+        setId(id);
     }
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -100,6 +98,8 @@ public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItem
     }
 
     public void setProduct(Product product) {
+        if (product == null)
+            getProduct().getReceiptItems().remove(this);
         this.product = product;
     }
 
@@ -196,6 +196,8 @@ public class ReceiptItem extends BaseEntity implements IDiscountable<ReceiptItem
 
     @Override
     public void setReceipt(Receipt receipt) {
+        if (receipt == null)
+            getReceipt().getReceiptItems().remove(this);
         this.receipt = receipt;
     }
 

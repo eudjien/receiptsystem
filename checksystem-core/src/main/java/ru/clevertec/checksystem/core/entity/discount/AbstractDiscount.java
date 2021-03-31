@@ -2,7 +2,6 @@ package ru.clevertec.checksystem.core.entity.discount;
 
 import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
-import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.persistence.*;
 
@@ -36,7 +35,6 @@ public abstract class AbstractDiscount<T extends AbstractDiscount<T>> extends Ba
     }
 
     public void setDescription(String description) {
-        ThrowUtils.Argument.nullOrBlank("description", description);
         this.description = description;
     }
 

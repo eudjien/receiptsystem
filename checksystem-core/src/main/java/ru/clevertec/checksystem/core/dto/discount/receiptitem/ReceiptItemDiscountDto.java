@@ -2,7 +2,7 @@ package ru.clevertec.checksystem.core.dto.discount.receiptitem;
 
 public class ReceiptItemDiscountDto {
 
-    private Long id;
+    private Long id = 0L;
     private String description;
     private Long dependentDiscountId;
 

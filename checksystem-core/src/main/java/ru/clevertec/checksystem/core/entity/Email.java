@@ -22,6 +22,10 @@ public class Email extends BaseEntity {
     public Email() {
     }
 
+    public Email(Long id) {
+        setId(id);
+    }
+
     public Email(String address) throws AddressException {
         setAddress(address);
     }
@@ -32,13 +36,5 @@ public class Email extends BaseEntity {
 
     public void setAddress(String address) throws AddressException {
         this.address = new InternetAddress(address).getAddress();
-    }
-
-    public InternetAddress toInternetAddress() {
-        try {
-            return new InternetAddress(getAddress());
-        } catch (AddressException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

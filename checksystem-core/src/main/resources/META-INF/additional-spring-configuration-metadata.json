@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "application.object-mapper.hibernate-aware",
+      "type": "java.lang.Boolean",
+      "description": "Use Hibernate-Aware ObjectMapper or not."
+    }
+  ]
+}

@@ -26,7 +26,7 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
     private String name;
 
     @Column(name = Entities.Column.PRICE, nullable = false)
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     @JsonIgnore
@@ -34,6 +34,11 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     public Product() {
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    public Product(Long id) {
+        setId(id);
     }
 
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -57,7 +62,6 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
     }
 
     public void setName(String name) {
-        ThrowUtils.Argument.nullOrBlank("name", name);
         this.name = name;
     }
 
@@ -66,9 +70,6 @@ public class Product extends BaseEntity implements IReceiptItemAggregable {
     }
 
     public void setPrice(BigDecimal price) {
-        var parameterName = "price";
-        ThrowUtils.Argument.nullValue(parameterName, price);
-        ThrowUtils.Argument.lessThan(parameterName, price, BigDecimal.ZERO);
         this.price = price;
     }
 

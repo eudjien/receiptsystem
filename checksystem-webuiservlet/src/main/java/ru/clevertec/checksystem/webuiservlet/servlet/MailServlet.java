@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import ru.clevertec.checksystem.core.io.FormatType;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 import ru.clevertec.checksystem.webuiservlet.ReceiptDataSource;
 import ru.clevertec.checksystem.webuiservlet.constant.Parameters;
 import ru.clevertec.checksystem.webuiservlet.constant.Servlets;

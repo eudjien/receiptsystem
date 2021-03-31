@@ -27,15 +27,11 @@ public class Receipt extends BaseEntity implements IDiscountable<ReceiptDiscount
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "receipt", fetch = FetchType.EAGER)
     private final Set<ReceiptItem> receiptItems = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = Entities.Table.RECEIPT__RECEIPT_DISCOUNT,
-            joinColumns = @JoinColumn(
-                    name = Entities.JoinColumn.RECEIPT_ID,
-                    referencedColumnName = Entities.Column.ID),
-            inverseJoinColumns = @JoinColumn(
-                    name = Entities.JoinColumn.RECEIPT_DISCOUNT_ID,
-                    referencedColumnName = Entities.Column.ID)
+            joinColumns = @JoinColumn(name = Entities.JoinColumn.RECEIPT_ID, referencedColumnName = Entities.Column.ID),
+            inverseJoinColumns = @JoinColumn(name = Entities.JoinColumn.RECEIPT_DISCOUNT_ID, referencedColumnName = Entities.Column.ID)
     )
     private final Set<ReceiptDiscount> discounts = new HashSet<>();
 
@@ -61,14 +57,12 @@ public class Receipt extends BaseEntity implements IDiscountable<ReceiptDiscount
     public Receipt() {
     }
 
+    public Receipt(Long id) {
+        setId(id);
+    }
+
     //@JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    public Receipt(
-            String name,
-            String description,
-            String address,
-            String phoneNumber,
-            String cashier,
-            Date date) {
+    public Receipt(String name, String description, String address, String phoneNumber, String cashier, Date date) {
         setName(name);
         setDescription(description);
         setAddress(address);

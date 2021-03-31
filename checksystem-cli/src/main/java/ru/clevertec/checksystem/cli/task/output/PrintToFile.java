@@ -5,7 +5,7 @@ import ru.clevertec.checksystem.cli.argument.ArgumentFinder;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.format.PrintFormat;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.io.File;
 import java.io.IOException;

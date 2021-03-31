@@ -22,8 +22,7 @@ public class ConsoleApplication implements CommandLineRunner {
     private final Application application;
 
     @Autowired
-    public ConsoleApplication(Application application, DataSeed dataSeed) {
-        dataSeed.dbSeed();
+    public ConsoleApplication(Application application) {
         this.application = application;
     }
 

@@ -52,8 +52,7 @@ class ArgumentTests {
     private static final String resourcesOutPath = Path.of(resourcesPath, "out").toString();
 
     @BeforeAll
-    public static void setUp(@Autowired DataSeed dataSeed) {
-        dataSeed.dbSeed();
+    public static void setUp() {
     }
 
     @AfterAll

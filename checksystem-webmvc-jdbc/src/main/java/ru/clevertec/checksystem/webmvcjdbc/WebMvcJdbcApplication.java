@@ -14,12 +14,6 @@ import ru.clevertec.checksystem.core.data.DataSeed;
 @EntityScan(Packages.CORE.ENTITY)
 @EnableJpaRepositories(Packages.CORE.REPOSITORY)
 public class WebMvcJdbcApplication {
-
-    @Autowired
-    public WebMvcJdbcApplication(DataSeed dataSeed) {
-        dataSeed.dbSeed();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(WebMvcJdbcApplication.class, args);
     }

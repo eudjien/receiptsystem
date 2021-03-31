@@ -2,17 +2,17 @@ package ru.clevertec.checksystem.core.dto.email;
 
 public class EventEmailDto {
 
-    private Integer id;
+    private Long id = 0L;
 
     private String eventType;
 
-    private Integer emailId;
+    private Long emailId;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -24,11 +24,11 @@ public class EventEmailDto {
         this.eventType = eventType;
     }
 
-    public int getEmailId() {
+    public Long getEmailId() {
         return emailId;
     }
 
-    public void setEmailId(int emailId) {
+    public void setEmailId(Long emailId) {
         this.emailId = emailId;
     }
 }

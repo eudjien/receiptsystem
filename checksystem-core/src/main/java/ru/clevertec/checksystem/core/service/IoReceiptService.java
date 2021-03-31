@@ -3,8 +3,6 @@ package ru.clevertec.checksystem.core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
-import ru.clevertec.checksystem.core.annotation.subscribe.Subscribe;
 import ru.clevertec.checksystem.core.common.builder.IReceiptBuilder;
 import ru.clevertec.checksystem.core.data.generate.ReceiptGenerate;
 import ru.clevertec.checksystem.core.data.generate.ReceiptItemGenerate;
@@ -16,6 +14,7 @@ import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.event.EventEmitter;
 import ru.clevertec.checksystem.core.event.EventType;
 import ru.clevertec.checksystem.core.event.MailSendListener;
+import ru.clevertec.checksystem.core.event.Subscribe;
 import ru.clevertec.checksystem.core.exception.EmitEventException;
 import ru.clevertec.checksystem.core.helper.FormatHelpers;
 import ru.clevertec.checksystem.core.io.FormatType;
@@ -26,10 +25,12 @@ import ru.clevertec.checksystem.core.io.format.PrintFormat;
 import ru.clevertec.checksystem.core.io.format.StructureFormat;
 import ru.clevertec.checksystem.core.io.print.layout.PdfReceiptLayout;
 import ru.clevertec.checksystem.core.log.LogLevel;
+import ru.clevertec.checksystem.core.log.annotation.AroundExecutionLog;
 import ru.clevertec.checksystem.core.repository.EventEmailRepository;
 import ru.clevertec.checksystem.core.repository.ProductRepository;
 import ru.clevertec.checksystem.core.repository.ReceiptDiscountRepository;
 import ru.clevertec.checksystem.core.repository.ReceiptItemDiscountRepository;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 import ru.clevertec.checksystem.core.template.pdf.FilePdfTemplate;
 
 import javax.mail.MessagingException;
@@ -50,7 +51,7 @@ import java.util.stream.StreamSupport;
 @Subscribe(eventType = EventType.PrintEnd, listenerClass = MailSendListener.class)
 public class IoReceiptService extends EventEmitter<Object> implements IIoReceiptService {
 
-    private final MailService mailService;
+    private final EmailService mailService;
 
     private final ReceiptReaderFactory receiptReaderFactory;
     private final ReceiptWriterFactory receiptWriterFactory;
@@ -65,7 +66,7 @@ public class IoReceiptService extends EventEmitter<Object> implements IIoReceipt
 
     @Autowired
     public IoReceiptService(
-            MailService mailService,
+            EmailService mailService,
             ReceiptReaderFactory receiptReaderFactory,
             ReceiptWriterFactory receiptWriterFactory,
             ReceiptPrinterFactory receiptPrinterFactory,
@@ -196,7 +197,7 @@ public class IoReceiptService extends EventEmitter<Object> implements IIoReceipt
 
         var htmlBody = printToHtml(receipts, false);
 
-        mailService.sendHtmlMail(subject, htmlBody, Collections.singleton(attachmentFile), addresses);
+        mailService.sendEmail(subject, htmlBody, true, Collections.singleton(attachmentFile), addresses);
     }
 
     @Override
