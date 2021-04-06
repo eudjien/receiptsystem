@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.clevertec.checksystem.cli.application.Application;
 import ru.clevertec.checksystem.cli.constant.Packages;
-import ru.clevertec.checksystem.core.data.DataSeed;
 
 @Profile("!test")
 @SpringBootApplication

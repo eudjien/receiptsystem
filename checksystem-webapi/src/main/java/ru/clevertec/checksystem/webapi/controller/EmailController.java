@@ -11,6 +11,8 @@ import ru.clevertec.checksystem.core.dto.email.EmailDto;
 import ru.clevertec.checksystem.core.dto.email.EventEmailDto;
 import ru.clevertec.checksystem.core.service.common.IEmailService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/emails", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmailController {
@@ -44,12 +46,12 @@ public class EmailController {
     }
 
     @PutMapping
-    ResponseEntity<EmailDto> update(@RequestBody EmailDto dto) {
+    ResponseEntity<EmailDto> update(@RequestBody @Valid EmailDto dto) {
         return new ResponseEntity<>(mailService.updateEmail(dto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<EmailDto> create(@RequestBody EmailDto dto) {
+    ResponseEntity<EmailDto> create(@RequestBody @Valid EmailDto dto) {
         return new ResponseEntity<>(mailService.createEmail(dto), HttpStatus.CREATED);
     }
 

@@ -1,9 +1,14 @@
 package ru.clevertec.checksystem.core.dto.discount.receipt;
 
+import javax.validation.constraints.NotBlank;
+
 public class ReceiptDiscountDto {
 
     private Long id = 0L;
+
+    @NotBlank
     private String description;
+
     private Long dependentDiscountId = 0L;
 
     public Long getId() {

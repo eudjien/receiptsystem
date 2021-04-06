@@ -12,6 +12,8 @@ import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscoun
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptItemDto;
 import ru.clevertec.checksystem.core.service.common.IReceiptService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/receiptItems", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReceiptItemController {
@@ -45,12 +47,12 @@ public class ReceiptItemController {
     }
 
     @PutMapping
-    ResponseEntity<ReceiptItemDto> update(@RequestBody ReceiptItemDto dto) {
+    ResponseEntity<ReceiptItemDto> update(@RequestBody @Valid ReceiptItemDto dto) {
         return new ResponseEntity<>(receiptService.updateReceiptItem(dto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<ReceiptItemDto> create(@RequestBody ReceiptItemDto dto) {
+    ResponseEntity<ReceiptItemDto> create(@RequestBody @Valid ReceiptItemDto dto) {
         return new ResponseEntity<>(receiptService.createReceiptItem(dto), HttpStatus.CREATED);
     }
 

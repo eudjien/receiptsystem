@@ -1,11 +1,19 @@
 package ru.clevertec.checksystem.core.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class ProductDto {
 
     private Long id = 0L;
+
+    @NotBlank
     private String name;
+
+    @NotNull
+    @Positive
     private BigDecimal price;
 
     public Long getId() {

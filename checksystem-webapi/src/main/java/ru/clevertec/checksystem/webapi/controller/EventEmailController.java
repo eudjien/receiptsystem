@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.checksystem.core.dto.email.EventEmailDto;
 import ru.clevertec.checksystem.core.service.common.IEmailService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "eventEmails", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EventEmailController {
@@ -43,12 +45,12 @@ public class EventEmailController {
     }
 
     @PutMapping
-    ResponseEntity<EventEmailDto> update(@RequestBody EventEmailDto dto) {
+    ResponseEntity<EventEmailDto> update(@RequestBody @Valid EventEmailDto dto) {
         return new ResponseEntity<>(mailService.updateEventEmail(dto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<EventEmailDto> create(@RequestBody EventEmailDto dto) {
+    ResponseEntity<EventEmailDto> create(@RequestBody @Valid EventEmailDto dto) {
         return new ResponseEntity<>(mailService.createEventEmail(dto), HttpStatus.CREATED);
     }
 }

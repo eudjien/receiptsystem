@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import ru.clevertec.checksystem.cli.application.Application;
 import ru.clevertec.checksystem.core.constant.Formats;
-import ru.clevertec.checksystem.core.data.DataSeed;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

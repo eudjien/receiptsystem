@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.clevertec.checksystem.core.dto.ProductDto;
 import ru.clevertec.checksystem.core.service.common.IProductService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
@@ -43,12 +45,12 @@ public class ProductController {
     }
 
     @PutMapping
-    ResponseEntity<ProductDto> update(@RequestBody ProductDto dto) {
+    ResponseEntity<ProductDto> update(@RequestBody @Valid ProductDto dto) {
         return new ResponseEntity<>(productService.updateProduct(dto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<ProductDto> create(@RequestBody ProductDto dto) {
+    ResponseEntity<ProductDto> create(@RequestBody @Valid ProductDto dto) {
         return new ResponseEntity<>(productService.createProduct(dto), HttpStatus.CREATED);
     }
 }

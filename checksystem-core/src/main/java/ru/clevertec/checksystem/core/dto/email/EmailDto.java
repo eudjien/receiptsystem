@@ -1,9 +1,14 @@
 package ru.clevertec.checksystem.core.dto.email;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
 public class EmailDto {
 
     private Long id = 0L;
 
+    @NotNull
+    @Email
     private String address;
 
     public Long getId() {

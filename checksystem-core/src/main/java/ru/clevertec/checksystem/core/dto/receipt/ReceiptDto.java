@@ -2,6 +2,9 @@ package ru.clevertec.checksystem.core.dto.receipt;
 
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -10,13 +13,28 @@ import java.util.Set;
 public class ReceiptDto {
 
     private Long id = 0L;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String description;
+
+    @NotBlank
     private String address;
+
+    @NotBlank
     private String phoneNumber;
+
+    @NotBlank
     private String cashier;
+
+    @NotNull
+    @PastOrPresent
     private Date date;
+
     private final Set<ReceiptItemDto> receiptItems = new HashSet<>();
+
     private final Set<ReceiptDiscountDto> discounts = new HashSet<>();
 
     public Long getId() {
