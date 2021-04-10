@@ -11,6 +11,7 @@ import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.service.common.IReceiptDiscountService;
 import ru.clevertec.checksystem.core.util.factory.ReceiptDiscountDtoFactory;
 
+import javax.validation.Validator;
 import java.util.Map;
 
 @RestController
@@ -18,10 +19,12 @@ import java.util.Map;
 public class ReceiptDiscountController {
 
     private final IReceiptDiscountService receiptDiscountService;
+    private final Validator validator;
 
     @Autowired
-    public ReceiptDiscountController(IReceiptDiscountService receiptDiscountService) {
+    public ReceiptDiscountController(IReceiptDiscountService receiptDiscountService, Validator validator) {
         this.receiptDiscountService = receiptDiscountService;
+        this.validator = validator;
     }
 
     @GetMapping
@@ -47,13 +50,13 @@ public class ReceiptDiscountController {
 
     @PutMapping
     ResponseEntity<ReceiptDiscountDto> update(@RequestBody Map<String, String> map, ReceiptDiscountDtoFactory receiptDiscountDtoFactory) {
-        var dto = receiptDiscountDtoFactory.create(map);
+        var dto = receiptDiscountDtoFactory.create(map, validator);
         return new ResponseEntity<>(receiptDiscountService.updateReceiptDiscount(dto), HttpStatus.OK);
     }
 
     @PostMapping
     ResponseEntity<ReceiptDiscountDto> create(@RequestBody Map<String, String> map, ReceiptDiscountDtoFactory receiptDiscountDtoFactory) {
-        var dto = receiptDiscountDtoFactory.create(map);
+        var dto = receiptDiscountDtoFactory.create(map, validator);
         return new ResponseEntity<>(receiptDiscountService.createReceiptDiscount(dto), HttpStatus.CREATED);
     }
 }

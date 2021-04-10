@@ -5,39 +5,55 @@ import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receipt.SimpleConstantReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receipt.SimplePercentageReceiptDiscountDto;
+import ru.clevertec.checksystem.core.exception.ValidationException;
 
+import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ReceiptDiscountDtoFactory {
 
-    public ReceiptDiscountDto create(Map<String, String> map) {
+    public ReceiptDiscountDto create(Map<String, String> map, Validator validator) {
 
         var type = map.get(Entities.DiscriminatorNames.RECEIPT_DISCOUNT);
 
-        ReceiptDiscountDto receiptDiscount;
+        ReceiptDiscountDto receiptDiscountDto;
 
         switch (type) {
             case Entities.DiscriminatorValues.SIMPLE_CONSTANT_RECEIPT_DISCOUNT -> {
-                receiptDiscount = new SimpleConstantReceiptDiscountDto();
-                ((SimpleConstantReceiptDiscountDto) receiptDiscount).setConstant(new BigDecimal(map.get("constant")));
+                receiptDiscountDto = new SimpleConstantReceiptDiscountDto();
+                ((SimpleConstantReceiptDiscountDto) receiptDiscountDto).setConstant(new BigDecimal(map.get("constant")));
             }
             case Entities.DiscriminatorValues.SIMPLE_PERCENTAGE_RECEIPT_DISCOUNT -> {
-                receiptDiscount = new SimplePercentageReceiptDiscountDto();
-                ((SimplePercentageReceiptDiscountDto) receiptDiscount).setPercent(Double.parseDouble(map.get("percent")));
+                receiptDiscountDto = new SimplePercentageReceiptDiscountDto();
+                ((SimplePercentageReceiptDiscountDto) receiptDiscountDto).setPercent(Double.parseDouble(map.get("percent")));
             }
             default -> throw new IllegalArgumentException("map");
         }
 
-        receiptDiscount.setId(Long.parseLong(map.getOrDefault("id", "0")));
-        receiptDiscount.setDescription(map.get("description"));
+        receiptDiscountDto.setId(Long.parseLong(map.getOrDefault("id", "0")));
+        receiptDiscountDto.setDescription(map.get("description"));
 
         try {
-            receiptDiscount.setDependentDiscountId(Long.parseLong(map.get("dependentDiscountId")));
+            receiptDiscountDto.setDependentDiscountId(Long.parseLong(map.get("dependentDiscountId")));
         } catch (Exception ignored) {
         }
 
-        return receiptDiscount;
+        validate(receiptDiscountDto, validator);
+
+        return receiptDiscountDto;
+    }
+
+    private static void validate(ReceiptDiscountDto receiptDiscountDto, Validator validator) {
+
+        var constraintViolations = validator.validate(receiptDiscountDto);
+
+        if (!constraintViolations.isEmpty()) {
+            throw new ValidationException(constraintViolations.stream()
+                    .map(a -> new ValidationException.Error(a.getPropertyPath().toString(), a.getMessage()))
+                    .collect(Collectors.toSet()));
+        }
     }
 }

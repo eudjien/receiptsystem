@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping(value = "/files", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FileController {
 
     private final IIoReceiptService ioReceiptService;
@@ -41,8 +41,7 @@ public class FileController {
         ioReceiptService.write(receiptRepository.findAllById(ids), os, formatTypeEnum);
 
         var headers = new HttpHeaders();
-        headers.set("Content-Disposition", "attachment; filename=receipts"
-                + FormatHelpers.extensionByFormat(formatTypeEnum.getFormat(), true));
+        headers.set("Content-Disposition", "attachment; filename=receipts" + FormatHelpers.extensionByFormat(formatTypeEnum.getFormat(), true));
 
         var resource = new ByteArrayResource(os.toByteArray());
 

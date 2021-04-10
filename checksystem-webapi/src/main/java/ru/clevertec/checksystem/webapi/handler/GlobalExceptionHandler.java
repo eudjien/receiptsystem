@@ -10,10 +10,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import ru.clevertec.checksystem.core.exception.ValidationException;
+import ru.clevertec.checksystem.webapi.dto.ErrorDto;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,54 +30,50 @@ public class GlobalExceptionHandler {
         this.errorAttributes = errorAttributes;
     }
 
-    @ExceptionHandler({EntityNotFoundException.class, EntityExistsException.class})
-    protected ResponseEntity<Object> handleEntityExceptions(WebRequest request) {
-        return handleBadRequest(request);
-    }
+    @ExceptionHandler({EntityNotFoundException.class, EntityExistsException.class, IllegalArgumentException.class})
+    public ResponseEntity<ErrorDto> handleBadRequestExceptions(WebRequest request) {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgumentExceptions(WebRequest request) {
-        return handleBadRequest(request);
+        var status = HttpStatus.BAD_REQUEST;
+        var attributes = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
+
+        return createResponseEntity(status, (Date) attributes.get("timestamp"), Collections.singleton((String) attributes.get("message")));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorDto> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
 
-        var errors = new HashMap<String, String>();
+        var messages = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> ((FieldError) error).getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toSet());
 
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            var fieldName = ((FieldError) error).getField();
-            var errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
+        var attributes = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return createResponseEntity(HttpStatus.BAD_REQUEST, (Date) attributes.get("timestamp"), messages);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorDto> handleManualValidationExceptions(ValidationException ex, WebRequest request) {
+
+        var messages = ex.getErrors().stream()
+                .map(a -> a.getProperty() + ": " + a.getMessage())
+                .collect(Collectors.toSet());
+
+        var attributes = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
+
+        return createResponseEntity(HttpStatus.BAD_REQUEST, (Date) attributes.get("timestamp"), messages);
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Object> handleInternalServerErrorExceptions(WebRequest request) {
-        return handleInternalServerError(request);
-    }
-
-    private ResponseEntity<Object> handleBadRequest(WebRequest request) {
-
-        var badRequestStatus = HttpStatus.BAD_REQUEST;
-
-        var body = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
-        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-        body.put("status", badRequestStatus.value());
-
-        return new ResponseEntity<>(body, badRequestStatus);
-    }
-
-    private ResponseEntity<Object> handleInternalServerError(WebRequest request) {
+    public ResponseEntity<ErrorDto> handleInternalServerErrorExceptions(WebRequest request) {
 
         var internalServerErrorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        var attributes = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
 
-        var body = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
-        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-        body.put("status", internalServerErrorStatus.value());
+        return createResponseEntity(internalServerErrorStatus, (Date) attributes.get("timestamp"), Collections.singleton((String) attributes.get("message")));
+    }
 
-        return new ResponseEntity<>(body, internalServerErrorStatus);
+    private static ResponseEntity<ErrorDto> createResponseEntity(HttpStatus httpStatus, Date date, Set<String> messages) {
+        var errorDto = new ErrorDto(date.getTime(), httpStatus.value(), httpStatus.getReasonPhrase(), messages);
+        return new ResponseEntity<>(errorDto, httpStatus);
     }
 }

@@ -2,18 +2,22 @@ package ru.clevertec.checksystem.core.util.factory;
 
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.constant.Entities;
+import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.SimpleConstantReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.SimplePercentageReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.ThresholdPercentageReceiptItemDiscountDto;
+import ru.clevertec.checksystem.core.exception.ValidationException;
 
+import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ReceiptItemDiscountDtoFactory {
 
-    public ReceiptItemDiscountDto create(Map<String, String> map) {
+    public ReceiptItemDiscountDto create(Map<String, String> map, Validator validator) {
 
         var type = map.get(Entities.DiscriminatorNames.RECEIPT_ITEM_DISCOUNT);
 
@@ -44,6 +48,19 @@ public class ReceiptItemDiscountDtoFactory {
         } catch (Exception ignored) {
         }
 
+        validate(receiptDiscount, validator);
+
         return receiptDiscount;
+    }
+
+    private static void validate(ReceiptItemDiscountDto receiptItemDiscountDto, Validator validator) {
+
+        var constraintViolations = validator.validate(receiptItemDiscountDto);
+
+        if (!constraintViolations.isEmpty()) {
+            throw new ValidationException(constraintViolations.stream()
+                    .map(a -> new ValidationException.Error(a.getPropertyPath().toString(), a.getMessage()))
+                    .collect(Collectors.toSet()));
+        }
     }
 }
