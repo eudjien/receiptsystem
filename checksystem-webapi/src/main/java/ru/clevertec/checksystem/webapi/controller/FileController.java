@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.webapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,16 +21,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/files", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class FileController {
 
     private final IIoReceiptService ioReceiptService;
     private final ReceiptRepository receiptRepository;
-
-    @Autowired
-    public FileController(IIoReceiptService ioReceiptService, ReceiptRepository receiptRepository) {
-        this.ioReceiptService = ioReceiptService;
-        this.receiptRepository = receiptRepository;
-    }
 
     @GetMapping
     public ResponseEntity<Resource> download(@RequestParam("formatType") String formatType, @RequestParam("id") List<Long> ids) throws IOException {

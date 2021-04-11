@@ -4,10 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.clevertec.checksystem.core.dto.ProductDto;
+import ru.clevertec.checksystem.core.dto.SummaryDto;
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptDto;
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptItemDto;
+import ru.clevertec.checksystem.core.entity.receipt.Receipt;
+import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 
 import java.util.Collection;
 import java.util.List;
@@ -50,13 +53,13 @@ public interface IReceiptService {
 
     void deleteReceiptItemById(Long id);
 
-    ReceiptDto createReceipt(ReceiptDto dto);
+    ReceiptDto createReceipt(ReceiptDto receiptDto);
 
-    ReceiptDto updateReceipt(ReceiptDto dto);
+    ReceiptDto updateReceipt(ReceiptDto receiptDto);
 
-    ReceiptItemDto createReceiptItem(ReceiptItemDto dto);
+    ReceiptItemDto createReceiptItem(ReceiptItemDto receiptItemDto);
 
-    ReceiptItemDto updateReceiptItem(ReceiptItemDto dto);
+    ReceiptItemDto updateReceiptItem(ReceiptItemDto receiptItemDto);
 
     void addDiscountToReceipt(Long receiptId, Long receiptDiscountId);
 
@@ -95,4 +98,12 @@ public interface IReceiptService {
     Long getReceiptCount();
 
     Long getReceiptItemCount();
+
+    SummaryDto getReceiptSummaryById(Long receiptId);
+
+    SummaryDto getReceiptItemSummaryById(Long receiptItemId);
+
+    SummaryDto getReceiptSummary(Receipt receipt);
+
+    SummaryDto getReceiptItemSummary(ReceiptItem receiptItem);
 }

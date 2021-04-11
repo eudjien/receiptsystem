@@ -1,8 +1,7 @@
 package ru.clevertec.checksystem.cli.application;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.cli.argument.ArgumentFinder;
 import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
@@ -13,7 +12,6 @@ import ru.clevertec.checksystem.cli.task.output.PrintToFile;
 import ru.clevertec.checksystem.cli.task.output.SerializeToFile;
 import ru.clevertec.checksystem.cli.task.output.SerializeToGenerateFile;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
-import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.repository.ReceiptRepository;
 import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
@@ -27,9 +25,9 @@ import static ru.clevertec.checksystem.cli.Constants.Inputs;
 import static ru.clevertec.checksystem.cli.Constants.Keys;
 
 @Component
+@RequiredArgsConstructor
+@Log4j2(topic = "ConsumerLogger")
 public final class Application implements Callable<ApplicationResult> {
-
-    private static final Logger logger = LogManager.getLogger("ConsumerLogger");
 
     private static final Map<String, String> startMap = new HashMap<>();
     private static final Map<String, String> errorsMap = new HashMap<>();
@@ -53,18 +51,6 @@ public final class Application implements Callable<ApplicationResult> {
         errorsMap.put(Keys.SERIALIZE, "Something went wrong with serializing to a file.");
         errorsMap.put(Keys.PRINT, "Something went wrong with printing to a file.");
         errorsMap.put(Keys.GENERATE_SERIALIZE, "Something went wrong with serializing to a generate file.");
-    }
-
-    @Autowired
-    public Application(
-            IIoReceiptService ioReceiptService,
-            ReceiptRepository receiptRepository,
-            ArgumentFinder argumentFinder,
-            ReceiptIdFilter receiptIdFilter) {
-        this.ioReceiptService = ioReceiptService;
-        this.receiptRepository = receiptRepository;
-        this.argumentFinder = argumentFinder;
-        this.receiptIdFilter = receiptIdFilter;
     }
 
     @Override
@@ -92,7 +78,7 @@ public final class Application implements Callable<ApplicationResult> {
             futureResult(inputCallableEntry.getKey(), future, executeResultBuilder);
 
         } catch (Throwable e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             executeResultBuilder.addError(e, e.getMessage());
         }
 
@@ -108,17 +94,17 @@ public final class Application implements Callable<ApplicationResult> {
 
         if (argumentFinder.firstBoolOrDefault(Keys.SERIALIZE)) {
             futuresMap.put(Keys.SERIALIZE, executor.submit(new SerializeToFile(argumentFinder, ioReceiptService, receipts)));
-            logger.info(startMap.get(Keys.SERIALIZE));
+            log.info(startMap.get(Keys.SERIALIZE));
         }
 
         if (argumentFinder.firstBoolOrDefault(Keys.PRINT)) {
             futuresMap.put(Keys.PRINT, executor.submit(new PrintToFile(argumentFinder, ioReceiptService, receipts)));
-            logger.info(startMap.get(Keys.PRINT));
+            log.info(startMap.get(Keys.PRINT));
         }
 
         if (argumentFinder.firstBoolOrDefault(Keys.GENERATE_SERIALIZE)) {
             futuresMap.put(Keys.GENERATE_SERIALIZE, executor.submit(new SerializeToGenerateFile(argumentFinder, ioReceiptService, receipts)));
-            logger.info(startMap.get(Keys.GENERATE_SERIALIZE));
+            log.info(startMap.get(Keys.GENERATE_SERIALIZE));
         }
 
         for (var entry : futuresMap.entrySet())
@@ -138,7 +124,7 @@ public final class Application implements Callable<ApplicationResult> {
             case Inputs.DATABASE -> new AbstractMap.SimpleEntry<>(
                     Inputs.DATABASE,
                     new LoadFromDatabase(argumentFinder, receiptIdFilter, receiptRepository, receipts));
-            default -> throw new ArgumentNotSupportedException(Keys.INPUT, inputType);
+            default -> throw new IllegalArgumentException(String.format("Argument '%s' does not support '%s' value", Keys.INPUT, inputType));
         };
     }
 
@@ -146,8 +132,9 @@ public final class Application implements Callable<ApplicationResult> {
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(errorsMap.get(futureKey));
-            logger.error(e.getMessage());
+            e.printStackTrace();
+            log.error(errorsMap.get(futureKey));
+            log.error(e.getMessage());
             executeResultBuilder.addError(e, errorsMap.get(futureKey));
         }
     }

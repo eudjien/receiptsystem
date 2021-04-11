@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.webapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.clevertec.checksystem.core.dto.ProductDto;
+import ru.clevertec.checksystem.core.dto.SummaryDto;
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptDto;
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptItemDto;
@@ -17,14 +18,10 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/receipts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class ReceiptController {
 
     private final IReceiptService receiptService;
-
-    @Autowired
-    public ReceiptController(IReceiptService receiptService) {
-        this.receiptService = receiptService;
-    }
 
     @GetMapping
     ResponseEntity<Page<ReceiptDto>> get(Pageable pageable) {
@@ -34,6 +31,11 @@ public class ReceiptController {
     @GetMapping(value = "/{id}")
     ResponseEntity<ReceiptDto> get(@PathVariable Long id) {
         return new ResponseEntity<>(receiptService.getReceiptById(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/summary")
+    ResponseEntity<SummaryDto> getSummary(@PathVariable Long id) {
+        return new ResponseEntity<>(receiptService.getReceiptSummaryById(id), HttpStatus.OK);
     }
 
     @GetMapping("/count")
@@ -48,13 +50,13 @@ public class ReceiptController {
     }
 
     @PutMapping
-    ResponseEntity<ReceiptDto> update(@RequestBody @Valid ReceiptDto dto) {
-        return new ResponseEntity<>(receiptService.updateReceipt(dto), HttpStatus.OK);
+    ResponseEntity<ReceiptDto> update(@RequestBody @Valid ReceiptDto receiptDto) {
+        return new ResponseEntity<>(receiptService.updateReceipt(receiptDto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<ReceiptDto> create(@RequestBody @Valid ReceiptDto dto) {
-        return new ResponseEntity<>(receiptService.createReceipt(dto), HttpStatus.CREATED);
+    ResponseEntity<ReceiptDto> create(@RequestBody @Valid ReceiptDto receiptDto) {
+        return new ResponseEntity<>(receiptService.createReceipt(receiptDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{receiptId}/items")

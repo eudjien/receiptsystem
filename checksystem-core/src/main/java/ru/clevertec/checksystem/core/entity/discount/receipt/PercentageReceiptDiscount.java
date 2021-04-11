@@ -1,66 +1,27 @@
 package ru.clevertec.checksystem.core.entity.discount.receipt;
 
-import ru.clevertec.checksystem.core.common.IPercentable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 import ru.clevertec.checksystem.core.constant.Entities;
-import ru.clevertec.checksystem.core.entity.receipt.Receipt;
-import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import static ru.clevertec.checksystem.core.constant.Constants.Percent;
-
-@MappedSuperclass
-public abstract class PercentageReceiptDiscount extends ReceiptDiscount implements IPercentable {
+@Jacksonized
+@SuperBuilder
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = Entities.Table.PERCENTAGE_RECEIPT_DISCOUNT)
+@DiscriminatorValue(Entities.DiscriminatorValues.PERCENTAGE_RECEIPT_DISCOUNT)
+public final class PercentageReceiptDiscount extends ReceiptDiscount {
 
     @Column(name = Entities.Column.PERCENT, nullable = false)
-    private Double percent = 0D;
-
-    protected PercentageReceiptDiscount() {
-    }
-
-    protected PercentageReceiptDiscount(String description, Double percent) {
-        super(description);
-        setPercent(percent);
-    }
-
-    protected PercentageReceiptDiscount(String description, Double percent, ReceiptDiscount dependentDiscount) {
-        super(description, dependentDiscount);
-        setPercent(percent);
-    }
-
-    @Override
-    public double getPercent() {
-        return percent;
-    }
-
-    @Override
-    public void setPercent(Double percent) {
-        ThrowUtils.Argument.nullValue("percent", percent);
-        ThrowUtils.Argument.outOfRange("percent", percent, Percent.MIN, Percent.MAX);
-        this.percent = percent;
-    }
-
-    @Override
-    public BigDecimal discountAmount(Receipt receipt) {
-
-        var subTotalAmount = receipt.subTotalAmount();
-        var dependentDiscountAmount = BigDecimal.ZERO;
-        var itemsDiscountAmount = receipt.itemsDiscountSum();
-
-        if (getDependentDiscount() != null) {
-            subTotalAmount = subTotalAmount.subtract(getDependentDiscount().discountAmount(receipt));
-            dependentDiscountAmount = getDependentDiscount().discountAmount(receipt);
-        }
-
-        subTotalAmount = subTotalAmount.subtract(itemsDiscountAmount);
-
-        var discount = subTotalAmount
-                .divide(BigDecimal.valueOf(Percent.MAX), RoundingMode.HALF_EVEN)
-                .multiply(BigDecimal.valueOf(getPercent()));
-
-        return discount.add(dependentDiscountAmount).add(itemsDiscountAmount);
-    }
+    private Double percent;
 }

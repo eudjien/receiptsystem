@@ -3,7 +3,6 @@ package ru.clevertec.checksystem.cli.argument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Component;
-import ru.clevertec.checksystem.core.exception.ArgumentNullException;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.util.HashMap;
@@ -33,9 +32,7 @@ public class ArgumentFinder {
     }
 
     public void addArguments(String[] arguments) {
-
         ThrowUtils.Argument.nullValue("arguments", arguments);
-
         for (var arg : arguments) {
             var matcher = pattern.matcher(arg);
             if (matcher.find()) {
@@ -77,7 +74,7 @@ public class ArgumentFinder {
     public String firstStringOrThrow(String argumentName) {
         var value = firstStringOrDefault(argumentName);
         if (value == null)
-            throw new ArgumentNullException(argumentName);
+            throw new NullPointerException(argumentName);
         return value;
     }
 

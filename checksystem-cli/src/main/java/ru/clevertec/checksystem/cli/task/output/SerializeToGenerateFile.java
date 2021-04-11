@@ -37,6 +37,6 @@ public class SerializeToGenerateFile implements Callable<Void> {
         var format = finder.firstStringOrThrow(Constants.Keys.GENERATE_SERIALIZE_FORMAT);
         var path = finder.firstStringOrThrow(Constants.Keys.GENERATE_SERIALIZE_PATH);
 
-        ioReceiptService.toGenerate(receipts, new File(path), GenerateFormat.parse(format));
+        ioReceiptService.toGenerate(receipts, new File(path), GenerateFormat.from(format));
     }
 }

@@ -1,10 +1,10 @@
 package ru.clevertec.checksystem.core.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.entity.discount.receipt.ReceiptDiscount;
 import ru.clevertec.checksystem.core.repository.ReceiptDiscountRepository;
@@ -16,17 +16,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ReceiptDiscountService implements IReceiptDiscountService {
 
     private final ReceiptDiscountRepository receiptDiscountRepository;
     private final ApplicationModelMapper modelMapper;
-
-    @Autowired
-    public ReceiptDiscountService(ReceiptDiscountRepository receiptDiscountRepository, ApplicationModelMapper modelMapper) {
-        this.receiptDiscountRepository = receiptDiscountRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public ReceiptDiscountDto getReceiptDiscountById(Long id) {
@@ -76,25 +71,25 @@ public class ReceiptDiscountService implements IReceiptDiscountService {
         receiptDiscountRepository.delete(discount);
     }
 
-    public ReceiptDiscountDto createReceiptDiscount(ReceiptDiscountDto dto) {
+    public ReceiptDiscountDto createReceiptDiscount(ReceiptDiscountDto receiptDiscountDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(receiptDiscountDto))
+            throw new NullPointerException("receiptDiscountDto");
 
-        return modelMapper.map(receiptDiscountRepository.save(modelMapper.map(dto, ReceiptDiscount.class)), ReceiptDiscountDto.class);
+        return modelMapper.map(receiptDiscountRepository.save(modelMapper.map(receiptDiscountDto, ReceiptDiscount.class)), ReceiptDiscountDto.class);
     }
 
-    public ReceiptDiscountDto updateReceiptDiscount(ReceiptDiscountDto dto) {
+    public ReceiptDiscountDto updateReceiptDiscount(ReceiptDiscountDto receiptDiscountDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(receiptDiscountDto))
+            throw new NullPointerException("receiptDiscountDto");
 
-        if (!receiptDiscountRepository.existsById(dto.getId()))
-            throw new EntityNotFoundException(String.format("ReceiptDiscount with id '%s' not found", dto.getId()));
+        if (!receiptDiscountRepository.existsById(receiptDiscountDto.getId()))
+            throw new EntityNotFoundException(String.format("ReceiptDiscount with id '%s' not found", receiptDiscountDto.getId()));
 
-        var discount = receiptDiscountRepository.findById(dto.getId()).orElseThrow();
+        var discount = receiptDiscountRepository.findById(receiptDiscountDto.getId()).orElseThrow();
 
-        modelMapper.map(dto, discount);
+        modelMapper.map(receiptDiscountDto, discount);
 
         return modelMapper.map(receiptDiscountRepository.save(discount), ReceiptDiscountDto.class);
     }

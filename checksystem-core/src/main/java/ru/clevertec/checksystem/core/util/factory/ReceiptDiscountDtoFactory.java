@@ -2,9 +2,9 @@ package ru.clevertec.checksystem.core.util.factory;
 
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.constant.Entities;
+import ru.clevertec.checksystem.core.dto.discount.receipt.ConstantReceiptDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receipt.PercentageReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.receipt.SimpleConstantReceiptDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.receipt.SimplePercentageReceiptDiscountDto;
 import ru.clevertec.checksystem.core.exception.ValidationException;
 
 import javax.validation.Validator;
@@ -22,13 +22,13 @@ public class ReceiptDiscountDtoFactory {
         ReceiptDiscountDto receiptDiscountDto;
 
         switch (type) {
-            case Entities.DiscriminatorValues.SIMPLE_CONSTANT_RECEIPT_DISCOUNT -> {
-                receiptDiscountDto = new SimpleConstantReceiptDiscountDto();
-                ((SimpleConstantReceiptDiscountDto) receiptDiscountDto).setConstant(new BigDecimal(map.get("constant")));
+            case Entities.DiscriminatorValues.CONSTANT_RECEIPT_DISCOUNT -> {
+                receiptDiscountDto = new ConstantReceiptDiscountDto();
+                ((ConstantReceiptDiscountDto) receiptDiscountDto).setConstant(new BigDecimal(map.get("constant")));
             }
-            case Entities.DiscriminatorValues.SIMPLE_PERCENTAGE_RECEIPT_DISCOUNT -> {
-                receiptDiscountDto = new SimplePercentageReceiptDiscountDto();
-                ((SimplePercentageReceiptDiscountDto) receiptDiscountDto).setPercent(Double.parseDouble(map.get("percent")));
+            case Entities.DiscriminatorValues.PERCENTAGE_RECEIPT_DISCOUNT -> {
+                receiptDiscountDto = new PercentageReceiptDiscountDto();
+                ((PercentageReceiptDiscountDto) receiptDiscountDto).setPercent(Double.parseDouble(map.get("percent")));
             }
             default -> throw new IllegalArgumentException("map");
         }

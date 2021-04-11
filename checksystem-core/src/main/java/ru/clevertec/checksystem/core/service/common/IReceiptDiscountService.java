@@ -26,9 +26,9 @@ public interface IReceiptDiscountService {
 
     void deleteReceiptDiscountById(Long id);
 
-    ReceiptDiscountDto createReceiptDiscount(ReceiptDiscountDto dto);
+    ReceiptDiscountDto createReceiptDiscount(ReceiptDiscountDto receiptDiscountDto);
 
-    ReceiptDiscountDto updateReceiptDiscount(ReceiptDiscountDto dto);
+    ReceiptDiscountDto updateReceiptDiscount(ReceiptDiscountDto receiptDiscountDto);
 
     Long getReceiptDiscountCount();
 }

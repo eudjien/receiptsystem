@@ -2,10 +2,9 @@ package ru.clevertec.checksystem.core.util.factory;
 
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.constant.Entities;
-import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.ConstantReceiptItemDiscountDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.PercentageReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.receiptitem.SimpleConstantReceiptItemDiscountDto;
-import ru.clevertec.checksystem.core.dto.discount.receiptitem.SimplePercentageReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.ThresholdPercentageReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.exception.ValidationException;
 
@@ -21,36 +20,36 @@ public class ReceiptItemDiscountDtoFactory {
 
         var type = map.get(Entities.DiscriminatorNames.RECEIPT_ITEM_DISCOUNT);
 
-        ReceiptItemDiscountDto receiptDiscount;
+        ReceiptItemDiscountDto receiptItemDiscountDto;
 
         switch (type) {
-            case Entities.DiscriminatorValues.SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT -> {
-                var discountDto = (SimpleConstantReceiptItemDiscountDto) (receiptDiscount = new SimpleConstantReceiptItemDiscountDto());
+            case Entities.DiscriminatorValues.CONSTANT_RECEIPT_ITEM_DISCOUNT -> {
+                var discountDto = (ConstantReceiptItemDiscountDto) (receiptItemDiscountDto = new ConstantReceiptItemDiscountDto());
                 discountDto.setConstant(new BigDecimal(map.get("constant")));
             }
-            case Entities.DiscriminatorValues.SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT -> {
-                var discountDto = (SimplePercentageReceiptItemDiscountDto) (receiptDiscount = new SimplePercentageReceiptItemDiscountDto());
+            case Entities.DiscriminatorValues.PERCENTAGE_RECEIPT_ITEM_DISCOUNT -> {
+                var discountDto = (PercentageReceiptItemDiscountDto) (receiptItemDiscountDto = new PercentageReceiptItemDiscountDto());
                 discountDto.setPercent(Double.parseDouble(map.get("percent")));
             }
             case Entities.DiscriminatorValues.THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT -> {
-                var discountDto = (ThresholdPercentageReceiptItemDiscountDto) (receiptDiscount = new ThresholdPercentageReceiptItemDiscountDto());
+                var discountDto = (ThresholdPercentageReceiptItemDiscountDto) (receiptItemDiscountDto = new ThresholdPercentageReceiptItemDiscountDto());
                 discountDto.setPercent(Double.parseDouble(map.get("percent")));
                 discountDto.setThreshold(Long.parseLong(map.get("threshold")));
             }
             default -> throw new IllegalArgumentException("map");
         }
 
-        receiptDiscount.setId(Long.parseLong(map.getOrDefault("id", "0")));
-        receiptDiscount.setDescription(map.get("description"));
+        receiptItemDiscountDto.setId(Long.parseLong(map.getOrDefault("id", "0")));
+        receiptItemDiscountDto.setDescription(map.get("description"));
 
         try {
-            receiptDiscount.setDependentDiscountId(Long.parseLong(map.get("dependentDiscountId")));
+            receiptItemDiscountDto.setDependentDiscountId(Long.parseLong(map.get("dependentDiscountId")));
         } catch (Exception ignored) {
         }
 
-        validate(receiptDiscount, validator);
+        validate(receiptItemDiscountDto, validator);
 
-        return receiptDiscount;
+        return receiptItemDiscountDto;
     }
 
     private static void validate(ReceiptItemDiscountDto receiptItemDiscountDto, Validator validator) {

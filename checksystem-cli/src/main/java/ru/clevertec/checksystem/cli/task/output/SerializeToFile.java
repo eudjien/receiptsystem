@@ -35,6 +35,6 @@ public class SerializeToFile implements Callable<Void> {
         var format = finder.firstStringOrThrow(Constants.Keys.SERIALIZE_FORMAT);
         var path = finder.firstStringOrThrow(Constants.Keys.SERIALIZE_PATH);
 
-        receiptService.serialize(receipts, new File(path), StructureFormat.parse(format));
+        receiptService.serialize(receipts, new File(path), StructureFormat.from(format));
     }
 }

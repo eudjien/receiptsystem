@@ -14,7 +14,8 @@ public enum GenerateFormat {
         this.generateFormat = generateFormat;
     }
 
-    public static GenerateFormat parse(String generateFormat) {
+    public static GenerateFormat from(String generateFormat) {
+        //noinspection SwitchStatementWithTooFewBranches
         return switch (generateFormat.trim().toLowerCase(Locale.ROOT)) {
             case Formats.JSON -> GenerateFormat.JSON;
             default -> throw new IllegalArgumentException();

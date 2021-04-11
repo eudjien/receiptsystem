@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({EntityNotFoundException.class, EntityExistsException.class, IllegalArgumentException.class})
-    public ResponseEntity<ErrorDto> handleBadRequestExceptions(WebRequest request) {
+    public ResponseEntity<ErrorDto> handleBadRequestExceptions(WebRequest request, Exception e) {
 
         var status = HttpStatus.BAD_REQUEST;
         var attributes = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ErrorDto> handleInternalServerErrorExceptions(WebRequest request) {
+    public ResponseEntity<ErrorDto> handleInternalServerErrorExceptions(WebRequest request, Exception e) {
 
         var internalServerErrorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         var attributes = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));

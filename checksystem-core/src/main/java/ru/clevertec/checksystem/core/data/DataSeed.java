@@ -1,37 +1,39 @@
 package ru.clevertec.checksystem.core.data;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.entity.Email;
 import ru.clevertec.checksystem.core.entity.EventEmail;
 import ru.clevertec.checksystem.core.entity.Product;
+import ru.clevertec.checksystem.core.entity.discount.receipt.ConstantReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receipt.PercentageReceiptDiscount;
 import ru.clevertec.checksystem.core.entity.discount.receipt.ReceiptDiscount;
-import ru.clevertec.checksystem.core.entity.discount.receipt.SimpleConstantReceiptDiscount;
-import ru.clevertec.checksystem.core.entity.discount.receipt.SimplePercentageReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.ConstantReceiptItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.PercentageReceiptItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.receiptitem.ReceiptItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.receiptitem.SimpleConstantReceiptItemDiscount;
-import ru.clevertec.checksystem.core.entity.discount.receiptitem.SimplePercentageReceiptItemDiscount;
 import ru.clevertec.checksystem.core.entity.discount.receiptitem.ThresholdPercentageReceiptItemDiscount;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.event.EventType;
 import ru.clevertec.checksystem.core.repository.*;
 
-import javax.mail.internet.AddressException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public final class DataSeed {
 
-    private static Collection<Product> products;
-    private static Collection<Receipt> receipts;
-    private static Collection<ReceiptDiscount> receiptDiscounts;
-    private static Collection<ReceiptItemDiscount> receiptItemDiscounts;
-    private static Collection<Email> emails;
-    private static Collection<EventEmail> eventEmails;
+    private static Set<Product> products;
+    private static Set<Receipt> receipts;
+    private static Set<ReceiptDiscount> receiptDiscounts;
+    private static Set<ReceiptItemDiscount> receiptItemDiscounts;
+    private static Set<Email> emails;
+    private static Set<EventEmail> eventEmails;
 
     private final ReceiptRepository receiptRepository;
     private final ProductRepository productRepository;
@@ -40,23 +42,8 @@ public final class DataSeed {
     private final EmailRepository emailRepository;
     private final EventEmailRepository eventEmailRepository;
 
-    @Autowired
-    public DataSeed(ReceiptRepository receiptRepository,
-                    ProductRepository productRepository,
-                    ReceiptDiscountRepository receiptDiscountRepository,
-                    ReceiptItemDiscountRepository receiptItemDiscountRepository,
-                    EmailRepository emailRepository,
-                    EventEmailRepository eventEmailRepository) {
-        this.receiptRepository = receiptRepository;
-        this.productRepository = productRepository;
-        this.receiptDiscountRepository = receiptDiscountRepository;
-        this.receiptItemDiscountRepository = receiptItemDiscountRepository;
-        this.emailRepository = emailRepository;
-        this.eventEmailRepository = eventEmailRepository;
-    }
-
-    public void dbSeed() {
-        receiptRepository.saveAll(checks());
+    public void dbSeed() throws ParseException {
+        receiptRepository.saveAll(receipts());
         productRepository.saveAll(products());
         receiptDiscountRepository.saveAll(receiptDiscounts());
         receiptItemDiscountRepository.saveAll(receiptItemDiscounts());
@@ -66,337 +53,124 @@ public final class DataSeed {
 
     public static Collection<Product> products() {
         if (products == null) {
-            products = new ArrayList<>();
-
-            products.add(new Product.Builder()
-                    .setName("Пельмени")
-                    .setPrice(BigDecimal.valueOf(12.48))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Картошка")
-                    .setPrice(BigDecimal.valueOf(7.5))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Помидоры")
-                    .setPrice(BigDecimal.valueOf(3.91))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Сало")
-                    .setPrice(BigDecimal.valueOf(10))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Кукуруза")
-                    .setPrice(BigDecimal.valueOf(20))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Макароны")
-                    .setPrice(BigDecimal.valueOf(8.5))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Колбаса")
-                    .setPrice(BigDecimal.valueOf(20))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Рис")
-                    .setPrice(BigDecimal.valueOf(19.999))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Рыба")
-                    .setPrice(BigDecimal.valueOf(50.2))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Апельсины")
-                    .setPrice(BigDecimal.valueOf(30.5))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Яблоки")
-                    .setPrice(BigDecimal.valueOf(8.7))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Чай")
-                    .setPrice(BigDecimal.valueOf(3.51))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Кофе")
-                    .setPrice(BigDecimal.valueOf(3.5))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Печенье")
-                    .setPrice(BigDecimal.valueOf(2.1))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Конфеты")
-                    .setPrice(BigDecimal.valueOf(5.6))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Монитор")
-                    .setPrice(BigDecimal.valueOf(155.5))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Клавиатура")
-                    .setPrice(BigDecimal.valueOf(30))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("Мышка")
-                    .setPrice(BigDecimal.valueOf(30))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("SSD")
-                    .setPrice(BigDecimal.valueOf(50))
-                    .build());
-
-            products.add(new Product.Builder()
-                    .setName("HDD")
-                    .setPrice(BigDecimal.valueOf(25.5))
-                    .build());
+            products = new HashSet<>();
+            products.add(Product.builder().name("Пельмени").price(BigDecimal.valueOf(12.48)).build());
+            products.add(Product.builder().name("Картошка").price(BigDecimal.valueOf(7.5)).build());
+            products.add(Product.builder().name("Помидоры").price(BigDecimal.valueOf(3.91)).build());
+            products.add(Product.builder().name("Сало").price(BigDecimal.valueOf(10)).build());
+            products.add(Product.builder().name("Кукуруза").price(BigDecimal.valueOf(20)).build());
+            products.add(Product.builder().name("Макароны").price(BigDecimal.valueOf(8.5)).build());
+            products.add(Product.builder().name("Колбаса").price(BigDecimal.valueOf(20)).build());
+            products.add(Product.builder().name("Рис").price(BigDecimal.valueOf(19.999)).build());
+            products.add(Product.builder().name("Рыба").price(BigDecimal.valueOf(50.2)).build());
+            products.add(Product.builder().name("Апельсины").price(BigDecimal.valueOf(30.5)).build());
+            products.add(Product.builder().name("Яблоки").price(BigDecimal.valueOf(8.7)).build());
+            products.add(Product.builder().name("Чай").price(BigDecimal.valueOf(3.51)).build());
+            products.add(Product.builder().name("Кофе").price(BigDecimal.valueOf(3.5)).build());
+            products.add(Product.builder().name("Печенье").price(BigDecimal.valueOf(2.1)).build());
+            products.add(Product.builder().name("Конфеты").price(BigDecimal.valueOf(5.6)).build());
+            products.add(Product.builder().name("Монитор").price(BigDecimal.valueOf(155.5)).build());
+            products.add(Product.builder().name("Клавиатура").price(BigDecimal.valueOf(30)).build());
+            products.add(Product.builder().name("Мышка").price(BigDecimal.valueOf(30)).build());
+            products.add(Product.builder().name("SSD").price(BigDecimal.valueOf(50)).build());
+            products.add(Product.builder().name("HDD").price(BigDecimal.valueOf(25.5)).build());
         }
-
         return products;
     }
 
-    public static Collection<Receipt> checks() {
+    public static Collection<Receipt> receipts() throws ParseException {
 
         var receiptDiscounts = receiptDiscounts().toArray(ReceiptDiscount[]::new);
         var receiptItemDiscounts = receiptItemDiscounts().toArray(ReceiptItemDiscount[]::new);
+        var dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
         if (receipts == null) {
-            receipts = new ArrayList<>();
+            receipts = new HashSet<>();
 
             var products = products().toArray(Product[]::new);
 
             // Receipt 1
-            var receipt = new Receipt.Builder()
-
-                    .setName("999 проблем")
-                    .setDescription("Компьютерный магазин")
-                    .setAddress("ул. Пушкина, д. Калатушкина")
-                    .setPhoneNumber("+375290000000")
-                    .setCashier("Василий Пупкин")
-                    .setDate(new Date())
+            var receipt = Receipt.builder()
+                    .name("999 проблем")
+                    .description("Компьютерный магазин")
+                    .address("ул. Пушкина, д. Калатушкина")
+                    .phoneNumber("+375290000000")
+                    .cashier("Василий Пупкин")
+                    .date(dateFormatter.parse("18.04.2018"))
                     .build();
-
-            var receiptItems = new ArrayList<ReceiptItem>();
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[0])
-                    .setQuantity(3L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[1])
-                    .setQuantity(1L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[2])
-                    .setQuantity(8L)
-                    .addDiscount(receiptItemDiscounts[4])
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[3])
-                    .setQuantity(9L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[4])
-                    .setQuantity(1L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[5])
-                    .setQuantity(2L)
-                    .build());
-
-            receipt.addReceiptItems(receiptItems);
-
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[0]).quantity(3L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[1]).quantity(1L).build());
+            var discountedItem = ReceiptItem.builder().product(products[2]).quantity(8L).build();
+            discountedItem.addDiscount(receiptItemDiscounts[4]);
+            receipt.addReceiptItem(discountedItem);
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[5]).quantity(2L).build());
             receipt.addDiscount(receiptDiscounts[2]);
             receipts.add(receipt);
 
             // Receipt 2
-            receipt = new Receipt.Builder()
-                    .setName("342 элемент")
-                    .setDescription("Гипермаркет")
-                    .setAddress("ул. Элементова, д. 1")
-                    .setPhoneNumber("+375290000001")
-                    .setCashier("Екатерина Пупкина")
-                    .setDate(new Date())
-                    .build();
-
-            receiptItems = new ArrayList<>();
-
-            receiptItems.add(new ReceiptItem.Builder()
-
-                    .setProduct(products[2])
-                    .setQuantity(8L)
-                    .addDiscount(receiptItemDiscounts[5])
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[1])
-                    .setQuantity(10L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[3])
-                    .setQuantity(9L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[10])
-                    .setQuantity(8L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[11])
-                    .setQuantity(8L)
-                    .addDiscount(receiptItemDiscounts[1])
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[5])
-                    .setQuantity(7L)
-                    .addDiscount(receiptItemDiscounts[2])
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[7])
-                    .setQuantity(6L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[9])
-                    .setQuantity(5L)
-                    .build());
-
-            receipt.addReceiptItems(receiptItems);
+            receipt = Receipt.builder()
+                    .name("342 элемент")
+                    .description("Гипермаркет")
+                    .address("ул. Элементова, д. 1")
+                    .phoneNumber("+375290000001")
+                    .cashier("Екатерина Пупкина")
+                    .date(dateFormatter.parse("02.03.2018")).build();
+            discountedItem = ReceiptItem.builder().product(products[2]).quantity(8L).build();
+            discountedItem.addDiscount(receiptItemDiscounts[5]);
+            receipt.addReceiptItem(discountedItem);
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[1]).quantity(10L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[3]).quantity(9L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[10]).quantity(8L).build());
+            discountedItem = ReceiptItem.builder().product(products[11]).quantity(8L).build();
+            discountedItem.addDiscount(receiptItemDiscounts[1]);
+            receipt.addReceiptItem(discountedItem);
+            discountedItem = ReceiptItem.builder().product(products[5]).quantity(7L).build();
+            discountedItem.addDiscount(receiptItemDiscounts[2]);
+            receipt.addReceiptItem(discountedItem);
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[9]).quantity(5L).build());
             receipt.addDiscount(receiptDiscounts[0]);
             receipts.add(receipt);
 
             // Receipt 3
-            receipt = new Receipt.Builder()
-                    .setName("Магазин №1")
-                    .setDescription("Продуктовый магазин")
-                    .setAddress("ул. Советская, д. 1001")
-                    .setPhoneNumber("+375290000002")
-                    .setCashier("Алексей Пупкин")
-                    .setDate(new Date())
+            receipt = Receipt.builder()
+                    .name("Магазин №1")
+                    .description("Продуктовый магазин")
+                    .address("ул. Советская, д. 1001")
+                    .phoneNumber("+375290000002")
+                    .cashier("Алексей Пупкин")
+                    .date(dateFormatter.parse("01.02.2018"))
                     .build();
-
-            receiptItems = new ArrayList<>();
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[2])
-                    .setQuantity(15L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[4])
-                    .setQuantity(1L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[6])
-                    .setQuantity(1L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[8])
-                    .setQuantity(3L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[10])
-                    .setQuantity(11L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[12])
-                    .setQuantity(6L)
-                    .build());
-
-            receipt.addReceiptItems(receiptItems);
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[2]).quantity(15L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[4]).quantity(1L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[6]).quantity(1L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[8]).quantity(3L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[10]).quantity(11L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[12]).quantity(6L).build());
             receipt.addDiscount(receiptDiscounts[1]);
             receipts.add(receipt);
 
             // Receipt 4
-            receipt = new Receipt.Builder()
-                    .setName("Магазин №2")
-                    .setDescription("Продуктовый магазин")
-                    .setAddress("ул. Свиридова, д. 1234")
-                    .setPhoneNumber("+375290000003")
-                    .setCashier("Татьяна Пупкина")
-                    .setDate(new Date())
+            receipt = Receipt.builder()
+                    .name("Магазин №2")
+                    .description("Продуктовый магазин")
+                    .address("ул. Свиридова, д. 1234")
+                    .phoneNumber("+375290000003")
+                    .cashier("Татьяна Пупкина")
+                    .date(dateFormatter.parse("04.07.2017"))
                     .build();
-
-            receiptItems = new ArrayList<>();
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[3])
-                    .setQuantity(15L)
-                    .addDiscount(receiptItemDiscounts[6])
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[5])
-                    .setQuantity(1L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[7])
-                    .setQuantity(1L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[9])
-                    .setQuantity(3L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[11])
-                    .setQuantity(15L)
-                    .addDiscount(receiptItemDiscounts[0])
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[13])
-                    .setQuantity(6L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[15])
-                    .setQuantity(3L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[17])
-                    .setQuantity(11L)
-                    .build());
-
-            receiptItems.add(new ReceiptItem.Builder()
-                    .setProduct(products[19])
-                    .setQuantity(6L)
-                    .build());
-
-            receipt.addReceiptItems(receiptItems);
+            discountedItem = ReceiptItem.builder().product(products[3]).quantity(15L).build();
+            discountedItem.addDiscount(receiptItemDiscounts[6]);
+            receipt.addReceiptItem(discountedItem);
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[5]).quantity(1L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[7]).quantity(1L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[9]).quantity(3L).build());
+            discountedItem = ReceiptItem.builder().product(products[11]).quantity(15L).build();
+            discountedItem.addDiscount(receiptItemDiscounts[0]);
+            receipt.addReceiptItem(discountedItem);
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[13]).quantity(6L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[15]).quantity(3L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[17]).quantity(11L).build());
+            receipt.addReceiptItem(ReceiptItem.builder().product(products[19]).quantity(6L).build());
             receipt.addDiscount(receiptDiscounts[3]);
             receipts.add(receipt);
         }
@@ -407,64 +181,43 @@ public final class DataSeed {
     public static Collection<ReceiptDiscount> receiptDiscounts() {
 
         if (receiptDiscounts == null) {
-            receiptDiscounts = new ArrayList<>();
+            receiptDiscounts = new HashSet<>();
 
-            receiptDiscounts.add(new SimplePercentageReceiptDiscount.Builder()
-                    .setPercent(30D)
-                    .setDescription("-30% на сумму чека")
-                    .build());
-
-            receiptDiscounts.add(new SimplePercentageReceiptDiscount.Builder()
-                    .setPercent(20D)
-                    .setDescription("-20% на сумму чека")
-                    .build());
-
-            receiptDiscounts.add(new SimplePercentageReceiptDiscount.Builder()
-                    .setPercent(35D)
-                    .setDescription("-35% на сумму чека")
-                    .build());
-
-            receiptDiscounts.add(new SimpleConstantReceiptDiscount.Builder()
-                    .setConstant(BigDecimal.valueOf(5))
-                    .setDescription("-5$ на сумму чека").build());
-
-            receiptDiscounts.add(new SimpleConstantReceiptDiscount.Builder()
-                    .setConstant(BigDecimal.valueOf(10))
-                    .setDescription("-10$ на сумму чека").build());
-
-            // (сумма - 35%) - 10
-            receiptDiscounts.add(new SimpleConstantReceiptDiscount.Builder()
-                    .setConstant(BigDecimal.valueOf(10))
-                    .setDependentDiscount(new SimplePercentageReceiptDiscount.Builder()
-                            .setPercent(35D)
-                            .setDescription("-35%")
-                            .build())
-                    .setDescription("-10$")
-                    .build());
-
-            // (сумма - 10) - 35%
-            receiptDiscounts.add(new SimplePercentageReceiptDiscount.Builder()
-                    .setPercent(35D)
-                    .setDependentDiscount(new SimpleConstantReceiptDiscount.Builder()
-                            .setConstant(BigDecimal.valueOf(10))
-                            .setDescription("-10$")
-                            .build())
-                    .setDescription("-35%")
-                    .build());
-
-            // (сумма - 15%) - 10) - 35%
-            receiptDiscounts.add(new SimplePercentageReceiptDiscount.Builder()
-                    .setPercent(35D)
-                    .setDependentDiscount(new SimpleConstantReceiptDiscount.Builder()
-                            .setConstant(BigDecimal.valueOf(10))
-                            .setDependentDiscount(new SimplePercentageReceiptDiscount.Builder()
-                                    .setPercent(15D)
-                                    .setDescription("-15%")
-                                    .build())
-                            .setDescription("-10$")
-                            .build())
-                    .setDescription("-35%")
-                    .build());
+            receiptDiscounts.add(PercentageReceiptDiscount.builder()
+                    .description("-30% на сумму чека")
+                    .percent(30D).build());
+            receiptDiscounts.add(PercentageReceiptDiscount.builder()
+                    .description("-20% на сумму чека")
+                    .percent(20D).build());
+            receiptDiscounts.add(PercentageReceiptDiscount.builder()
+                    .description("-35% на сумму чека")
+                    .percent(35D).build());
+            receiptDiscounts.add(ConstantReceiptDiscount.builder()
+                    .description("-5$ на сумму чека")
+                    .constant(BigDecimal.valueOf(5)).build());
+            receiptDiscounts.add(ConstantReceiptDiscount.builder()
+                    .description("-10$ на сумму чека")
+                    .constant(BigDecimal.valueOf(10)).build());
+            receiptDiscounts.add(ConstantReceiptDiscount.builder()
+                    .description("-10$")
+                    .constant(BigDecimal.valueOf(10))
+                    .dependentDiscount(PercentageReceiptDiscount.builder()
+                            .description("-35%")
+                            .percent(35D).build()).build());
+            receiptDiscounts.add(PercentageReceiptDiscount.builder()
+                    .description("-35%")
+                    .percent(35D)
+                    .dependentDiscount(ConstantReceiptDiscount.builder()
+                            .description("-10%").constant(BigDecimal.valueOf(10)).build()).build());
+            receiptDiscounts.add(PercentageReceiptDiscount.builder()
+                    .description("-35%")
+                    .percent(35D)
+                    .dependentDiscount(ConstantReceiptDiscount.builder()
+                            .description("-10$")
+                            .constant(BigDecimal.valueOf(10))
+                            .dependentDiscount(PercentageReceiptDiscount.builder()
+                                    .description("-15%")
+                                    .percent(15D).build()).build()).build());
         }
 
         return receiptDiscounts;
@@ -473,50 +226,36 @@ public final class DataSeed {
     public static Collection<ReceiptItemDiscount> receiptItemDiscounts() {
 
         if (receiptItemDiscounts == null) {
-            receiptItemDiscounts = new ArrayList<>();
+            receiptItemDiscounts = new HashSet<>();
 
-            receiptItemDiscounts.add(new SimpleConstantReceiptItemDiscount.Builder()
-                    .setConstant(BigDecimal.valueOf(5))
-                    .setDescription("-5$")
-                    .build());
-
-            receiptItemDiscounts.add(new SimplePercentageReceiptItemDiscount.BuilderSimple()
-                    .setPercent(30D)
-                    .setDescription("-30%")
-                    .build());
-
-            receiptItemDiscounts.add(new SimplePercentageReceiptItemDiscount.BuilderSimple()
-                    .setPercent(40D)
-                    .setDescription("-40%")
-                    .build());
-
-            receiptItemDiscounts.add(new SimplePercentageReceiptItemDiscount.BuilderSimple()
-                    .setPercent(50D)
-                    .setDescription("-50%")
-                    .build());
-
-            receiptItemDiscounts.add(
-                    new ThresholdPercentageReceiptItemDiscount.Builder()
-                            .setPercent(10D)
-                            .setThreshold(5L)
-                            .setDescription("-10% если количество продукта больше чем 5")
-                            .build());
-
-            receiptItemDiscounts.add(new ThresholdPercentageReceiptItemDiscount.Builder()
-                    .setPercent(1D)
-                    .setThreshold(6L)
-                    .setDependentDiscount(new SimpleConstantReceiptItemDiscount.Builder()
-                            .setConstant(BigDecimal.valueOf(10))
-                            .setDescription("Скидка 10 на продукт")
-                            .build())
-                    .setDescription("Скидка 1% если количество продуктов больше 6")
-                    .build());
-
-            receiptItemDiscounts.add(new ThresholdPercentageReceiptItemDiscount.Builder()
-                    .setPercent(10D)
-                    .setThreshold(2L)
-                    .setDescription("Скидка 10% если количество продуктов больше 2")
-                    .build());
+            receiptItemDiscounts.add(ConstantReceiptItemDiscount.builder()
+                    .description("-5$")
+                    .constant(BigDecimal.valueOf(5)).build());
+            receiptItemDiscounts.add(PercentageReceiptItemDiscount.builder()
+                    .description("-30%")
+                    .percent(30D).build());
+            receiptItemDiscounts.add(PercentageReceiptItemDiscount.builder()
+                    .description("-40%")
+                    .percent(40D).build());
+            receiptItemDiscounts.add(PercentageReceiptItemDiscount.builder()
+                    .description("-50%")
+                    .percent(50D).build());
+            receiptItemDiscounts.add(ThresholdPercentageReceiptItemDiscount.builder()
+                    .description("-10% если количество продукта больше чем 5")
+                    .percent(10D)
+                    .threshold(5L).build());
+            receiptItemDiscounts.add(ThresholdPercentageReceiptItemDiscount.builder()
+                    .description("Скидка 1% если количество продуктов больше 6")
+                    .percent(1D)
+                    .threshold(6L)
+                    .dependentDiscount(ConstantReceiptItemDiscount.builder()
+                            .description("Скидка 10 на продукт")
+                            .constant(BigDecimal.valueOf(10))
+                            .build()).build());
+            receiptItemDiscounts.add(ThresholdPercentageReceiptItemDiscount.builder()
+                    .description("Скидка 10% если количество продуктов больше 2")
+                    .percent(10D)
+                    .threshold(2L).build());
         }
 
         return receiptItemDiscounts;
@@ -524,22 +263,17 @@ public final class DataSeed {
 
     public static Collection<Email> emails() {
         if (emails == null) {
-            try {
-                emails = new ArrayList<>();
-                emails.add(new Email("lakadmakatag@gmail.com"));
-                emails.add(new Email("chcksstm1@gmail.com"));
-
-            } catch (AddressException e) {
-                throw new RuntimeException(e);
-            }
+            emails = new HashSet<>();
+            emails.add(new Email("lakadmakatag@gmail.com"));
+            emails.add(new Email("chcksstm1@gmail.com"));
         }
         return emails;
     }
 
     public static Collection<EventEmail> eventEmails() {
         if (eventEmails == null) {
-            eventEmails = new ArrayList<>();
-            emails().forEach(email -> eventEmails.add(new EventEmail(email, EventType.PrintEnd)));
+            eventEmails = new HashSet<>();
+            emails().forEach(email -> eventEmails.add(new EventEmail(email, EventType.PrintEnd, null)));
         }
         return eventEmails;
     }

@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,16 +17,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;
     private final ApplicationModelMapper modelMapper;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository, ApplicationModelMapper modelMapper) {
-        this.productRepository = productRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public ProductDto getProductById(Long id) {
@@ -80,24 +75,24 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ProductDto createProduct(ProductDto dto) {
+    public ProductDto createProduct(ProductDto productDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(productDto))
+            throw new NullPointerException("productDto");
 
-        return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDto.class);
+        return modelMapper.map(productRepository.save(modelMapper.map(productDto, Product.class)), ProductDto.class);
     }
 
     @Override
-    public ProductDto updateProduct(ProductDto dto) {
+    public ProductDto updateProduct(ProductDto productDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(productDto))
+            throw new NullPointerException("productDto");
 
-        productRepository.findById(dto.getId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Product with id '%s' not found", dto.getId())));
+        productRepository.findById(productDto.getId()).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Product with id '%s' not found", productDto.getId())));
 
-        return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDto.class);
+        return modelMapper.map(productRepository.save(modelMapper.map(productDto, Product.class)), ProductDto.class);
     }
 
     @Override

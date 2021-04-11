@@ -36,19 +36,21 @@ public interface IEmailService {
 
     void deleteEmailById(Long id);
 
+    void deleteEventEmailById(Long id);
+
     Page<EventEmailDto> getEventEmailsByEmailId(Long emailId, Pageable pageable);
 
     Page<EventEmailDto> getEventEmailsPage(Pageable pageable);
 
     EventEmailDto getEventEmailById(Long id);
 
-    EmailDto createEmail(EmailDto dto);
+    EmailDto createEmail(EmailDto emailDto);
 
-    EmailDto updateEmail(EmailDto dto);
+    EmailDto updateEmail(EmailDto emailDto);
 
-    EventEmailDto updateEventEmail(EventEmailDto dto);
+    EventEmailDto updateEventEmail(EventEmailDto eventEmailDto);
 
-    EventEmailDto createEventEmail(EventEmailDto dto);
+    EventEmailDto createEventEmail(EventEmailDto eventEmailDto);
 
     Long getEmailCount();
 

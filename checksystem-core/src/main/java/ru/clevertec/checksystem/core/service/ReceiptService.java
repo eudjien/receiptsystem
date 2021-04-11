@@ -1,15 +1,24 @@
 package ru.clevertec.checksystem.core.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.clevertec.checksystem.core.dto.ProductDto;
+import ru.clevertec.checksystem.core.dto.SummaryDto;
 import ru.clevertec.checksystem.core.dto.discount.receipt.ReceiptDiscountDto;
 import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptDto;
 import ru.clevertec.checksystem.core.dto.receipt.ReceiptItemDto;
+import ru.clevertec.checksystem.core.entity.discount.AbstractDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receipt.ConstantReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receipt.PercentageReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receipt.ReceiptDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.ConstantReceiptItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.PercentageReceiptItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.ReceiptItemDiscount;
+import ru.clevertec.checksystem.core.entity.discount.receiptitem.ThresholdPercentageReceiptItemDiscount;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
 import ru.clevertec.checksystem.core.repository.*;
@@ -18,11 +27,15 @@ import ru.clevertec.checksystem.core.util.mapper.ApplicationModelMapper;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Stack;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ReceiptService implements IReceiptService {
 
     private final ReceiptRepository receiptRepository;
@@ -31,21 +44,6 @@ public class ReceiptService implements IReceiptService {
     private final ReceiptItemDiscountRepository receiptItemDiscountRepository;
     private final ProductRepository productRepository;
     private final ApplicationModelMapper modelMapper;
-
-    @Autowired
-    public ReceiptService(ReceiptRepository receiptRepository,
-                          ReceiptItemRepository receiptItemRepository,
-                          ReceiptDiscountRepository receiptDiscountRepository,
-                          ReceiptItemDiscountRepository receiptItemDiscountRepository,
-                          ProductRepository productRepository,
-                          ApplicationModelMapper modelMapper) {
-        this.receiptRepository = receiptRepository;
-        this.receiptItemRepository = receiptItemRepository;
-        this.receiptDiscountRepository = receiptDiscountRepository;
-        this.receiptItemDiscountRepository = receiptItemDiscountRepository;
-        this.productRepository = productRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public ReceiptDto getReceiptById(Long id) {
@@ -218,8 +216,7 @@ public class ReceiptService implements IReceiptService {
 
     @Override
     public Page<ReceiptItemDto> getReceiptItemsPageByReceiptId(Pageable pageable, Long receiptId) {
-        return receiptItemRepository.findAllByReceiptId(pageable, receiptId)
-                .map(e -> modelMapper.map(e, ReceiptItemDto.class));
+        return receiptItemRepository.findAllByReceiptId(pageable, receiptId).map(e -> modelMapper.map(e, ReceiptItemDto.class));
     }
 
     @Override
@@ -277,7 +274,7 @@ public class ReceiptService implements IReceiptService {
         var receiptItem = receiptItemRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException(String.format("ReceiptItem with id '%s' not found", id)));
 
-        receiptItem.setReceipt(null);
+        receiptItem.removeReceipt();
 
         receiptItemRepository.delete(receiptItem);
     }
@@ -286,9 +283,10 @@ public class ReceiptService implements IReceiptService {
     public ReceiptDto createReceipt(ReceiptDto receiptDto) {
 
         if (Objects.isNull(receiptDto))
-            throw new NullPointerException("dto");
+            throw new NullPointerException("receiptDto");
 
         var receipt = new Receipt();
+
         mapReceiptFromDto(receiptDto, receipt);
 
         return modelMapper.map(receiptRepository.save(receipt), ReceiptDto.class);
@@ -298,7 +296,7 @@ public class ReceiptService implements IReceiptService {
     public ReceiptDto updateReceipt(ReceiptDto receiptDto) {
 
         if (Objects.isNull(receiptDto))
-            throw new NullPointerException("dto");
+            throw new NullPointerException("receiptDto");
 
         var receipt = receiptRepository.findById(receiptDto.getId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Receipt with id '%s' not found", receiptDto.getId())));
@@ -312,7 +310,7 @@ public class ReceiptService implements IReceiptService {
     public ReceiptItemDto createReceiptItem(ReceiptItemDto receiptItemDto) {
 
         if (Objects.isNull(receiptItemDto))
-            throw new NullPointerException("dto");
+            throw new NullPointerException("receiptItemDto");
 
         var receiptItem = new ReceiptItem();
         mapReceiptItemFromDto(receiptItemDto, receiptItem, true);
@@ -324,7 +322,7 @@ public class ReceiptService implements IReceiptService {
     public ReceiptItemDto updateReceiptItem(ReceiptItemDto receiptItemDto) {
 
         if (Objects.isNull(receiptItemDto))
-            throw new NullPointerException("dto");
+            throw new NullPointerException("receiptItemDto");
 
         if (!receiptRepository.existsById(receiptItemDto.getReceiptId()))
             throw new EntityNotFoundException(String.format("Receipt with id '%s' not found", receiptItemDto.getReceiptId()));
@@ -373,6 +371,44 @@ public class ReceiptService implements IReceiptService {
         receiptRepository.save(receipt);
     }
 
+    @Override
+    public SummaryDto getReceiptSummaryById(Long receiptId) {
+
+        var receipt = receiptRepository.findById(receiptId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Receipt with id '%s' not found", receiptId)));
+
+        return getReceiptSummary(receipt);
+    }
+
+    @Override
+    public SummaryDto getReceiptItemSummaryById(Long receiptItemId) {
+
+        var receiptItem = receiptItemRepository.findById(receiptItemId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("ReceiptItem with id '%s' not found", receiptItemId)));
+
+        return getReceiptItemSummary(receiptItem);
+    }
+
+    @Override
+    public SummaryDto getReceiptSummary(Receipt receipt) {
+
+        var subTotalAmount = subTotalAmount(receipt);
+        var discountAmount = calcAllReceiptDiscounts(receipt);
+        var totalAmount = subTotalAmount.subtract(discountAmount);
+
+        return new SummaryDto(subTotalAmount, discountAmount, totalAmount);
+    }
+
+    @Override
+    public SummaryDto getReceiptItemSummary(ReceiptItem receiptItem) {
+
+        var subTotalAmount = receiptItemSubTotalAmount(receiptItem);
+        var discountAmount = calcAllReceiptItemDiscounts(receiptItem);
+        var totalAmount = subTotalAmount.subtract(discountAmount);
+
+        return new SummaryDto(subTotalAmount, discountAmount, totalAmount);
+    }
+
     private void mapReceiptFromDto(ReceiptDto receiptDto, Receipt receipt) {
 
         receipt.setId(receiptDto.getId());
@@ -383,7 +419,7 @@ public class ReceiptService implements IReceiptService {
         receipt.setCashier(receiptDto.getCashier());
         receipt.setDate(receiptDto.getDate());
 
-        receipt.clearReceiptItems();
+        receipt.getReceiptItems().clear();
         receipt.clearDiscounts();
 
         if (receiptDto.getReceiptItems() != null) {
@@ -395,10 +431,10 @@ public class ReceiptService implements IReceiptService {
         }
 
         if (receiptDto.getDiscounts() != null) {
-            for (var dtoReceiptDiscount : receiptDto.getDiscounts()) {
-                receipt.addDiscount(receiptDiscountRepository.findById(dtoReceiptDiscount.getId()).orElseThrow(() ->
+            for (var receiptDiscountDto : receiptDto.getDiscounts()) {
+                receipt.addDiscount(receiptDiscountRepository.findById(receiptDiscountDto.getId()).orElseThrow(() ->
                         new EntityNotFoundException(
-                                String.format("ReceiptDiscount with id '%s' not found", dtoReceiptDiscount.getId()))));
+                                String.format("ReceiptDiscount with id '%s' not found", receiptDiscountDto.getId()))));
             }
         }
     }
@@ -410,12 +446,14 @@ public class ReceiptService implements IReceiptService {
         receiptItem.setProductId(receiptItemDto.getProductId());
         receiptItem.setReceiptId(receiptItemDto.getReceiptId());
 
-        var product = productRepository.findById(receiptItem.getProductId()).orElseThrow(() ->
+        receiptItem.clearDiscounts();
+
+        var product = productRepository.findById(receiptItemDto.getProductId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Product with id '%s' not found", receiptItemDto.getProductId())));
         receiptItem.setProduct(product);
 
         if (findReceipt) {
-            var receipt = receiptRepository.findById(receiptItem.getReceiptId()).orElseThrow(() ->
+            var receipt = receiptRepository.findById(receiptItemDto.getReceiptId()).orElseThrow(() ->
                     new EntityNotFoundException(String.format("Receipt with id '%s' not found", receiptItemDto.getReceiptId())));
             receiptItem.setReceipt(receipt);
         }
@@ -424,5 +462,106 @@ public class ReceiptService implements IReceiptService {
             receiptItem.addDiscount(receiptItemDiscountRepository.findById(receiptItemDiscountDto.getId()).orElseThrow(() ->
                     new EntityNotFoundException(String.format("ReceiptItemDiscount with id '%s' not found", receiptItemDiscountDto.getId()))));
         }
+    }
+
+    private BigDecimal receiptItemSubTotalAmount(ReceiptItem receiptItem) {
+        return receiptItem.getProduct().getPrice().multiply(BigDecimal.valueOf(receiptItem.getQuantity()));
+    }
+
+    private BigDecimal calcAllReceiptDiscounts(Receipt receipt) {
+        return receipt.getDiscounts().stream()
+                .map(receiptDiscount -> calcReceiptDiscount(receipt, receiptDiscount))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    private BigDecimal calcAllReceiptItemsDiscounts(Receipt receipt) {
+        return receipt.getReceiptItems().stream()
+                .map(this::calcAllReceiptItemDiscounts)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    private BigDecimal calcAllReceiptItemDiscounts(ReceiptItem receiptItem) {
+        return receiptItem.getDiscounts().stream()
+                .map(receiptItemDiscount -> calcReceiptItemDiscount(receiptItem, receiptItemDiscount))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    private BigDecimal subTotalAmount(Receipt receipt) {
+        return receipt.getReceiptItems().stream()
+                .map(this::receiptItemSubTotalAmount)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    private BigDecimal calcReceiptDiscount(Receipt receipt, ReceiptDiscount receiptDiscount) {
+
+        var subTotalAmount = subTotalAmount(receipt);
+        var discountAmount = calcAllReceiptItemsDiscounts(receipt);
+        var totalAmount = subTotalAmount.subtract(discountAmount);
+
+        var unwrappedDiscounts = unwrapDiscount(receiptDiscount);
+
+        while (!unwrappedDiscounts.empty()) {
+            var currentDiscountAmount = BigDecimal.ZERO;
+            var poppedDiscount = unwrappedDiscounts.pop();
+            if (poppedDiscount instanceof PercentageReceiptDiscount) {
+                currentDiscountAmount = totalAmount.multiply(BigDecimal.valueOf(((PercentageReceiptDiscount) poppedDiscount).getPercent()))
+                        .divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN);
+            } else if (poppedDiscount instanceof ConstantReceiptDiscount) {
+                currentDiscountAmount = ((ConstantReceiptDiscount) poppedDiscount).getConstant();
+            } else {
+                throw new IllegalArgumentException("Unsupported type of discount");
+            }
+            totalAmount = totalAmount.subtract(currentDiscountAmount);
+            discountAmount = discountAmount.add(currentDiscountAmount);
+        }
+
+        return discountAmount;
+    }
+
+    private BigDecimal calcReceiptItemDiscount(ReceiptItem receiptItem, ReceiptItemDiscount receiptItemDiscount) {
+
+        var unwrappedDiscounts = unwrapDiscount(receiptItemDiscount);
+
+        var totalAmount = receiptItemSubTotalAmount(receiptItem);
+        var discountAmount = BigDecimal.ZERO;
+
+        while (!unwrappedDiscounts.empty()) {
+            var currentDiscountAmount = BigDecimal.ZERO;
+            var poppedDiscount = unwrappedDiscounts.pop();
+            if (poppedDiscount instanceof PercentageReceiptItemDiscount) {
+                currentDiscountAmount = totalAmount.multiply(BigDecimal.valueOf(((PercentageReceiptItemDiscount) poppedDiscount).getPercent()))
+                        .divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN);
+            } else if (poppedDiscount instanceof ConstantReceiptItemDiscount) {
+                currentDiscountAmount = ((ConstantReceiptItemDiscount) poppedDiscount).getConstant();
+            } else if (poppedDiscount instanceof ThresholdPercentageReceiptItemDiscount) {
+                var d = (ThresholdPercentageReceiptItemDiscount) poppedDiscount;
+                if (receiptItem.getQuantity() > d.getThreshold())
+                    currentDiscountAmount = totalAmount.multiply(BigDecimal.valueOf(d.getPercent())).divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN);
+            } else {
+                throw new IllegalArgumentException("Unsupported type of discount");
+            }
+            totalAmount = totalAmount.subtract(currentDiscountAmount);
+            discountAmount = discountAmount.add(currentDiscountAmount);
+        }
+
+        return discountAmount;
+    }
+
+    private static <T extends AbstractDiscount<T>> Stack<T> unwrapDiscount(T discount) {
+
+        var discountStack = new Stack<T>();
+
+        var currentDiscount = discount;
+
+        while (currentDiscount != null) {
+            discountStack.add(currentDiscount);
+            currentDiscount = currentDiscount.getDependentDiscount();
+        }
+
+        return discountStack;
     }
 }

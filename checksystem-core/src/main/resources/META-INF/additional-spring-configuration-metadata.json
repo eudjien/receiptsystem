@@ -1,9 +1,9 @@
 {
   "properties": [
     {
-      "name": "application.object-mapper.hibernate-aware",
+      "name": "application.database.seed-programmatically",
       "type": "java.lang.Boolean",
-      "description": "Use Hibernate-Aware ObjectMapper or not."
+      "description": "Seed database programmatically or not."
     }
   ]
 }

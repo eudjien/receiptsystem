@@ -48,7 +48,7 @@ public class DeserializeFromGenerateFile implements Callable<Void> {
         String format = finder.firstStringOrDefault(Keys.DESERIALIZE_GENERATE_FORMAT, Formats.JSON);
         String path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_GENERATE_PATH);
 
-        var receiptList = ioReceiptService.fromGenerate(new File(path), GenerateFormat.parse(format));
+        var receiptList = ioReceiptService.fromGenerate(new File(path), GenerateFormat.from(format));
         receipts.addAll(receiptIdFilter.applyFilterIfExist(receiptList));
     }
 }
