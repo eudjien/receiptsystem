@@ -1,11 +1,18 @@
 package ru.clevertec.checksystem.core.entity.discount;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.clevertec.checksystem.core.constant.Entities;
 import ru.clevertec.checksystem.core.entity.BaseEntity;
-import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.persistence.*;
 
+@Data
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @MappedSuperclass
 public abstract class AbstractDiscount<T extends AbstractDiscount<T>> extends BaseEntity {
 
@@ -18,41 +25,4 @@ public abstract class AbstractDiscount<T extends AbstractDiscount<T>> extends Ba
 
     @Column(name = Entities.JoinColumn.DEPENDENT_DISCOUNT_ID, insertable = false, updatable = false)
     private Long dependentDiscountId;
-
-    protected AbstractDiscount() {
-    }
-
-    protected AbstractDiscount(String description) {
-        setDescription(description);
-    }
-
-    protected AbstractDiscount(String description, T dependentDiscount) {
-        setDescription(description);
-        setDependentDiscount(dependentDiscount);
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        ThrowUtils.Argument.nullOrBlank("description", description);
-        this.description = description;
-    }
-
-    public T getDependentDiscount() {
-        return dependentDiscount;
-    }
-
-    public void setDependentDiscount(T discount) {
-        dependentDiscount = discount;
-    }
-
-    public Long getDependentDiscountId() {
-        return dependentDiscountId;
-    }
-
-    public void setDependentDiscountId(Long dependentDiscountId) {
-        this.dependentDiscountId = dependentDiscountId;
-    }
 }

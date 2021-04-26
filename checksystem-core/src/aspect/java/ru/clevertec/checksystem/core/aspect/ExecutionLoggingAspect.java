@@ -5,11 +5,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
-import ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog;
-import ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog;
-import ru.clevertec.checksystem.core.annotation.execution.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.log.MethodSignatureFormats;
 import ru.clevertec.checksystem.core.log.MethodSignatureFormatter;
+import ru.clevertec.checksystem.core.log.annotation.AfterExecutionLog;
+import ru.clevertec.checksystem.core.log.annotation.AroundExecutionLog;
+import ru.clevertec.checksystem.core.log.annotation.BeforeExecutionLog;
 import ru.clevertec.checksystem.core.util.AnnotationUtils;
 
 @SuppressWarnings("EmptyMethod")
@@ -89,18 +89,18 @@ public class ExecutionLoggingAspect {
     private void anyPublicOperation() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.annotation.execution.AfterExecutionLog))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.log.annotation.AfterExecutionLog)" +
+            "|| @annotation(ru.clevertec.checksystem.core.log.annotation.AfterExecutionLog))")
     private void withAfterReturningLogAnnotation() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.execution.BeforeExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.annotation.execution.BeforeExecutionLog))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.log.annotation.BeforeExecutionLog)" +
+            "|| @annotation(ru.clevertec.checksystem.core.log.annotation.BeforeExecutionLog))")
     private void withBeforeExecutionLogAnnotation() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog)" +
-            "|| @annotation(ru.clevertec.checksystem.core.annotation.execution.AroundExecutionLog))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.log.annotation.AroundExecutionLog)" +
+            "|| @annotation(ru.clevertec.checksystem.core.log.annotation.AroundExecutionLog))")
     private void withAroundExecutionLogAnnotation() {
     }
 

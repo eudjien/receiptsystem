@@ -1,34 +1,26 @@
 package ru.clevertec.checksystem.core.dto.email;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+@Data
+@Builder
+@Jacksonized
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventEmailDto {
 
-    private Integer id;
+    private Long id;
 
+    @NotBlank
     private String eventType;
 
-    private Integer emailId;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
-
-    public int getEmailId() {
-        return emailId;
-    }
-
-    public void setEmailId(int emailId) {
-        this.emailId = emailId;
-    }
+    @NotNull
+    private Long emailId;
 }

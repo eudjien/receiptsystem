@@ -1,22 +1,26 @@
 package ru.clevertec.checksystem.core.io.print.layout;
 
+import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.asciithemes.TA_GridThemes;
+import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
+import ru.clevertec.checksystem.core.service.common.IReceiptService;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TextReceiptLayout extends AbstractReceiptLayout {
 
-    private static final int MIN_SPACE_COUNT = 1;
+    private static final String EMPTY_LINE_REPLACEMENT_REGEX = "(?m)^[ \t]*\r?\n";
+    private static final int MIN_TABLE_WIDTH = 28;
 
-    private int spacesNumber = 4;
+    private int tableWidth = 40;
 
-    public TextReceiptLayout() {
+    public TextReceiptLayout(IReceiptService receiptService) {
+        super(receiptService);
     }
 
     @Override
@@ -32,177 +36,129 @@ public class TextReceiptLayout extends AbstractReceiptLayout {
                 .orElse(null);
     }
 
-    public int getSpacesNumber() {
-        return spacesNumber;
-    }
-
-    public void setSpacesNumber(int spacesNumber) {
-        ThrowUtils.Argument.lessThan("spacesNumber", spacesNumber, MIN_SPACE_COUNT);
-        this.spacesNumber = spacesNumber;
-    }
-
     private byte[] createReceiptText(Receipt receipt) {
 
-        int maxProductNameLength = getNameLengths(receipt).max(Integer::compareTo).orElse(0);
-        int maxPriceLength = getPriceLengths(receipt).max(Integer::compareTo).orElse(0);
-        int maxQuantityLength = getQuantityLengths(receipt).max(Integer::compareTo).orElse(0);
-        int maxAmountLength = getAmountLengths(receipt).max(Integer::compareTo).orElse(0);
+        var table = createSellerTable(receipt) + '\n' + '\n' +
+                createPurchaseTable(receipt) + '\n' + ' ' + "-".repeat(getTableWidth() - 2) + ' ' + '\n' +
+                createReceiptItemsTable(receipt) + '\n' + ' ' + "-".repeat(getTableWidth() - 2) + ' ' + '\n' +
+                createSummaryTable(receipt);
 
-        var strBuilder = new StringBuilder();
+        return table.getBytes(StandardCharsets.UTF_8);
+    }
 
-        int fullWidth = maxProductNameLength + maxPriceLength
-                + maxQuantityLength + maxAmountLength + (getSpacesNumber() * 3);
-        double halfWidth = fullWidth / 2d;
+    private String createSellerTable(Receipt receipt) {
 
-        appendLineCenter(strBuilder, fullWidth, cropIfOutOfBounds(receipt.getName(), fullWidth));
-        strBuilder.append("\n");
+        var at = new AsciiTable();
+        at.getContext().setGridTheme(TA_GridThemes.NONE);
 
-        appendLineCenter(strBuilder, fullWidth, cropIfOutOfBounds(receipt.getDescription(), fullWidth));
-        strBuilder.append("\n");
+        at.addRule();
+        at.addRow(receipt.getName()).setTextAlignment(TextAlignment.CENTER);
+        at.addRule();
+        at.addRow(receipt.getDescription()).setTextAlignment(TextAlignment.CENTER);
+        at.addRule();
+        at.addRow(receipt.getAddress()).setTextAlignment(TextAlignment.CENTER);
+        at.addRule();
+        at.addRow(receipt.getPhoneNumber()).setTextAlignment(TextAlignment.CENTER);
 
-        appendLineCenter(strBuilder, fullWidth, cropIfOutOfBounds(receipt.getAddress(), fullWidth));
-        strBuilder.append("\n");
+        return at.render(getTableWidth()).replaceAll(EMPTY_LINE_REPLACEMENT_REGEX, "");
+    }
 
-        appendLineCenter(strBuilder, fullWidth, cropIfOutOfBounds(receipt.getPhoneNumber(), fullWidth));
-        strBuilder.append("\n\n");
+    private String createPurchaseTable(Receipt receipt) {
 
         var dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
         var timeFormatter = new SimpleDateFormat("hh:mm");
 
-        appendLineLeft(strBuilder, (int) Math.floor(halfWidth),
-                cropIfOutOfBounds("CASHIER: " + receipt.getCashier(), (int) Math.floor(halfWidth)));
+        var at = new AsciiTable();
+        at.getContext().setGridTheme(TA_GridThemes.NONE);
 
-        var dateStr = cropIfOutOfBounds("DATE: " + dateFormatter.format(receipt.getDate()),
-                (int) Math.round(halfWidth));
-        appendLineRight(strBuilder, (int) Math.round(halfWidth),
-                cropIfOutOfBounds(dateStr, (int) Math.round(halfWidth)));
-        strBuilder.append("\n");
+        var date = dateFormatter.format(receipt.getDate());
+        var time = timeFormatter.format(receipt.getDate());
 
-        var timeStr = cropIfOutOfBounds("TIME: " + timeFormatter.format(receipt.getDate()),
-                (int) Math.ceil(halfWidth));
-        appendLineRight(strBuilder, fullWidth, timeStr + " ".repeat(dateStr.length() - timeStr.length()));
+        if (date.length() > time.length())
+            time = time + "#".repeat(date.length() - time.length());
+        else if (date.length() < time.length())
+            date = date + "#".repeat(time.length() - date.length());
 
-        strBuilder.append("\n");
+        at.addRule();
+        var row1 = at.addRow("CASHIER: " + receipt.getCashier(), "DATE: " + date + "<br/>TIME: " + time);
+        row1.getCells().get(0).getContext().setTextAlignment(TextAlignment.LEFT);
+        row1.getCells().get(1).getContext().setTextAlignment(TextAlignment.RIGHT);
 
-        strBuilder.append("-".repeat(fullWidth));
+        return at.render(getTableWidth()).replaceAll(EMPTY_LINE_REPLACEMENT_REGEX, "").replace('#', ' ');
+    }
 
-        strBuilder.append("\n");
+    private String createReceiptItemsTable(Receipt receipt) {
 
-        appendLineCenter(strBuilder, maxQuantityLength, getHeaderQuantity());
-        strBuilder.append(" ".repeat(getSpacesNumber()));
+        var at = new AsciiTable();
+        at.getContext().setGridTheme(TA_GridThemes.NONE);
 
-        appendLineLeft(strBuilder, maxProductNameLength, getHeaderName());
-        strBuilder.append(" ".repeat(getSpacesNumber()));
+        at.addRule();
+        var headerRow = at.addRow(getHeaderQuantity(), getHeaderName(), getHeaderPrice(), getHeaderTotal());
+        headerRow.getCells().get(0).getContext().setTextAlignment(TextAlignment.LEFT);
+        headerRow.getCells().get(1).getContext().setTextAlignment(TextAlignment.LEFT);
+        headerRow.getCells().get(2).getContext().setTextAlignment(TextAlignment.RIGHT);
+        headerRow.getCells().get(3).getContext().setTextAlignment(TextAlignment.RIGHT);
 
-        appendLineRight(strBuilder, maxPriceLength, getHeaderPrice());
-        strBuilder.append(" ".repeat(getSpacesNumber()));
+        for (var receiptItem : receipt.getReceiptItems()) {
 
-        appendLineRight(strBuilder, maxAmountLength, getHeaderTotal());
+            var summary = getReceiptService().getReceiptItemSummary(receiptItem);
 
-        strBuilder.append("\n\n");
+            at.addRule();
+            var row = at.addRow(
+                    receiptItem.getQuantity(),
+                    receiptItem.getProduct().getName(),
+                    getCurrency() + receiptItem.getProduct().getPrice(),
+                    getCurrency() + summary.getSubTotalAmount());
+            row.getCells().get(0).getContext().setTextAlignment(TextAlignment.LEFT);
+            row.getCells().get(1).getContext().setTextAlignment(TextAlignment.LEFT);
+            row.getCells().get(2).getContext().setTextAlignment(TextAlignment.RIGHT);
+            row.getCells().get(3).getContext().setTextAlignment(TextAlignment.RIGHT);
 
-        for (var item : receipt.getReceiptItems()) {
+            if (summary.getDiscountAmount().doubleValue() > 0) {
+                at.addRule();
+                at.addRow(null, null, null, "Discount: -" + getCurrency() + summary.getDiscountAmount().setScale(getScale(), RoundingMode.CEILING)
+                        + " = " + getCurrency() + summary.getTotalAmount().setScale(getScale(), RoundingMode.CEILING))
+                        .setTextAlignment(TextAlignment.RIGHT);
 
-            // Quantity
-            appendLineCenter(strBuilder, maxQuantityLength, item.getQuantity() + "");
-            strBuilder.append(" ".repeat(getSpacesNumber()));
-
-            // Name
-            appendLineLeft(strBuilder, maxProductNameLength, item.getProduct().getName());
-            strBuilder.append(" ".repeat(getSpacesNumber()));
-
-            // Price
-            appendLineRight(strBuilder, maxPriceLength, getCurrency() + item.getProduct().getPrice()
-                    .setScale(getScale(), RoundingMode.CEILING));
-            strBuilder.append(" ".repeat(getSpacesNumber()));
-
-            // Sum
-            appendLineRight(strBuilder, maxAmountLength, getCurrency() + item.subTotalAmount()
-                    .setScale(getScale(), RoundingMode.CEILING));
-            strBuilder.append("\n");
-
-            // Discount
-            if (item.discountsAmount().doubleValue() > 0) {
-                appendLineRight(strBuilder, fullWidth,
-                        "Discount: -" + getCurrency() + item.discountsAmount()
-                                .setScale(getScale(), RoundingMode.CEILING)
-                                + " = " + getCurrency() + item.totalAmount().setScale(getScale(), RoundingMode.CEILING));
-                strBuilder.append("\n");
             }
         }
 
-        strBuilder.append("-".repeat(fullWidth));
-        strBuilder.append("\n");
-
-        appendLineLeft(strBuilder, (int) Math.floor(halfWidth), "SUBTOTAL");
-        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + receipt.subTotalAmount()
-                .setScale(getScale(), RoundingMode.CEILING).toString());
-        strBuilder.append("\n");
-
-        appendLineLeft(strBuilder, (int) Math.floor(halfWidth), "DISCOUNTS");
-        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + receipt.discountsAmount()
-                .setScale(getScale(), RoundingMode.CEILING).toString());
-        strBuilder.append("\n");
-
-        appendLineLeft(strBuilder, (int) Math.floor(halfWidth), "TOTAL");
-        appendLineRight(strBuilder, (int) Math.round(halfWidth), getCurrency() + receipt.totalAmount()
-                .setScale(getScale(), RoundingMode.CEILING).toString());
-        strBuilder.append("\n");
-
-        return strBuilder.toString().getBytes(StandardCharsets.UTF_8);
+        return at.render(getTableWidth()).replaceAll(EMPTY_LINE_REPLACEMENT_REGEX, "");
     }
 
-    private void appendLineCenter(StringBuilder strBuilder, long maxColumnLength, String text) {
-        double half = (maxColumnLength - text.length()) / 2d;
-        strBuilder.append(" ".repeat((int) Math.floor(half)));
-        strBuilder.append(text);
-        strBuilder.append(" ".repeat((int) Math.round(half)));
+    private String createSummaryTable(Receipt receipt) {
+
+        var at = new AsciiTable();
+        at.getContext().setGridTheme(TA_GridThemes.NONE);
+
+        var summary = getReceiptService().getReceiptSummary(receipt);
+
+        at.addRule();
+        var subTotalRow = at.addRow("SUBTOTAL", getCurrency() + summary.getSubTotalAmount().setScale(getScale(), RoundingMode.CEILING));
+        subTotalRow.getCells().get(0).getContext().setTextAlignment(TextAlignment.LEFT);
+        subTotalRow.getCells().get(1).getContext().setTextAlignment(TextAlignment.RIGHT);
+
+        at.addRule();
+        var discountsRow = at.addRow("DISCOUNTS", getCurrency() + summary.getDiscountAmount().setScale(getScale(), RoundingMode.CEILING));
+        discountsRow.getCells().get(0).getContext().setTextAlignment(TextAlignment.LEFT);
+        discountsRow.getCells().get(1).getContext().setTextAlignment(TextAlignment.RIGHT);
+
+        at.addRule();
+        var totalRow = at.addRow("TOTAL", getCurrency() + summary.getTotalAmount().setScale(getScale(), RoundingMode.CEILING));
+        totalRow.getCells().get(0).getContext().setTextAlignment(TextAlignment.LEFT);
+        totalRow.getCells().get(1).getContext().setTextAlignment(TextAlignment.RIGHT);
+
+        at.addRule();
+
+        return at.render(getTableWidth()).replaceAll(EMPTY_LINE_REPLACEMENT_REGEX, "");
     }
 
-    private void appendLineLeft(StringBuilder strBuilder, int maxColumnLength, String text) {
-        strBuilder.append(text);
-        strBuilder.append(" ".repeat(maxColumnLength - text.length()));
+    public int getTableWidth() {
+        return tableWidth;
     }
 
-    private void appendLineRight(StringBuilder strBuilder, long maxColumnLength, String text) {
-        strBuilder.append(" ".repeat((int) maxColumnLength - text.length()));
-        strBuilder.append(text);
-    }
-
-    private String cropIfOutOfBounds(String str, int maxLength) {
-        return str.length() > maxLength ? str.substring(0, maxLength) : str;
-    }
-
-    private Stream<Integer> getQuantityLengths(Receipt receipt) {
-        var list = receipt.getReceiptItems().stream().map(a -> (a.getQuantity() + "").length())
-                .collect(Collectors.toList());
-        list.add(getHeaderQuantity().length());
-        return list.stream();
-    }
-
-    private Stream<Integer> getPriceLengths(Receipt receipt) {
-        var list = receipt.getReceiptItems().stream()
-                .map(a -> getCurrency().length() + (a.getProduct() != null ? a.getProduct().getPrice()
-                        .setScale(getScale(), RoundingMode.CEILING).toString().length() : 0))
-                .collect(Collectors.toList());
-        list.add(getHeaderPrice().length());
-        return list.stream();
-    }
-
-    private Stream<Integer> getNameLengths(Receipt receipt) {
-        var list = receipt.getReceiptItems().stream()
-                .map(a -> a.getProduct() != null ? a.getProduct().getName().length() : 0)
-                .collect(Collectors.toList());
-        list.add(getHeaderName().length());
-        return list.stream();
-    }
-
-    private Stream<Integer> getAmountLengths(Receipt receipt) {
-        var list = receipt.getReceiptItems().stream()
-                .map(a -> (getCurrency() + a.totalAmount()
-                        .setScale(getScale(), RoundingMode.CEILING).toString()).length())
-                .collect(Collectors.toList());
-        list.add(getHeaderTotal().length());
-        return list.stream();
+    public void setTableWidth(int tableWidth) {
+        ThrowUtils.Argument.lessThan("tableWidth", tableWidth, MIN_TABLE_WIDTH);
+        this.tableWidth = tableWidth;
     }
 }

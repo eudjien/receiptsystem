@@ -1,7 +1,7 @@
 package ru.clevertec.checksystem.core.io.write;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 
@@ -12,14 +12,10 @@ import java.nio.file.Files;
 import java.util.Collection;
 
 @Component
+@RequiredArgsConstructor
 public class XmlReceiptWriter implements IReceiptWriter {
 
     private final XmlMapper xmlMapper;
-
-    @Autowired
-    public XmlReceiptWriter(XmlMapper xmlMapper) {
-        this.xmlMapper = xmlMapper;
-    }
 
     @Override
     public byte[] write(Collection<Receipt> receipts) throws IOException {

@@ -17,6 +17,7 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import ru.clevertec.checksystem.core.common.ITemplatable;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
+import ru.clevertec.checksystem.core.service.common.IReceiptService;
 import ru.clevertec.checksystem.core.template.pdf.IPdfTemplate;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
@@ -47,11 +48,8 @@ public class PdfReceiptLayout extends AbstractReceiptLayout implements ITemplata
 
     private IPdfTemplate template;
 
-    public PdfReceiptLayout() {
-    }
-
-    public PdfReceiptLayout(IPdfTemplate pdfTemplate) {
-        setTemplate(pdfTemplate);
+    public PdfReceiptLayout(IReceiptService receiptService) {
+        super(receiptService);
     }
 
     @Override
@@ -164,6 +162,8 @@ public class PdfReceiptLayout extends AbstractReceiptLayout implements ITemplata
 
         for (var receiptItem : receipt.getReceiptItems()) {
 
+            var summary = getReceiptService().getReceiptItemSummary(receiptItem);
+
             table.addCell(new Cell()
                     .setBorder(Border.NO_BORDER)
                     .add(new Paragraph(receiptItem.getQuantity() + "")
@@ -183,19 +183,19 @@ public class PdfReceiptLayout extends AbstractReceiptLayout implements ITemplata
                             .setMultipliedLeading(LINE_HEIGHT_MD)
                             .setTextAlignment(TextAlignment.RIGHT)));
 
-            var totalParagraph = new Paragraph(getCurrency() + receiptItem.subTotalAmount()
+            var totalParagraph = new Paragraph(getCurrency() + summary.getSubTotalAmount()
                     .setScale(getScale(), RoundingMode.CEILING))
                     .setMultipliedLeading(LINE_HEIGHT_MD)
                     .setTextAlignment(TextAlignment.RIGHT);
             table.addCell(new Cell().setBorder(Border.NO_BORDER).add(totalParagraph));
 
-            if (receiptItem.discountsAmount().doubleValue() > 0) {
+            if (summary.getDiscountAmount().doubleValue() > 0) {
                 totalParagraph.setLineThrough();
                 table.addCell(new Cell(1, 4)
                         .setBorder(Border.NO_BORDER)
-                        .add(new Paragraph("Discount: " + getCurrency() + receiptItem.discountsAmount()
+                        .add(new Paragraph("Discount: " + getCurrency() + summary.getDiscountAmount()
                                 .setScale(getScale(), RoundingMode.CEILING) + " = "
-                                + getCurrency() + receiptItem.totalAmount().setScale(getScale(), RoundingMode.CEILING))
+                                + getCurrency() + summary.getTotalAmount().setScale(getScale(), RoundingMode.CEILING))
                                 .setMultipliedLeading(LINE_HEIGHT_MD)
                                 .setTextAlignment(TextAlignment.RIGHT)));
             }
@@ -209,11 +209,13 @@ public class PdfReceiptLayout extends AbstractReceiptLayout implements ITemplata
                 .useAllAvailableWidth()
                 .setBorder(Border.NO_BORDER);
 
-        addResultTableRow(table, "SUBTOTAL", getCurrency() + receipt.subTotalAmount()
+        var summary = getReceiptService().getReceiptSummary(receipt);
+
+        addResultTableRow(table, "SUBTOTAL", getCurrency() + summary.getSubTotalAmount()
                 .setScale(getScale(), RoundingMode.CEILING));
-        addResultTableRow(table, "DISCOUNTS", getCurrency() + receipt.discountsAmount()
+        addResultTableRow(table, "DISCOUNTS", getCurrency() + summary.getDiscountAmount()
                 .setScale(getScale(), RoundingMode.CEILING));
-        addResultTableRow(table, "TOTAL", getCurrency() + receipt.totalAmount()
+        addResultTableRow(table, "TOTAL", getCurrency() + summary.getTotalAmount()
                 .setScale(getScale(), RoundingMode.CEILING));
 
         return table;

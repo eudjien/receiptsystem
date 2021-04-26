@@ -1,43 +1,35 @@
 package ru.clevertec.checksystem.core.dto.receipt;
 
-import ru.clevertec.checksystem.core.entity.Product;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
+import ru.clevertec.checksystem.core.dto.ProductDto;
+import ru.clevertec.checksystem.core.dto.discount.receiptitem.ReceiptItemDiscountDto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import java.util.Set;
+
+@Data
+@Builder
+@Jacksonized
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReceiptItemDto {
 
-    private Product product;
-    private int quantity;
-    private Integer productId;
-    private Integer receiptId;
+    private Long id;
 
-    public Product getProduct() {
-        return product;
-    }
+    @NotNull
+    @Positive
+    private Long quantity;
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+    @NotNull
+    private Long productId;
 
-    public int getQuantity() {
-        return quantity;
-    }
+    @NotNull
+    private Long receiptId;
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    private ProductDto product;
 
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public int getReceiptId() {
-        return receiptId;
-    }
-
-    public void setReceiptId(int receiptId) {
-        this.receiptId = receiptId;
-    }
+    @Singular
+    private Set<ReceiptItemDiscountDto> discounts;
 }

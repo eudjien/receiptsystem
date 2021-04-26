@@ -16,7 +16,7 @@ public enum PrintFormat {
         this.printFormat = printFormat;
     }
 
-    public static PrintFormat parse(String printFormat) {
+    public static PrintFormat from(String printFormat) {
         return switch (printFormat.trim().toLowerCase(Locale.ROOT)) {
             case Formats.PDF -> PrintFormat.PDF;
             case Formats.HTML -> PrintFormat.HTML;

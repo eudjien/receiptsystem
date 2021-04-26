@@ -39,8 +39,8 @@ public class LoadFromDatabase implements Callable<Void> {
             Collection<Receipt> destinationReceipts) {
 
         if (finder.hasArgumentKey(Constants.Keys.INPUT_FILTER_ID))
-            receiptRepository.findAllById(receiptIdFilter.getIdentifiers()).forEach(destinationReceipts::add);
+            destinationReceipts.addAll(receiptRepository.findAllById(receiptIdFilter.getIdentifiers()));
         else
-            receiptRepository.findAll().forEach(destinationReceipts::add);
+            destinationReceipts.addAll(receiptRepository.findAll());
     }
 }

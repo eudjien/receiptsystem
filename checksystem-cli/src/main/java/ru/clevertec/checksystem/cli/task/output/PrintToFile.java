@@ -3,9 +3,8 @@ package ru.clevertec.checksystem.cli.task.output;
 import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentFinder;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
-import ru.clevertec.checksystem.core.exception.ArgumentNotSupportedException;
 import ru.clevertec.checksystem.core.io.format.PrintFormat;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class PrintToFile implements Callable<Void> {
 
     private void printToFile(String path, String format) throws IOException {
         try {
-            var printFormat = PrintFormat.parse(format);
+            var printFormat = PrintFormat.from(format);
             if (printFormat == PrintFormat.PDF && argumentFinder.firstBoolOrDefault(Keys.PRINT_PDF_TEMPLATE)) {
                 var pdfTemplatePath = argumentFinder.firstStringOrDefault(Keys.PRINT_PDF_TEMPLATE_PATH);
                 receiptService.printWithTemplateToPdf(receipts, new File(path),
@@ -48,8 +47,10 @@ public class PrintToFile implements Callable<Void> {
             } else {
                 receiptService.print(receipts, new File(path), printFormat);
             }
-        } catch (IllegalArgumentException e) {
-            throw new ArgumentNotSupportedException(Constants.Keys.PRINT_FORMAT, format);
+        } catch (IllegalArgumentException ex1) {
+            throw new IllegalArgumentException(String.format("Argument '%s' does not support '%s' value", Constants.Keys.PRINT_FORMAT, format));
+        } catch (Exception e) {
+            throw e;
         }
     }
 }
