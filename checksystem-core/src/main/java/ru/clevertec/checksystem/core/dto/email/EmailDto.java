@@ -1,29 +1,24 @@
 package ru.clevertec.checksystem.core.dto.email;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+@Data
+@Builder
+@Jacksonized
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmailDto {
 
-    private Long id = 0L;
+    private Long id;
 
     @NotNull
     @Email
     private String address;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

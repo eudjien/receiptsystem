@@ -1,7 +1,6 @@
 package ru.clevertec.checksystem.core.io.factory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.io.format.GenerateFormat;
 import ru.clevertec.checksystem.core.io.write.IReceiptGenerateWriter;
@@ -9,14 +8,10 @@ import ru.clevertec.checksystem.core.io.write.JsonReceiptGenerateWriter;
 import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 @Component
+@RequiredArgsConstructor
 public final class ReceiptGenerateWriterFactory {
 
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    private ReceiptGenerateWriterFactory(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+    private final JsonReceiptGenerateWriter jsonReceiptGenerateWriter;
 
     public IReceiptGenerateWriter instance(GenerateFormat generateFormat) {
 
@@ -24,7 +19,7 @@ public final class ReceiptGenerateWriterFactory {
 
         //noinspection SwitchStatementWithTooFewBranches
         return switch (generateFormat) {
-            case JSON -> applicationContext.getBean(JsonReceiptGenerateWriter.class);
+            case JSON -> jsonReceiptGenerateWriter;
         };
     }
 }

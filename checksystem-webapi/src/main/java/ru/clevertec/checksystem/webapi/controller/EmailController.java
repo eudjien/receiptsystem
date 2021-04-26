@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.webapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,14 +15,10 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/emails", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class EmailController {
 
     private final IEmailService mailService;
-
-    @Autowired
-    public EmailController(IEmailService mailService) {
-        this.mailService = mailService;
-    }
 
     @GetMapping
     ResponseEntity<Page<EmailDto>> get(Pageable pageable) {
@@ -46,13 +42,13 @@ public class EmailController {
     }
 
     @PutMapping
-    ResponseEntity<EmailDto> update(@RequestBody @Valid EmailDto dto) {
-        return new ResponseEntity<>(mailService.updateEmail(dto), HttpStatus.OK);
+    ResponseEntity<EmailDto> update(@RequestBody @Valid EmailDto emailDto) {
+        return new ResponseEntity<>(mailService.updateEmail(emailDto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<EmailDto> create(@RequestBody @Valid EmailDto dto) {
-        return new ResponseEntity<>(mailService.createEmail(dto), HttpStatus.CREATED);
+    ResponseEntity<EmailDto> create(@RequestBody @Valid EmailDto emailDto) {
+        return new ResponseEntity<>(mailService.createEmail(emailDto), HttpStatus.CREATED);
     }
 
     @GetMapping("{emailId}/eventEmails")

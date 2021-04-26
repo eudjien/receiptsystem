@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.webapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,14 +14,10 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class ProductController {
 
     private final IProductService productService;
-
-    @Autowired
-    public ProductController(IProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping
     ResponseEntity<Page<ProductDto>> get(Pageable pageable) {
@@ -45,12 +41,12 @@ public class ProductController {
     }
 
     @PutMapping
-    ResponseEntity<ProductDto> update(@RequestBody @Valid ProductDto dto) {
-        return new ResponseEntity<>(productService.updateProduct(dto), HttpStatus.OK);
+    ResponseEntity<ProductDto> update(@RequestBody @Valid ProductDto productDto) {
+        return new ResponseEntity<>(productService.updateProduct(productDto), HttpStatus.OK);
     }
 
     @PostMapping
-    ResponseEntity<ProductDto> create(@RequestBody @Valid ProductDto dto) {
-        return new ResponseEntity<>(productService.createProduct(dto), HttpStatus.CREATED);
+    ResponseEntity<ProductDto> create(@RequestBody @Valid ProductDto productDto) {
+        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 }

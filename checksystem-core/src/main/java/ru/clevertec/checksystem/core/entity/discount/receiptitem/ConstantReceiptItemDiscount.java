@@ -1,48 +1,28 @@
 package ru.clevertec.checksystem.core.entity.discount.receiptitem;
 
-import ru.clevertec.checksystem.core.common.IConstable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 import ru.clevertec.checksystem.core.constant.Entities;
-import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
-import ru.clevertec.checksystem.core.util.ThrowUtils;
 
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 
-@MappedSuperclass
-public abstract class ConstantReceiptItemDiscount extends ReceiptItemDiscount implements IConstable<BigDecimal> {
+@Jacksonized
+@SuperBuilder
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = Entities.Table.CONSTANT_RECEIPT_ITEM_DISCOUNT)
+@DiscriminatorValue(Entities.DiscriminatorValues.CONSTANT_RECEIPT_ITEM_DISCOUNT)
+public final class ConstantReceiptItemDiscount extends ReceiptItemDiscount {
 
     @Column(name = Entities.Column.CONSTANT, nullable = false)
-    private BigDecimal constant = BigDecimal.valueOf(0);
-
-    protected ConstantReceiptItemDiscount() {
-    }
-
-    protected ConstantReceiptItemDiscount(String description, BigDecimal constant) {
-        super(description);
-        setConstant(constant);
-    }
-
-    protected ConstantReceiptItemDiscount(String description, BigDecimal constant, ReceiptItemDiscount dependentDiscount) {
-        super(description, dependentDiscount);
-        setConstant(constant);
-    }
-
-    public BigDecimal getConstant() {
-        return constant;
-    }
-
-    public void setConstant(BigDecimal constant) {
-        ThrowUtils.Argument.nullValue("constant", constant);
-        ThrowUtils.Argument.lessThan("constant", constant, BigDecimal.ZERO);
-        this.constant = constant;
-    }
-
-    @Override
-    public BigDecimal discountAmount(ReceiptItem receiptItem) {
-        var dependentDiscountAmount = getDependentDiscount() != null
-                ? getDependentDiscount().discountAmount(receiptItem)
-                : BigDecimal.ZERO;
-        return dependentDiscountAmount.add(constant);
-    }
+    private BigDecimal constant;
 }

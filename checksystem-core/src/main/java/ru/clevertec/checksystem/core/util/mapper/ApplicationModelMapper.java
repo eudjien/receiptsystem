@@ -15,18 +15,18 @@ public class ApplicationModelMapper extends ModelMapper {
 
         getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        addConverter(new SimpleConstantReceiptDiscountFromEntityToDtoConverter(this));
-        addConverter(new SimplePercentageReceiptDiscountFromEntityToDtoConverter(this));
+        addConverter(new ConstantReceiptDiscountFromEntityToDtoConverter(this));
+        addConverter(new PercentageReceiptDiscountFromEntityToDtoConverter(this));
 
-        addConverter(new SimpleConstantReceiptItemDiscountFromEntityToDtoConverter(this));
-        addConverter(new SimplePercentageReceiptItemDiscountFromEntityToDtoConverter(this));
+        addConverter(new ConstantReceiptItemDiscountFromEntityToDtoConverter(this));
+        addConverter(new PercentageReceiptItemDiscountFromEntityToDtoConverter(this));
         addConverter(new ThresholdPercentageReceiptItemDiscountFromEntityToDtoConverter(this));
 
-        addConverter(new SimpleConstantReceiptDiscountFromDtoToEntityConverter(this));
-        addConverter(new SimplePercentageReceiptDiscountFromDtoToEntityConverter(this));
+        addConverter(new ConstantReceiptDiscountFromDtoToEntityConverter(this));
+        addConverter(new PercentageReceiptDiscountFromDtoToEntityConverter(this));
 
-        addConverter(new SimpleConstantReceiptItemDiscountFromDtoToEntityConverter(this));
-        addConverter(new SimplePercentageReceiptItemDiscountFromDtoToEntityConverter(this));
+        addConverter(new ConstantReceiptItemDiscountFromDtoToEntityConverter(this));
+        addConverter(new PercentageReceiptItemDiscountFromDtoToEntityConverter(this));
         addConverter(new ThresholdPercentageReceiptItemDiscountFromDtoToEntityConverter(this));
     }
 

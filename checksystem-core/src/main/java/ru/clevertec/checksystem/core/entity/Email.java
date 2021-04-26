@@ -1,40 +1,24 @@
 package ru.clevertec.checksystem.core.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import ru.clevertec.checksystem.core.constant.Entities;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(
-        name = Entities.Table.EMAILS,
-        indexes = @Index(columnList = Entities.Column.ADDRESS, unique = true)
-)
+@Table(name = Entities.Table.EMAILS, indexes = @Index(columnList = Entities.Column.ADDRESS, unique = true))
 public class Email extends BaseEntity {
 
     @Column(name = Entities.Column.ADDRESS, nullable = false)
     private String address;
-
-    public Email() {
-    }
-
-    public Email(Long id) {
-        setId(id);
-    }
-
-    public Email(String address) throws AddressException {
-        setAddress(address);
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) throws AddressException {
-        this.address = new InternetAddress(address).getAddress();
-    }
 }

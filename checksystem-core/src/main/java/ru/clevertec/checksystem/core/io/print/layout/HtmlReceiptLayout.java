@@ -1,10 +1,13 @@
 package ru.clevertec.checksystem.core.io.print.layout;
 
+import ru.clevertec.checksystem.core.dto.SummaryDto;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.entity.receipt.ReceiptItem;
+import ru.clevertec.checksystem.core.service.common.IReceiptService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -37,6 +40,10 @@ public class HtmlReceiptLayout extends AbstractReceiptLayout {
 
     private static final String PATTERN_DATE = "dd.MM.yyyy";
     private static final String PATTERN_TIME = "hh:mm";
+
+    public HtmlReceiptLayout(IReceiptService receiptService) {
+        super(receiptService);
+    }
 
     @Override
     public byte[] getLayoutData(Receipt receipt) throws IOException {
@@ -83,6 +90,8 @@ public class HtmlReceiptLayout extends AbstractReceiptLayout {
         var dateFormatter = new SimpleDateFormat(PATTERN_DATE);
         var timeFormatter = new SimpleDateFormat(PATTERN_TIME);
 
+        var summary = getReceiptService().getReceiptSummary(receipt);
+
         return Pattern.compile(REPLACEMENT_PATTERN).matcher(commonHtml).replaceAll(mr -> switch (mr.group()) {
             case REPLACEMENT_NAME -> Matcher.quoteReplacement(receipt.getName());
             case REPLACEMENT_DESCRIPTION -> Matcher.quoteReplacement(receipt.getDescription());
@@ -92,28 +101,28 @@ public class HtmlReceiptLayout extends AbstractReceiptLayout {
             case REPLACEMENT_DATE -> Matcher.quoteReplacement(dateFormatter.format(receipt.getDate()));
             case REPLACEMENT_TIME -> Matcher.quoteReplacement(timeFormatter.format(receipt.getDate()));
             case REPLACEMENT_SUBTOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + receipt.subTotalAmount().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + summary.getSubTotalAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_DISCOUNTS -> Matcher.quoteReplacement(
-                    getCurrency() + receipt.discountsAmount().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + summary.getDiscountAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_TOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + receipt.totalAmount().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + summary.getTotalAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM -> Matcher.quoteReplacement(getReceiptItemsContent(receipt, itemHtml, discountedItem));
             default -> mr.group();
         });
     }
 
-    private String replaceItemValues(ReceiptItem receiptItem, String itemHtml) {
+    private String replaceItemValues(ReceiptItem receiptItem, String itemHtml, SummaryDto summary) {
         return Pattern.compile(REPLACEMENT_PATTERN).matcher(itemHtml).replaceAll(rm -> switch (rm.group()) {
             case REPLACEMENT_ITEM_QUANTITY -> Matcher.quoteReplacement(String.valueOf(receiptItem.getQuantity()));
             case REPLACEMENT_ITEM_NAME -> Matcher.quoteReplacement(receiptItem.getProduct().getName());
             case REPLACEMENT_ITEM_PRICE -> Matcher.quoteReplacement(
                     getCurrency() + receiptItem.getProduct().getPrice().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM_SUBTOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + receiptItem.subTotalAmount().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + summary.getSubTotalAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM_DISCOUNTS -> Matcher.quoteReplacement(
-                    getCurrency() + receiptItem.discountsAmount().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + summary.getDiscountAmount().setScale(getScale(), RoundingMode.CEILING));
             case REPLACEMENT_ITEM_TOTAL -> Matcher.quoteReplacement(
-                    getCurrency() + receiptItem.totalAmount().setScale(getScale(), RoundingMode.CEILING));
+                    getCurrency() + summary.getTotalAmount().setScale(getScale(), RoundingMode.CEILING));
             default -> rm.group();
         });
     }
@@ -122,10 +131,11 @@ public class HtmlReceiptLayout extends AbstractReceiptLayout {
         if (receipt.getReceiptItems() != null) {
             var stringBuilder = new StringBuilder();
             for (var receiptItem : receipt.getReceiptItems()) {
-                if (receiptItem.discountsAmount().doubleValue() > 0) {
-                    stringBuilder.append(replaceItemValues(receiptItem, discountedItem));
+                var summary = getReceiptService().getReceiptItemSummary(receiptItem);
+                if (summary.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    stringBuilder.append(replaceItemValues(receiptItem, discountedItem, summary));
                 } else {
-                    stringBuilder.append(replaceItemValues(receiptItem, itemHtml));
+                    stringBuilder.append(replaceItemValues(receiptItem, itemHtml, summary));
                 }
             }
             return stringBuilder.toString();

@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.core.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService implements IEmailService {
 
     private final JavaMailSender mailSender;
@@ -37,18 +38,6 @@ public class EmailService implements IEmailService {
     private final EventEmailRepository eventEmailRepository;
 
     private final ApplicationModelMapper modelMapper;
-
-    @Autowired
-    public EmailService(
-            JavaMailSender mailSender,
-            EmailRepository emailRepository,
-            EventEmailRepository eventEmailRepository,
-            ApplicationModelMapper modelMapper) {
-        this.mailSender = mailSender;
-        this.emailRepository = emailRepository;
-        this.modelMapper = modelMapper;
-        this.eventEmailRepository = eventEmailRepository;
-    }
 
     @Override
     public void sendEmail(String subject, String body, boolean isHtml, String... addresses) throws MessagingException {
@@ -128,63 +117,72 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public EmailDto createEmail(EmailDto dto) {
+    public void deleteEventEmailById(Long id) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        var eventEmail = eventEmailRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException(String.format("EventEmail with id '%s' not found", id)));
 
-        return modelMapper.map(emailRepository.save(modelMapper.map(dto, Email.class)), EmailDto.class);
+        eventEmailRepository.delete(eventEmail);
     }
 
     @Override
-    public EmailDto updateEmail(EmailDto dto) {
+    public EmailDto createEmail(EmailDto emailDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(emailDto))
+            throw new NullPointerException("emailDto");
 
-        emailRepository.findById(dto.getId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Email with id '%s' not found", dto.getId())));
-
-        return modelMapper.map(emailRepository.save(modelMapper.map(dto, Email.class)), EmailDto.class);
+        return modelMapper.map(emailRepository.save(modelMapper.map(emailDto, Email.class)), EmailDto.class);
     }
 
     @Override
-    public EventEmailDto updateEventEmail(EventEmailDto dto) {
+    public EmailDto updateEmail(EmailDto emailDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(emailDto))
+            throw new NullPointerException("emailDto");
 
-        var eventEmail = eventEmailRepository.findById(dto.getId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("EventEmail with id '%s' not found", dto.getId())));
+        emailRepository.findById(emailDto.getId()).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Email with id '%s' not found", emailDto.getId())));
 
-        if (!emailRepository.existsById(dto.getEmailId()))
-            throw new EntityExistsException(String.format("Email with id '%s' not found", dto.getEmailId()));
+        return modelMapper.map(emailRepository.save(modelMapper.map(emailDto, Email.class)), EmailDto.class);
+    }
 
-        if (eventEmailRepository.findByEmailIdAndEventType(dto.getEmailId(), dto.getEventType()).isPresent())
+    @Override
+    public EventEmailDto updateEventEmail(EventEmailDto eventEmailDto) {
+
+        if (Objects.isNull(eventEmailDto))
+            throw new NullPointerException("eventEmailDto");
+
+        var eventEmail = eventEmailRepository.findById(eventEmailDto.getId()).orElseThrow(() ->
+                new EntityNotFoundException(String.format("EventEmail with id '%s' not found", eventEmailDto.getId())));
+
+        if (!emailRepository.existsById(eventEmailDto.getEmailId()))
+            throw new EntityExistsException(String.format("Email with id '%s' not found", eventEmailDto.getEmailId()));
+
+        if (eventEmailRepository.findByEmailIdAndEventType(eventEmailDto.getEmailId(), eventEmailDto.getEventType()).isPresent())
             throw new EntityExistsException(
                     String.format("EventEmail with id '%s' and eventType '%s' already exists",
-                            dto.getEmailId(), dto.getEventType()));
+                            eventEmailDto.getEmailId(), eventEmailDto.getEventType()));
 
-        modelMapper.map(dto, eventEmail);
+        modelMapper.map(eventEmailDto, eventEmail);
 
         return modelMapper.map(eventEmailRepository.save(eventEmail), EventEmailDto.class);
     }
 
     @Override
-    public EventEmailDto createEventEmail(EventEmailDto dto) {
+    public EventEmailDto createEventEmail(EventEmailDto eventEmailDto) {
 
-        if (Objects.isNull(dto))
-            throw new NullPointerException("dto");
+        if (Objects.isNull(eventEmailDto))
+            throw new NullPointerException("eventEmailDto");
 
-        if (!emailRepository.existsById(dto.getEmailId()))
+        if (!emailRepository.existsById(eventEmailDto.getEmailId()))
             throw new EntityNotFoundException("Email with id '%s' not found");
 
-        if (eventEmailRepository.findByEmailIdAndEventType(dto.getEmailId(), dto.getEventType()).isPresent())
+        if (eventEmailRepository.findByEmailIdAndEventType(eventEmailDto.getEmailId(), eventEmailDto.getEventType()).isPresent())
             throw new EntityExistsException(
                     String.format("EventEmail with id '%s' and eventType '%s' already exists",
-                            dto.getEmailId(), dto.getEventType()));
+                            eventEmailDto.getEmailId(), eventEmailDto.getEventType()));
 
-        return modelMapper.map(eventEmailRepository.save(modelMapper.map(dto, EventEmail.class)), EventEmailDto.class);
+        return modelMapper.map(eventEmailRepository.save(modelMapper.map(eventEmailDto, EventEmail.class)), EventEmailDto.class);
     }
 
     @Override

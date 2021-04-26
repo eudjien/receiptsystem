@@ -1,29 +1,22 @@
 package ru.clevertec.checksystem.core.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.clevertec.checksystem.core.constant.Entities;
 
 import javax.persistence.*;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @MappedSuperclass
 public abstract class BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = Entities.Column.ID)
     private Long id;
-
-    public BaseEntity() {
-    }
-
-    public BaseEntity(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

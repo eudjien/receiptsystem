@@ -44,7 +44,7 @@ public class DeserializeFromFile implements Callable<Void> {
         String format = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_FORMAT);
         String path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_PATH);
 
-        var receipts = receiptService.deserialize(new File(path), StructureFormat.parse(format));
+        var receipts = receiptService.deserialize(new File(path), StructureFormat.from(format));
         destinationReceipts.addAll(receiptIdFilter.applyFilterIfExist(receipts));
     }
 }

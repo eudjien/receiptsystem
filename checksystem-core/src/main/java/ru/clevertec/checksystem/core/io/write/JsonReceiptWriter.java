@@ -1,7 +1,7 @@
 package ru.clevertec.checksystem.core.io.write;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 
@@ -12,14 +12,10 @@ import java.nio.file.Files;
 import java.util.Collection;
 
 @Component
+@RequiredArgsConstructor
 public class JsonReceiptWriter implements IReceiptWriter {
 
     private final ObjectMapper objectMapper;
-
-    @Autowired
-    public JsonReceiptWriter(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public byte[] write(Collection<Receipt> receipts) throws IOException {

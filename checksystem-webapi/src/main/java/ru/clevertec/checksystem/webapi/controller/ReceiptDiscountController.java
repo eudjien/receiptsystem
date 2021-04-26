@@ -1,6 +1,6 @@
 package ru.clevertec.checksystem.webapi.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,16 +16,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "receiptDiscounts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class ReceiptDiscountController {
 
     private final IReceiptDiscountService receiptDiscountService;
     private final Validator validator;
-
-    @Autowired
-    public ReceiptDiscountController(IReceiptDiscountService receiptDiscountService, Validator validator) {
-        this.receiptDiscountService = receiptDiscountService;
-        this.validator = validator;
-    }
 
     @GetMapping
     ResponseEntity<Page<ReceiptDiscountDto>> get(Pageable pageable) {
@@ -50,13 +45,13 @@ public class ReceiptDiscountController {
 
     @PutMapping
     ResponseEntity<ReceiptDiscountDto> update(@RequestBody Map<String, String> map, ReceiptDiscountDtoFactory receiptDiscountDtoFactory) {
-        var dto = receiptDiscountDtoFactory.create(map, validator);
-        return new ResponseEntity<>(receiptDiscountService.updateReceiptDiscount(dto), HttpStatus.OK);
+        var receiptDiscountDto = receiptDiscountDtoFactory.create(map, validator);
+        return new ResponseEntity<>(receiptDiscountService.updateReceiptDiscount(receiptDiscountDto), HttpStatus.OK);
     }
 
     @PostMapping
     ResponseEntity<ReceiptDiscountDto> create(@RequestBody Map<String, String> map, ReceiptDiscountDtoFactory receiptDiscountDtoFactory) {
-        var dto = receiptDiscountDtoFactory.create(map, validator);
-        return new ResponseEntity<>(receiptDiscountService.createReceiptDiscount(dto), HttpStatus.CREATED);
+        var receiptDiscountDto = receiptDiscountDtoFactory.create(map, validator);
+        return new ResponseEntity<>(receiptDiscountService.createReceiptDiscount(receiptDiscountDto), HttpStatus.CREATED);
     }
 }

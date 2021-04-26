@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.4'
+    id 'org.springframework.boot' version '2.4.5'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
@@ -25,13 +25,16 @@ sourceSets {
     }
 }
 
-configurations.all {
-    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+configurations {
+    all {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
 }
 
 dependencies {
     implementation coreProject
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    annotationProcessor "org.projectlombok:lombok"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
