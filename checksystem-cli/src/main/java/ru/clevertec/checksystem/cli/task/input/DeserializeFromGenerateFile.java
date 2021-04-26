@@ -6,7 +6,7 @@ import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
 import ru.clevertec.checksystem.core.constant.Formats;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.io.format.GenerateFormat;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class DeserializeFromGenerateFile implements Callable<Void> {
         String format = finder.firstStringOrDefault(Keys.DESERIALIZE_GENERATE_FORMAT, Formats.JSON);
         String path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_GENERATE_PATH);
 
-        var receiptList = ioReceiptService.fromGenerate(new File(path), GenerateFormat.parse(format));
+        var receiptList = ioReceiptService.fromGenerate(new File(path), GenerateFormat.from(format));
         receipts.addAll(receiptIdFilter.applyFilterIfExist(receiptList));
     }
 }

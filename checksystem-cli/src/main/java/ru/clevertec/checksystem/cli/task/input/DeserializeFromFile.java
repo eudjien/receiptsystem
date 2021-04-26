@@ -5,7 +5,7 @@ import ru.clevertec.checksystem.cli.argument.ArgumentFinder;
 import ru.clevertec.checksystem.cli.argument.ReceiptIdFilter;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.io.format.StructureFormat;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class DeserializeFromFile implements Callable<Void> {
         String format = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_FORMAT);
         String path = finder.firstStringOrThrow(Constants.Keys.DESERIALIZE_PATH);
 
-        var receipts = receiptService.deserialize(new File(path), StructureFormat.parse(format));
+        var receipts = receiptService.deserialize(new File(path), StructureFormat.from(format));
         destinationReceipts.addAll(receiptIdFilter.applyFilterIfExist(receipts));
     }
 }

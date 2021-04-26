@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "application.database.seed-programmatically",
+      "type": "java.lang.Boolean",
+      "description": "Seed database programmatically or not."
+    }
+  ]
+}

@@ -1,13 +1,15 @@
 package ru.clevertec.checksystem.cli;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import ru.clevertec.checksystem.cli.application.Application;
 import ru.clevertec.checksystem.core.constant.Formats;
-import ru.clevertec.checksystem.core.data.DataSeed;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,36 +27,21 @@ class ArgumentTests {
     @Autowired
     private Application application;
 
-    private final static boolean deleteOutputDirAfterAll = true;
+    private final static boolean deleteOutputDirAfterAll = false;
 
-    private final static String SERIALIZED_TO_JSON_FILE_FROM_PREDEFINED_FILENAME
-            = "serialized_from_predefined.json";
-    private final static String SERIALIZED_TO_XML_FILE_FROM_JSON_FILE_FILENAME
-            = "serialized_from_json_file.xml";
-    private final static String SERIALIZED_TO_JSON_FILE_FROM_XML_FILE_FILENAME
-            = "serialized_from_xml_file.json";
-    private final static String PRINTED_TO_TEXT_FILE_FROM_JSON_FILE_FILENAME
-            = "printed_from_json_file.txt";
-    private final static String PRINTED_TO_HTML_FILE_FROM_JSON_FILE_FILENAME
-            = "printed_from_json_file.html";
-    private final static String PRINTED_TO_PDF_FILE_WITH_TEMPLATE_FROM_PREDEFINED_FILENAME
-            = "printed_with_template_from_predefined.pdf";
-    private final static String PRINTED_TO_PDF_FILE_FROM_JSON_FILE_FILENAME
-            = "printed_from_json_file.pdf";
-    private final static String PRINTED_TO_PDF_FILE_WITH_TEMPLATE_FROM_JSON_FILE_FILENAME
-            = "printed_with_template_from_json_file.pdf";
-    private final static String SERIALIZED_TO_GENERATED_JSON_FILE_FROM_PREDEFINED_FILENAME
-            = "serialized_generated_from_predefined.json";
-    private final static String SERIALIZED_TO_JSON_FILE_FROM_GENERATED_FILENAME
-            = "serialized_from_generated.json";
+    private final static String SERIALIZED_TO_JSON_FILE_FROM_PREDEFINED_FILENAME = "serialized_from_predefined.json";
+    private final static String SERIALIZED_TO_XML_FILE_FROM_JSON_FILE_FILENAME = "serialized_from_json_file.xml";
+    private final static String SERIALIZED_TO_JSON_FILE_FROM_XML_FILE_FILENAME = "serialized_from_xml_file.json";
+    private final static String PRINTED_TO_TEXT_FILE_FROM_JSON_FILE_FILENAME = "printed_from_json_file.txt";
+    private final static String PRINTED_TO_HTML_FILE_FROM_JSON_FILE_FILENAME = "printed_from_json_file.html";
+    private final static String PRINTED_TO_PDF_FILE_WITH_TEMPLATE_FROM_PREDEFINED_FILENAME = "printed_with_template_from_predefined.pdf";
+    private final static String PRINTED_TO_PDF_FILE_FROM_JSON_FILE_FILENAME = "printed_from_json_file.pdf";
+    private final static String PRINTED_TO_PDF_FILE_WITH_TEMPLATE_FROM_JSON_FILE_FILENAME = "printed_with_template_from_json_file.pdf";
+    private final static String SERIALIZED_TO_GENERATED_JSON_FILE_FROM_PREDEFINED_FILENAME = "serialized_generated_from_predefined.json";
+    private final static String SERIALIZED_TO_JSON_FILE_FROM_GENERATED_FILENAME = "serialized_from_generated.json";
 
     private static final String resourcesPath = Path.of("src", "test", "resources").toString();
     private static final String resourcesOutPath = Path.of(resourcesPath, "out").toString();
-
-    @BeforeAll
-    public static void setUp(@Autowired DataSeed dataSeed) {
-        dataSeed.dbSeed();
-    }
 
     @AfterAll
     public static void afterAll() {

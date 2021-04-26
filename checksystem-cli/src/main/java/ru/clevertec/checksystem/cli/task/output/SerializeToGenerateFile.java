@@ -4,7 +4,7 @@ import ru.clevertec.checksystem.cli.Constants;
 import ru.clevertec.checksystem.cli.argument.ArgumentFinder;
 import ru.clevertec.checksystem.core.entity.receipt.Receipt;
 import ru.clevertec.checksystem.core.io.format.GenerateFormat;
-import ru.clevertec.checksystem.core.service.IIoReceiptService;
+import ru.clevertec.checksystem.core.service.common.IIoReceiptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +37,6 @@ public class SerializeToGenerateFile implements Callable<Void> {
         var format = finder.firstStringOrThrow(Constants.Keys.GENERATE_SERIALIZE_FORMAT);
         var path = finder.firstStringOrThrow(Constants.Keys.GENERATE_SERIALIZE_PATH);
 
-        ioReceiptService.toGenerate(receipts, new File(path), GenerateFormat.parse(format));
+        ioReceiptService.toGenerate(receipts, new File(path), GenerateFormat.from(format));
     }
 }

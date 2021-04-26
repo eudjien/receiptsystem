@@ -1,5 +1,6 @@
 package ru.clevertec.checksystem.cli.application;
 
+import lombok.Value;
 import ru.clevertec.checksystem.core.common.IBuildable;
 
 import java.util.ArrayList;
@@ -21,23 +22,10 @@ public class ApplicationResult {
         return Collections.unmodifiableCollection(errors);
     }
 
+    @Value
     public static class Error {
-
-        private final Throwable throwable;
-        private final String message;
-
-        private Error(Throwable throwable, String message) {
-            this.throwable = throwable;
-            this.message = message;
-        }
-
-        public Throwable getThrowable() {
-            return throwable;
-        }
-
-        public String getMessage() {
-            return message;
-        }
+        Throwable throwable;
+        String message;
     }
 
     public static class Builder implements IBuildable<ApplicationResult> {

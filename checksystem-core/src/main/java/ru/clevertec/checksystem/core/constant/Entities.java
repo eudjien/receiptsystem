@@ -11,12 +11,12 @@ public class Entities {
         public static final String PRODUCTS = "products";
         public static final String RECEIPTS = "receipts";
         public static final String RECEIPT_DISCOUNTS = "receipt_discounts";
-        public static final String SIMPLE_CONSTANT_RECEIPT_DISCOUNT = "simple_constant_receipt_discounts";
-        public static final String SIMPLE_PERCENTAGE_RECEIPT_DISCOUNT = "simple_percentage_receipt_discounts";
+        public static final String CONSTANT_RECEIPT_DISCOUNT = "constant_receipt_discounts";
+        public static final String PERCENTAGE_RECEIPT_DISCOUNT = "percentage_receipt_discounts";
         public static final String RECEIPT_ITEMS = "receipt_items";
         public static final String RECEIPT_ITEM_DISCOUNTS = "receipt_item_discounts";
-        public static final String SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT = "simple_constant_receipt_item_discounts";
-        public static final String SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "simple_percentage_receipt_item_discounts";
+        public static final String CONSTANT_RECEIPT_ITEM_DISCOUNT = "constant_receipt_item_discounts";
+        public static final String PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "percentage_receipt_item_discounts";
         public static final String THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "threshold_percentage_receipt_item_discounts";
         public static final String RECEIPT__RECEIPT_DISCOUNT = "_receipt__receipt_discount";
         public static final String RECEIPT_ITEM__RECEIPT_ITEM_DISCOUNT = "_receipt_item__receipt_item_discount";
@@ -49,10 +49,10 @@ public class Entities {
     }
 
     public static final class DiscriminatorValues {
-        public static final String SIMPLE_PERCENTAGE_RECEIPT_DISCOUNT = "SimplePercentageReceiptDiscount";
-        public static final String SIMPLE_CONSTANT_RECEIPT_DISCOUNT = "SimpleConstantReceiptDiscount";
-        public static final String SIMPLE_CONSTANT_RECEIPT_ITEM_DISCOUNT = "SimpleConstantReceiptItemDiscount";
-        public static final String SIMPLE_PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "SimplePercentageReceiptItemDiscount";
+        public static final String PERCENTAGE_RECEIPT_DISCOUNT = "PercentageReceiptDiscount";
+        public static final String CONSTANT_RECEIPT_DISCOUNT = "ConstantReceiptDiscount";
+        public static final String CONSTANT_RECEIPT_ITEM_DISCOUNT = "ConstantReceiptItemDiscount";
+        public static final String PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "PercentageReceiptItemDiscount";
         public static final String THRESHOLD_PERCENTAGE_RECEIPT_ITEM_DISCOUNT = "ThresholdPercentageReceiptItemDiscount";
     }
 

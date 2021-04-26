@@ -4,9 +4,9 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import ru.clevertec.checksystem.core.annotation.subscribe.Subscribe;
 import ru.clevertec.checksystem.core.event.IEventEmitter;
 import ru.clevertec.checksystem.core.event.IEventListener;
+import ru.clevertec.checksystem.core.event.Subscribe;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -42,8 +42,8 @@ public class SubscribingAspect {
     private void onEventEmitterConstructorExecution() {
     }
 
-    @Pointcut("(@within(ru.clevertec.checksystem.core.annotation.subscribe.Subscribe) " +
-            "|| @within(ru.clevertec.checksystem.core.annotation.subscribe.Subscribes))")
+    @Pointcut("(@within(ru.clevertec.checksystem.core.event.Subscribe) " +
+            "|| @within(ru.clevertec.checksystem.core.event.Subscribes))")
     private void withSubscribeAnnotation() {
     }
 }

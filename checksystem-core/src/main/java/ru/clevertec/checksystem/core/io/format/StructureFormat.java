@@ -15,7 +15,7 @@ public enum StructureFormat {
         this.serializeFormat = serializeFormat;
     }
 
-    public static StructureFormat parse(String serializeFormat) {
+    public static StructureFormat from(String serializeFormat) {
         return switch (serializeFormat.trim().toLowerCase(Locale.ROOT)) {
             case Formats.JSON -> StructureFormat.JSON;
             case Formats.XML -> StructureFormat.XML;

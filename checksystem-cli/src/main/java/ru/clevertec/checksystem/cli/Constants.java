@@ -39,8 +39,4 @@ public final class Constants {
         public static final String DESERIALIZE = "deserialize";
         public static final String DATABASE = "database";
     }
-
-    public static final class ExceptionMessages {
-
-    }
 }
